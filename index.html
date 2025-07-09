@@ -3,7 +3,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <title>AuraCare Avustaja – Hitaampi rytmi</title>
+  <title>AuraCare Avustaja – Laajempi vastaustunnistus</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -42,21 +42,21 @@
 </head>
 <body>
   <div class="info-box">
-    <strong>Demon kulku (hitaampi):</strong><br>
+    <strong>Demon kulku (laajempi):</strong><br>
     1. Avustaja: "Hei, mitä kuuluu?"<br>
     2. Käyttäjä: "Hyvää"<br>
     3. Avustaja: "Jutellanko kukista? Sano vaikka kyllä."<br>
-    4. Käyttäjä: "Kyllä"<br>
+    4. Käyttäjä: "Kyllä / joo / ok"<br>
     5. Avustaja: "Kukat tuovat iloa."<br>
     6. Avustaja: "Onko aika ottaa lääke?"<br>
-    7. Käyttäjä: "Kyllä"<br>
+    7. Käyttäjä: "Kyllä / joo / ok"<br>
     8. Avustaja (4s): "Otitko varmasti?"<br>
-    9. Käyttäjä: "Kyllä"<br>
+    9. Käyttäjä: "Kyllä / joo / ok"<br>
     🔚 Avustaja päättää keskustelun.
   </div>
 
   <h1>AuraCare Virtuaaliavustaja</h1>
-  <p>Keskustelu etenee hitaammin – ei tarvitse kiirehtiä. Avustaja odottaa vastaustasi.</p>
+  <p>Keskustelu etenee rauhallisesti – nyt myös "joo" ja "ok" hyväksytään vastauksina.</p>
 
   <div class="log" id="log">
     <h3>Tapahtumat:</h3>
@@ -100,6 +100,10 @@
       }, delay);
     }
 
+    function isAffirmative(transcript) {
+      return transcript.includes("kyllä") || transcript.includes("joo") || transcript.includes("ok");
+    }
+
     recognition.onresult = function(event) {
       const transcript = event.results[0][0].transcript.toLowerCase();
       log("Käyttäjä sanoi: " + transcript);
@@ -109,7 +113,7 @@
         speak("Jutellanko kukista? Sano vaikka kyllä.");
         stage = 1;
         startRecognitionWithDelay(8000);
-      } else if (stage === 1 && transcript.includes("kyllä")) {
+      } else if (stage === 1 && isAffirmative(transcript)) {
         speak("Kukat tuovat iloa päivään.");
         stage = 2;
         setTimeout(() => {
@@ -117,17 +121,17 @@
           stage = 3;
           startRecognitionWithDelay(8000);
         }, 4000);
-      } else if (stage === 3 && transcript.includes("kyllä")) {
+      } else if (stage === 3 && isAffirmative(transcript)) {
         speak("Hyvä. Otitko varmasti?");
         stage = 4;
         startRecognitionWithDelay(6000);
-      } else if (stage === 4 && transcript.includes("kyllä")) {
+      } else if (stage === 4 && isAffirmative(transcript)) {
         speak("Hienoa. Pidetään huolta hyvinvoinnistasi.");
         stage = 5;
       } else {
         if (!retry) {
           retry = true;
-          speak("En kuullut vastausta. Voit sanoa esimerkiksi kyllä.");
+          speak("En kuullut vastausta. Voit sanoa esimerkiksi kyllä, joo tai ok.");
           startRecognitionWithDelay(8000);
         } else {
           speak("Jatketaan myöhemmin.");
