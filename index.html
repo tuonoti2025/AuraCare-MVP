@@ -3,7 +3,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <title>AuraCare Ääniavustaja – Korjattu ääni</title>
+  <title>AuraCare Avustaja – Hitaampi rytmi</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,7 +29,7 @@
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 260px;
+      width: 270px;
       background-color: #ffffffcc;
       border: 2px solid #4db6ac;
       padding: 15px;
@@ -42,10 +42,10 @@
 </head>
 <body>
   <div class="info-box">
-    <strong>Demon kulku:</strong><br>
+    <strong>Demon kulku (hitaampi):</strong><br>
     1. Avustaja: "Hei, mitä kuuluu?"<br>
     2. Käyttäjä: "Hyvää"<br>
-    3. Avustaja: "Jutellanko kukista?"<br>
+    3. Avustaja: "Jutellanko kukista? Sano vaikka kyllä."<br>
     4. Käyttäjä: "Kyllä"<br>
     5. Avustaja: "Kukat tuovat iloa."<br>
     6. Avustaja: "Onko aika ottaa lääke?"<br>
@@ -56,7 +56,7 @@
   </div>
 
   <h1>AuraCare Virtuaaliavustaja</h1>
-  <p>Ei tarvitse painaa mitään – keskustelu alkaa automaattisesti.</p>
+  <p>Keskustelu etenee hitaammin – ei tarvitse kiirehtiä. Avustaja odottaa vastaustasi.</p>
 
   <div class="log" id="log">
     <h3>Tapahtumat:</h3>
@@ -85,6 +85,7 @@
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'fi-FI';
     let stage = 0;
+    let retry = false;
 
     function log(text) {
       const now = new Date().toLocaleTimeString();
@@ -93,49 +94,57 @@
       document.getElementById('log-list').appendChild(entry);
     }
 
+    function startRecognitionWithDelay(delay) {
+      setTimeout(() => {
+        recognition.start();
+      }, delay);
+    }
+
     recognition.onresult = function(event) {
       const transcript = event.results[0][0].transcript.toLowerCase();
       log("Käyttäjä sanoi: " + transcript);
       recognition.stop();
 
       if (stage === 0 && transcript.includes("hyv")) {
-        speak("Jutellanko kukista?");
+        speak("Jutellanko kukista? Sano vaikka kyllä.");
         stage = 1;
-        setTimeout(() => recognition.start(), 4000);
+        startRecognitionWithDelay(8000);
       } else if (stage === 1 && transcript.includes("kyllä")) {
         speak("Kukat tuovat iloa päivään.");
         stage = 2;
         setTimeout(() => {
           speak("Onko aika ottaa lääke?");
           stage = 3;
-          setTimeout(() => recognition.start(), 4000);
+          startRecognitionWithDelay(8000);
         }, 4000);
       } else if (stage === 3 && transcript.includes("kyllä")) {
         speak("Hyvä. Otitko varmasti?");
         stage = 4;
-        setTimeout(() => recognition.start(), 4000);
+        startRecognitionWithDelay(6000);
       } else if (stage === 4 && transcript.includes("kyllä")) {
         speak("Hienoa. Pidetään huolta hyvinvoinnistasi.");
         stage = 5;
       } else {
-        speak("En ymmärtänyt. Voisitko toistaa?");
-        setTimeout(() => recognition.start(), 3000);
+        if (!retry) {
+          retry = true;
+          speak("En kuullut vastausta. Voit sanoa esimerkiksi kyllä.");
+          startRecognitionWithDelay(8000);
+        } else {
+          speak("Jatketaan myöhemmin.");
+        }
       }
     };
 
     recognition.onerror = function(event) {
       log("Virhe: " + event.error);
       recognition.stop();
-      setTimeout(() => recognition.start(), 3000);
+      startRecognitionWithDelay(6000);
     };
 
     window.onload = function() {
       setTimeout(() => {
         speak("Hei, mitä kuuluu?");
-        setTimeout(() => {
-          stage = 0;
-          recognition.start();
-        }, 3000);
+        startRecognitionWithDelay(6000);
       }, 3000);
     };
   </script>
