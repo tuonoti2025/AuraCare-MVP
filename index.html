@@ -3,7 +3,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <title>AuraCare Avustaja – Laajempi vastaustunnistus</title>
+  <title>AuraCare Avustaja – Luotettava jatkokeskustelu</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,7 +29,7 @@
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 270px;
+      width: 280px;
       background-color: #ffffffcc;
       border: 2px solid #4db6ac;
       padding: 15px;
@@ -42,11 +42,11 @@
 </head>
 <body>
   <div class="info-box">
-    <strong>Demon kulku (laajempi):</strong><br>
+    <strong>Demon kulku (korjattu logiikka):</strong><br>
     1. Avustaja: "Hei, mitä kuuluu?"<br>
     2. Käyttäjä: "Hyvää"<br>
     3. Avustaja: "Jutellanko kukista? Sano vaikka kyllä."<br>
-    4. Käyttäjä: "Kyllä / joo / ok"<br>
+    4. Käyttäjä: "Kyllä / joo / ok / kyllä joo"<br>
     5. Avustaja: "Kukat tuovat iloa."<br>
     6. Avustaja: "Onko aika ottaa lääke?"<br>
     7. Käyttäjä: "Kyllä / joo / ok"<br>
@@ -56,7 +56,7 @@
   </div>
 
   <h1>AuraCare Virtuaaliavustaja</h1>
-  <p>Keskustelu etenee rauhallisesti – nyt myös "joo" ja "ok" hyväksytään vastauksina.</p>
+  <p>Avustaja reagoi nyt luotettavasti myös monisanaisiin vastauksiin. Testaa rohkeasti!</p>
 
   <div class="log" id="log">
     <h3>Tapahtumat:</h3>
@@ -67,18 +67,20 @@
     const synth = window.speechSynthesis;
     let voices = [];
 
-    function loadVoices() {
+    function loadVoices(callback) {
       voices = synth.getVoices();
-    }
-    loadVoices();
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = loadVoices;
+      if (voices.length > 0) {
+        callback();
+      } else {
+        setTimeout(() => loadVoices(callback), 100);
+      }
     }
 
-    function speak(text) {
+    function speak(text, callback) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'fi-FI';
       utterance.voice = voices.find(v => v.lang === 'fi-FI') || null;
+      if (callback) utterance.onend = callback;
       synth.speak(utterance);
     }
 
@@ -101,7 +103,7 @@
     }
 
     function isAffirmative(transcript) {
-      return transcript.includes("kyllä") || transcript.includes("joo") || transcript.includes("ok");
+      return ["kyllä", "joo", "ok"].some(word => transcript.includes(word));
     }
 
     recognition.onresult = function(event) {
@@ -110,29 +112,34 @@
       recognition.stop();
 
       if (stage === 0 && transcript.includes("hyv")) {
-        speak("Jutellanko kukista? Sano vaikka kyllä.");
-        stage = 1;
-        startRecognitionWithDelay(8000);
+        speak("Jutellanko kukista? Sano vaikka kyllä.", () => {
+          stage = 1;
+          startRecognitionWithDelay(800);
+        });
       } else if (stage === 1 && isAffirmative(transcript)) {
-        speak("Kukat tuovat iloa päivään.");
-        stage = 2;
-        setTimeout(() => {
-          speak("Onko aika ottaa lääke?");
-          stage = 3;
-          startRecognitionWithDelay(8000);
-        }, 4000);
+        speak("Kukat tuovat iloa päivään.", () => {
+          stage = 2;
+          setTimeout(() => {
+            speak("Onko aika ottaa lääke?", () => {
+              stage = 3;
+              startRecognitionWithDelay(1000);
+            });
+          }, 4000);
+        });
       } else if (stage === 3 && isAffirmative(transcript)) {
-        speak("Hyvä. Otitko varmasti?");
-        stage = 4;
-        startRecognitionWithDelay(6000);
+        speak("Hyvä. Otitko varmasti?", () => {
+          stage = 4;
+          startRecognitionWithDelay(1000);
+        });
       } else if (stage === 4 && isAffirmative(transcript)) {
         speak("Hienoa. Pidetään huolta hyvinvoinnistasi.");
         stage = 5;
       } else {
         if (!retry) {
           retry = true;
-          speak("En kuullut vastausta. Voit sanoa esimerkiksi kyllä, joo tai ok.");
-          startRecognitionWithDelay(8000);
+          speak("En kuullut vastausta. Voit sanoa esimerkiksi kyllä, joo tai ok.", () => {
+            startRecognitionWithDelay(1000);
+          });
         } else {
           speak("Jatketaan myöhemmin.");
         }
@@ -142,14 +149,18 @@
     recognition.onerror = function(event) {
       log("Virhe: " + event.error);
       recognition.stop();
-      startRecognitionWithDelay(6000);
+      startRecognitionWithDelay(1000);
     };
 
     window.onload = function() {
-      setTimeout(() => {
-        speak("Hei, mitä kuuluu?");
-        startRecognitionWithDelay(6000);
-      }, 3000);
+      loadVoices(() => {
+        setTimeout(() => {
+          speak("Hei, mitä kuuluu?", () => {
+            stage = 0;
+            startRecognitionWithDelay(1000);
+          });
+        }, 2000);
+      });
     };
   </script>
 </body>
