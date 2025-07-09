@@ -2,143 +2,142 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-    <meta charset="UTF-8">
-    <title>AuraCare Ääniavustaja</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e0f7fa;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            color: #00796b;
-        }
-        button {
-            font-size: 18px;
-            padding: 15px 30px;
-            margin: 20px;
-            background-color: #4db6ac;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .log {
-            margin-top: 30px;
-            text-align: left;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .info {
-            background: #fff3e0;
-            padding: 10px;
-            border-radius: 6px;
-            margin: 15px auto;
-            max-width: 600px;
-            text-align: left;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>AuraCare Ääniavustaja – Korjattu ääni</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #00796b;
+    }
+    .log {
+      margin-top: 30px;
+      text-align: left;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .info-box {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 260px;
+      background-color: #ffffffcc;
+      border: 2px solid #4db6ac;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 14px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 <body>
-    <h1>AuraCare Virtuaaliavustaja</h1>
-    <p>Avustaja puhuu ja kuuntelee. Ei tarvitse painaa mitään – vain puhu suoraan.</p>
-    <button onclick="startAssistant()">Käynnistä avustaja</button>
+  <div class="info-box">
+    <strong>Demon kulku:</strong><br>
+    1. Avustaja: "Hei, mitä kuuluu?"<br>
+    2. Käyttäjä: "Hyvää"<br>
+    3. Avustaja: "Jutellanko kukista?"<br>
+    4. Käyttäjä: "Kyllä"<br>
+    5. Avustaja: "Kukat tuovat iloa."<br>
+    6. Avustaja: "Onko aika ottaa lääke?"<br>
+    7. Käyttäjä: "Kyllä"<br>
+    8. Avustaja (4s): "Otitko varmasti?"<br>
+    9. Käyttäjä: "Kyllä"<br>
+    🔚 Avustaja päättää keskustelun.
+  </div>
 
-    <div class="info">
-        <h3>Voit kokeilla sanoa:</h3>
-        <ul>
-            <li>"Kukat"</li>
-            <li>"Lapsuus"</li>
-            <li>"Sää"</li>
-            <li>"Olen yksinäinen"</li>
-            <li>"Ota lääke"</li>
-            <li>"Tulppaanit", "Ruusut", "Orvokit"</li>
-        </ul>
-        <h4>Sijoittaja voi kysyä:</h4>
-        <ul>
-            <li>Voiko keskustelua jatkaa useassa vuorossa?</li>
-            <li>Miten lisätään tekoälyhaku (GPT)?</li>
-            <li>Voiko ääniä vaihtaa tai lisätä kieliä?</li>
-        </ul>
-    </div>
+  <h1>AuraCare Virtuaaliavustaja</h1>
+  <p>Ei tarvitse painaa mitään – keskustelu alkaa automaattisesti.</p>
 
-    <div class="log" id="log">
-        <h3>Tapahtumat:</h3>
-        <ul id="log-list"></ul>
-    </div>
+  <div class="log" id="log">
+    <h3>Tapahtumat:</h3>
+    <ul id="log-list"></ul>
+  </div>
 
-    <script>
-        const synth = window.speechSynthesis;
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'fi-FI';
-        let lastTopic = '';
+  <script>
+    const synth = window.speechSynthesis;
+    let voices = [];
 
-        function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fi-FI';
-            synth.speak(utterance);
-        }
+    function loadVoices() {
+      voices = synth.getVoices();
+    }
+    loadVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
 
-        function log(text) {
-            const now = new Date().toLocaleTimeString();
-            const entry = document.createElement('li');
-            entry.textContent = `${now} – ${text}`;
-            document.getElementById('log-list').appendChild(entry);
-        }
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'fi-FI';
+      utterance.voice = voices.find(v => v.lang === 'fi-FI') || null;
+      synth.speak(utterance);
+    }
 
-        function processResponse(input) {
-            const user = input.toLowerCase();
-            let response = "En ymmärtänyt. Voisitko toistaa?";
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'fi-FI';
+    let stage = 0;
 
-            if (lastTopic === 'kukat') {
-                if (user.includes('ruusu')) response = "Ruusut ovat rakkauden symboleita.";
-                else if (user.includes('tulppaani')) response = "Tulppaanit ovat kevään ensimmäisiä kukkia.";
-                else if (user.includes('orvokki')) response = "Orvokit ovat pieniä mutta kestäviä kukkia.";
-                else response = "Se onkin harvinaisempi kukka – kaunis varmasti!";
-                lastTopic = '';
-            } else if (user.includes("kukka")) {
-                response = "Mistä kukista pidät?";
-                lastTopic = 'kukat';
-            } else if (user.includes("lapsuus")) {
-                response = "Lapsuuden muistot ovat tärkeitä. Muistatko jonkin hauskan hetken?";
-            } else if (user.includes("sää")) {
-                response = "Tänään on poutainen sää. Oletko käynyt ulkona?";
-            } else if (user.includes("vesi") || user.includes("juo")) {
-                response = "Muistathan juoda riittävästi vettä tänään.";
-            } else if (user.includes("lääke")) {
-                response = "Onko aika ottaa lääke? Voin muistuttaa sinua uudelleen myöhemmin.";
-            } else if (user.includes("yksinäinen")) {
-                response = "Ymmärrän. Olen tässä juttelemassa kanssasi.";
-            }
+    function log(text) {
+      const now = new Date().toLocaleTimeString();
+      const entry = document.createElement('li');
+      entry.textContent = `${now} – ${text}`;
+      document.getElementById('log-list').appendChild(entry);
+    }
 
-            log("Käyttäjä sanoi: " + input);
-            log("Avustaja vastasi: " + response);
-            speak(response);
-        }
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      log("Käyttäjä sanoi: " + transcript);
+      recognition.stop();
 
-        function startAssistant() {
-            speak("Hei! Haluaisitko jutella hetken tai muistanko jotakin tärkeää?");
-            recognition.start();
+      if (stage === 0 && transcript.includes("hyv")) {
+        speak("Jutellanko kukista?");
+        stage = 1;
+        setTimeout(() => recognition.start(), 4000);
+      } else if (stage === 1 && transcript.includes("kyllä")) {
+        speak("Kukat tuovat iloa päivään.");
+        stage = 2;
+        setTimeout(() => {
+          speak("Onko aika ottaa lääke?");
+          stage = 3;
+          setTimeout(() => recognition.start(), 4000);
+        }, 4000);
+      } else if (stage === 3 && transcript.includes("kyllä")) {
+        speak("Hyvä. Otitko varmasti?");
+        stage = 4;
+        setTimeout(() => recognition.start(), 4000);
+      } else if (stage === 4 && transcript.includes("kyllä")) {
+        speak("Hienoa. Pidetään huolta hyvinvoinnistasi.");
+        stage = 5;
+      } else {
+        speak("En ymmärtänyt. Voisitko toistaa?");
+        setTimeout(() => recognition.start(), 3000);
+      }
+    };
 
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                processResponse(transcript);
-                recognition.stop();
-                setTimeout(() => recognition.start(), 9000); // kuuntelee uudelleen 9s kuluttua
-            };
+    recognition.onerror = function(event) {
+      log("Virhe: " + event.error);
+      recognition.stop();
+      setTimeout(() => recognition.start(), 3000);
+    };
 
-            recognition.onerror = function(event) {
-                log("Virhe: " + event.error);
-                recognition.stop();
-                setTimeout(() => recognition.start(), 5000);
-            };
-        }
-    </script>
+    window.onload = function() {
+      setTimeout(() => {
+        speak("Hei, mitä kuuluu?");
+        setTimeout(() => {
+          stage = 0;
+          recognition.start();
+        }, 3000);
+      }, 3000);
+    };
+  </script>
 </body>
 </html>
