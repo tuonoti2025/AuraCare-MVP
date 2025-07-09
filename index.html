@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>AuraCare Ääniavustaja</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #00796b;
+        }
+        button {
+            font-size: 18px;
+            padding: 15px 30px;
+            margin: 20px;
+            background-color: #4db6ac;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .log {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .info {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 15px auto;
+            max-width: 600px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>AuraCare Virtuaaliavustaja</h1>
+    <p>Avustaja puhuu ja kuuntelee. Ei tarvitse painaa mitään – vain puhu suoraan.</p>
+    <button onclick="startAssistant()">Käynnistä avustaja</button>
+
+    <div class="info">
+        <h3>Voit kokeilla sanoa:</h3>
+        <ul>
+            <li>"Kukat"</li>
+            <li>"Lapsuus"</li>
+            <li>"Sää"</li>
+            <li>"Olen yksinäinen"</li>
+            <li>"Ota lääke"</li>
+            <li>"Tulppaanit", "Ruusut", "Orvokit"</li>
+        </ul>
+        <h4>Sijoittaja voi kysyä:</h4>
+        <ul>
+            <li>Voiko keskustelua jatkaa useassa vuorossa?</li>
+            <li>Miten lisätään tekoälyhaku (GPT)?</li>
+            <li>Voiko ääniä vaihtaa tai lisätä kieliä?</li>
+        </ul>
+    </div>
+
+    <div class="log" id="log">
+        <h3>Tapahtumat:</h3>
+        <ul id="log-list"></ul>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'fi-FI';
+        let lastTopic = '';
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fi-FI';
+            synth.speak(utterance);
+        }
+
+        function log(text) {
+            const now = new Date().toLocaleTimeString();
+            const entry = document.createElement('li');
+            entry.textContent = `${now} – ${text}`;
+            document.getElementById('log-list').appendChild(entry);
+        }
+
+        function processResponse(input) {
+            const user = input.toLowerCase();
+            let response = "En ymmärtänyt. Voisitko toistaa?";
+
+            if (lastTopic === 'kukat') {
+                if (user.includes('ruusu')) response = "Ruusut ovat rakkauden symboleita.";
+                else if (user.includes('tulppaani')) response = "Tulppaanit ovat kevään ensimmäisiä kukkia.";
+                else if (user.includes('orvokki')) response = "Orvokit ovat pieniä mutta kestäviä kukkia.";
+                else response = "Se onkin harvinaisempi kukka – kaunis varmasti!";
+                lastTopic = '';
+            } else if (user.includes("kukka")) {
+                response = "Mistä kukista pidät?";
+                lastTopic = 'kukat';
+            } else if (user.includes("lapsuus")) {
+                response = "Lapsuuden muistot ovat tärkeitä. Muistatko jonkin hauskan hetken?";
+            } else if (user.includes("sää")) {
+                response = "Tänään on poutainen sää. Oletko käynyt ulkona?";
+            } else if (user.includes("vesi") || user.includes("juo")) {
+                response = "Muistathan juoda riittävästi vettä tänään.";
+            } else if (user.includes("lääke")) {
+                response = "Onko aika ottaa lääke? Voin muistuttaa sinua uudelleen myöhemmin.";
+            } else if (user.includes("yksinäinen")) {
+                response = "Ymmärrän. Olen tässä juttelemassa kanssasi.";
+            }
+
+            log("Käyttäjä sanoi: " + input);
+            log("Avustaja vastasi: " + response);
+            speak(response);
+        }
+
+        function startAssistant() {
+            speak("Hei! Haluaisitko jutella hetken tai muistanko jotakin tärkeää?");
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                processResponse(transcript);
+                recognition.stop();
+                setTimeout(() => recognition.start(), 9000); // kuuntelee uudelleen 9s kuluttua
+            };
+
+            recognition.onerror = function(event) {
+                log("Virhe: " + event.error);
+                recognition.stop();
+                setTimeout(() => recognition.start(), 5000);
+            };
+        }
+    </script>
+</body>
+</html>
