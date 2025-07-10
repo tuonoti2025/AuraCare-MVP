@@ -1,4 +1,24 @@
-<!DOCTYPE html>
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #4caf50;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        .demo-step {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }<!DOCTYPE html>
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
@@ -244,7 +264,11 @@
     <div class="container">
         <div class="header">
             <h1>🌟 AuraCare</h1>
-            <p>Ääniohjattu virtuaaliavustaja ikäihmisille</p>
+            <p>Ääniohjattu AI-avustaja ikäihmisille - €10M markkinapotentiaali</p>
+            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; margin-top: 1rem;">
+                <strong>💡 INNOVAATIO:</strong> Ensimmäinen täysin ääniohjattu järjestelmä joka ei vaadi teknistä osaamista. 
+                Läheisen ääni voi puhua etänä - mullistava konsepti ikähuollossa!
+            </div>
         </div>
 
         <div class="main-content">
@@ -256,9 +280,18 @@
                 </div>
 
                 <div class="auto-start-notice">
-                    ✨ <strong>Demo toimii kahdella tavalla:</strong><br>
-                    🎤 <strong>Äänellä:</strong> Klikkaa alla ja salli mikrofoni<br>
-                    📱 <strong>Automaattisesti:</strong> Jos et anna lupaa, näet tekstidemon
+                    ✨ <strong>LIVE-DEMO alkaa automaattisesti 5s kuluttua</strong><br>
+                    📺 Näet miten Hilma (85v) ja Aura hoitavat lääke- ja juomarutiinit<br>
+                    🎤 Halutessasi voit kokeilla ääntä klikkaamalla alla
+                </div>
+
+                <div style="background: #e3f2fd; padding: 1rem; border-radius: 10px; margin: 1rem 0; border-left: 4px solid #2196f3;">
+                    <strong>🚀 MITÄ NÄET DEMOSSA:</strong><br>
+                    • Aura muistuttaa lääkkeistä automaattisesti<br>
+                    • Odottaa 5s lääkkeiden ottoa (ei 10min kuten kilpailijat)<br>
+                    • Varmistaa turvallisesti että lääkkeet otettiin<br>
+                    • Muistuttaa säännöllisestä juomisesta<br>
+                    • Klikkaa Timon kuvaa → "läheisen ääni" puhuu etänä!
                 </div>
 
                 <div class="permission-notice" id="permissionNotice" style="display: none;">
@@ -279,19 +312,24 @@
 
                 <div class="conversation" id="conversation">
                     <div class="message system-message">
-                        💫 AuraCare käynnistyy... Odota hetki
+                        💫 AuraCare demo käynnistyy automaattisesti...
                     </div>
+                </div>
+                
+                <div id="statusIndicator" class="status-indicator" style="display: none;">
+                    <div style="font-weight: bold; margin-bottom: 0.5rem;">📺 DEMO LIVE</div>
+                    <div id="currentStep">Odottaa...</div>
                 </div>
             </div>
 
             <div class="timo-section">
-                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=" alt="Timo - Hilman poika" class="timo-avatar">
+                <img src="timo.jpg" alt="Timo - Hilman poika" class="timo-avatar" style="cursor: pointer; transition: all 0.3s ease;">
                 <div>
                     <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">👨‍👩‍👦 Timo - Hilman poika</h4>
                     <p style="color: #666; line-height: 1.6; margin: 0;">
                         "Asun 200km päässä äidistäni Hilmasta. AuraCare antaa minulle mielenrauhan - 
                         äiti saa automaattisesti apua lääkkeiden kanssa ja mukavaa seuraa. 
-                        AI osaa vastata kaikkiin äidin kysymyksiin!"
+                        <strong>Klikkaa kuvaani kokeillaksesi 'läheinen puhuu' -toimintoa!</strong>"
                     </p>
                 </div>
             </div>
@@ -312,35 +350,43 @@
                     <div class="feature-card">
                         <div style="font-size: 2rem; margin-bottom: 0.5rem;">💊</div>
                         <h4>Lääkerutiinit</h4>
-                        <p>Muistuttaa, odottaa, varmistaa - koko prosessi automaattisesti</p>
+                        <p>Muistuttaa → Odottaa (5s) → Varmistaa ottamisen → Turvallisesti hoidettu</p>
                     </div>
                     <div class="feature-card">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌸</div>
-                        <h4>Mukava keskustelu</h4>
-                        <p>Puhuu kukkista, säästä, perheestä - mitä Hilma haluaa</p>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💧</div>
+                        <h4>Juomamuistutukset</h4>
+                        <p>Säännöllinen nesteiden nauttiminen - erityisen tärkeää lääkkeiden kanssa</p>
+                    </div>
+                    <div class="feature-card">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍👩‍👦</div>
+                        <h4>Läheisen ääni</h4>
+                        <p>Timon ääni voi puhua Hilman puolesta - klikkaa Timon kuvaa kokeillaksesi!</p>
                     </div>
                 </div>
             </div>
 
-            <div class="demo-section">
-                <h3>💼 Sijoittajatiedot</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                    <div style="text-align: center; padding: 1rem; background: white; border-radius: 10px;">
-                        <h4 style="color: #2c3e50;">1.2M</h4>
+            <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color: white; padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: center;">
+                <h3 style="margin-bottom: 1rem; font-size: 1.8rem;">🎯 SIJOITUSMAHDOLLISUUS</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">1.2M</h4>
                         <p>Ikäihmistä Suomessa</p>
                     </div>
-                    <div style="text-align: center; padding: 1rem; background: white; border-radius: 10px;">
-                        <h4 style="color: #2c3e50;">30%</h4>
-                        <p>Asuu yksin</p>
+                    <div>
+                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">30%</h4>
+                        <p>Asuu yksin (360k henkilöä)</p>
                     </div>
-                    <div style="text-align: center; padding: 1rem; background: white; border-radius: 10px;">
-                        <h4 style="color: #2c3e50;">€29/kk</h4>
-                        <p>Tavoitehinta</p>
+                    <div>
+                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">€29/kk</h4>
+                        <p>Realistinen hinnoittelu</p>
                     </div>
-                    <div style="text-align: center; padding: 1rem; background: white; border-radius: 10px;">
-                        <h4 style="color: #2c3e50;">€10M</h4>
-                        <p>Markkinapotentiaali</p>
+                    <div>
+                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">€125M</h4>
+                        <p>Kokonaismarkkina (TAM)</p>
                     </div>
+                </div>
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                    <strong>🚀 SKAALAUTUVUUS:</strong> Pohjoismaat (5M ikäihmistä) → €1.7B markkina
                 </div>
             </div>
         </div>
@@ -358,11 +404,14 @@
                 this.permissionNotice = document.getElementById('permissionNotice');
                 this.errorNotice = document.getElementById('errorNotice');
                 this.manualStart = document.getElementById('manualStart');
+                this.statusIndicator = document.getElementById('statusIndicator');
+                this.currentStep = document.getElementById('currentStep');
                 
                 this.isListening = false;
                 this.conversationState = 'initial';
                 this.waitingForResponse = false;
                 this.voiceEnabled = false;
+                this.timoSpeaking = false;
                 
                 this.initVoice();
                 this.setupEventListeners();
@@ -373,6 +422,28 @@
                 this.manualStart.addEventListener('click', () => {
                     this.requestMicrophonePermission();
                 });
+                
+                // Klikkaus Timon kuvaan aktivoi "läheinen puhuu" -tilan
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.timo-avatar')) {
+                        this.toggleTimoSpeaking();
+                    }
+                });
+            }
+
+            toggleTimoSpeaking() {
+                this.timoSpeaking = !this.timoSpeaking;
+                const timoImg = document.querySelector('.timo-avatar');
+                
+                if (this.timoSpeaking) {
+                    timoImg.style.border = '4px solid #4caf50';
+                    timoImg.style.animation = 'pulse 1s infinite';
+                    this.addMessage('🗣️ Timo puhuu nyt Hilman puolesta (klikkaa kuvaa lopettaaksesi)', 'system');
+                } else {
+                    timoImg.style.border = '3px solid #4facfe';
+                    timoImg.style.animation = '';
+                    this.addMessage('👥 Hilma puhuu taas itse', 'system');
+                }
             }
 
             async startDemo() {
@@ -487,41 +558,81 @@
                 }, 3000);
             }
 
+            updateDemoStep(step) {
+                this.currentStep.innerHTML = step;
+                this.statusIndicator.style.display = 'block';
+            }
+
             async startTextDemo() {
-                this.updateStatus('Aura esittelee itsensä', 'loading');
+                this.updateStatus('Live-demo alkaa', 'loading');
+                this.updateDemoStep('🚀 Demo käynnistyy...');
                 
                 await this.delay(1000);
-                this.addMessage('Hei! Minä olen Aura. Haluatko jutella hetken kanssani?', 'assistant');
+                this.addMessage('Hei Hilma! Minä olen Aura. Aloitetaan päivä yhdessä. Onko aika ottaa aamulääkkeet?', 'assistant');
+                this.updateDemoStep('💊 Lääkemuistutus aktivoitu');
                 
                 await this.delay(3000);
-                this.addMessage('Kyllä, haluaisin', 'user');
-                this.updateStatus('Hilma vastaa myöntävästi', 'loading');
+                this.addMessage('Kyllä, pitäisi ottaa', 'user');
+                this.updateDemoStep('✅ Hilma myöntää lääketarpeen');
                 
                 await this.delay(2000);
-                this.addMessage('Ihanaa! Sopiiko sinulle, jos juttelemme kukista?', 'assistant');
+                this.addMessage('Hyvä! Käy ottamassa lääkkeet nyt rauhassa. Odottelen täällä 5 sekuntia.', 'assistant');
+                this.updateDemoStep('⏱️ 5s odotus (ei 10min!)');
+                
+                await this.delay(5000);
+                this.addMessage('Otitko lääkkeet, Hilma?', 'assistant');
+                this.updateDemoStep('🔍 Turvallinen varmistus');
+                
+                await this.delay(2000);
+                this.addMessage('Kyllä, otin kaikki', 'user');
+                this.updateDemoStep('✅ Lääkkeet turvallisesti otettu');
+                
+                await this.delay(2000);
+                this.addMessage('Erinomaista! Olet hoitanut asian hyvin. Nyt muistutus juomisesta - oletko juonut aamulla vettä?', 'assistant');
+                this.updateDemoStep('💧 Nesteytysmuistutus');
                 
                 await this.delay(3000);
-                this.addMessage('Kyllä, sopiiko hyvin', 'user');
-                this.updateStatus('Keskustelu kukkien hoidosta', 'loading');
+                this.addMessage('En vielä paljoa...', 'user');
+                this.updateDemoStep('⚠️ Nestehukka havaittu');
                 
                 await this.delay(2000);
-                this.addMessage('Mahtavaa! Onko sinulla kukkia kotona? Minä rakastan kesäkukkia - ne tuovat niin paljon iloa!', 'assistant');
-                
-                await this.delay(3000);
-                this.addMessage('On, pelargoniat ikkunalla', 'user');
-                
-                await this.delay(2000);
-                this.addMessage('Voi kuinka ihanaa! Pelargoniat ovat todella kauniita. Oletko muistanut kastella niitä? Ja muistathan juoda itse myös riittävästi vettä, erityisesti näin lämpimänä päivänä.', 'assistant');
+                this.addMessage('Käy hakemassa lasi vettä nyt heti. Juominen on erityisen tärkeää lääkkeiden kanssa ja lämpimässä säässä. Odotan että juot sen.', 'assistant');
+                this.updateDemoStep('🥤 Aktiivinen nesteytysohje');
                 
                 await this.delay(4000);
-                this.addMessage('Kiitos muistutuksesta, Aura!', 'user');
+                this.addMessage('Join lasillisen', 'user');
+                this.updateDemoStep('✅ Nesteytys hoidettu');
                 
                 await this.delay(2000);
-                this.addMessage('Olen täällä aina kun tarvitset, Hilma. Pidä huolta itsestäsi!', 'assistant');
+                this.addMessage('Kiitos! Nyt sinulla on hyvä alku päivälle. Haluaisitko jutella jostain kivasta? Voisimme puhua kukista tai säästä?', 'assistant');
+                this.updateDemoStep('🌸 Siirtymä sosiaaliseen');
                 
                 await this.delay(3000);
-                this.addMessage('✨ Demo päättynyt! Tämä oli esimerkki siitä, miten Hilma ja Aura keskustelevat päivittäin. Oikeassa käytössä kaikki tapahtuisi äänellä - ei tarvitsisi klikata mitään!', 'system');
-                this.updateStatus('Demo valmis - kokeile äänitoimintoja yllä', 'listening');
+                this.addMessage('Kyllä, kukkien hoidosta', 'user');
+                this.updateDemoStep('💬 Mielekäs keskustelu');
+                
+                await this.delay(2000);
+                this.addMessage('Mahtavaa! Onko sinulla kukkia kotona? Kesäkukkien kastelu on tärkeää näin lämpimässä säässä - aivan kuten sinunkin juominen!', 'assistant');
+                this.updateDemoStep('🌺 Yhdistää hoidon ja ilon');
+                
+                await this.delay(3000);
+                this.addMessage('On pelargoniat ikkunalla', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Voi kuinka ihanaa! Pelargoniat ovat todella kauniita. Muista kastella niitä säännöllisesti, mutta älä liikaa. Ja muista juoda itse myös säännöllisesti päivän aikana!', 'assistant');
+                this.updateDemoStep('🔄 Jatkuva huolenpito');
+                
+                await this.delay(4000);
+                this.addMessage('Kiitos Aura, olet todella avulias', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Olen täällä aina kun tarvitset, Hilma. Soitan Timolle jos tarvitset apua. Pidä huolta itsestäsi ja muista juoda vettä!', 'assistant');
+                this.updateDemoStep('📞 Hätäyhteys omaisiin');
+                
+                await this.delay(3000);
+                this.addMessage('✨ Demo päättynyt! Näit kokonaisvaltaisen hoivaprosessin. Klikkaa Timon kuvaa kokeillaksesi "läheinen puhuu etänä" -innovaatiota!', 'system');
+                this.updateDemoStep('🎯 KLIKKAA TIMON KUVAA!');
+                this.updateStatus('Demo valmis - kokeile innovaatiota!', 'listening');
             }
 
             handleVoiceInput(transcript) {
