@@ -3,191 +3,114 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <title>AuraCare Avustaja – Korjattu 'Jutellaanko'</title>
+  <title>AuraCare MVP – Keskusteludemo sijoittajille</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #e0f7fa;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      color: #00796b;
-    }
-    .log {
-      margin-top: 30px;
-      text-align: left;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .info-box, .mic-status {
-      position: fixed;
-      left: 20px;
-      background-color: #ffffffcc;
-      border: 2px solid #4db6ac;
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-size: 14px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);
-    }
-    .info-box {
-      top: 20px;
-      width: 280px;
-      text-align: left;
-    }
+    body { font-family: Arial; background: #e8f5e9; padding: 20px; text-align: center; }
+    h1 { color: #2e7d32; }
+    .log { margin-top: 30px; max-width: 600px; margin-left: auto; margin-right: auto;
+           background: white; padding: 15px; border-radius: 8px;
+           box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: left; }
     .mic-status {
-      bottom: 20px;
-      font-weight: bold;
-      color: #00796b;
+      position: fixed; bottom: 20px; left: 20px;
+      background: #ffffffcc; border: 2px solid #66bb6a;
+      padding: 10px 15px; border-radius: 10px;
+      font-weight: bold; color: #2e7d32;
     }
   </style>
 </head>
 <body>
-  <div class="info-box">
-    <strong>Demon kulku (lopullinen korjaus):</strong><br>
-    1. Avustaja: "Hei, mitä kuuluu?"<br>
-    2. Käyttäjä: "Hyvää"<br>
-    3. Avustaja: "Jutellaanko kukista? Sano vaikka kyllä."<br>
-    4. Käyttäjä: "Kyllä / joo / ok"<br>
-    5. Avustaja: "Kukat tuovat iloa päivään."<br>
-    6. Avustaja: "Onko aika ottaa lääke?"<br>
-    7. Käyttäjä: "Kyllä / joo / ok"<br>
-    8. Avustaja: "Otitko varmasti?"<br>
-    9. Käyttäjä: "Kyllä / joo / ok"<br>
-    🔚 Avustaja päättää keskustelun.
-  </div>
-
+  <h1>AuraCare MVP – Virtuaaliavustaja</h1>
+  <p>Demo sijoittajille. Avustaja kysyy, käyttäjä vastaa puheella. Mikrofoni toimii automaattisesti.</p>
+  <div class="log" id="log"><h3>Tapahtumat:</h3><ul id="log-list"></ul></div>
   <div class="mic-status" id="micStatus">⏸️ Odottaa...</div>
 
-  <h1>AuraCare Virtuaaliavustaja</h1>
-  <p>Puhu vasta kun näet 🎤 Kuuntelee -ilmoituksen. Nyt myös "jutellaanko" toimii oikein.</p>
+<script>
+const synth = window.speechSynthesis;
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'fi-FI';
+let voices = [];
+let stage = 0;
 
-  <div class="log" id="log">
-    <h3>Tapahtumat:</h3>
-    <ul id="log-list"></ul>
-  </div>
+function log(text) {
+  const time = new Date().toLocaleTimeString();
+  const entry = document.createElement("li");
+  entry.textContent = time + " – " + text;
+  document.getElementById("log-list").appendChild(entry);
+}
+function updateMicStatus(text) {
+  document.getElementById("micStatus").textContent = text;
+}
+function loadVoices(callback) {
+  voices = synth.getVoices();
+  if (voices.length) callback();
+  else setTimeout(() => loadVoices(callback), 100);
+}
+function speak(text, callback) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'fi-FI';
+  utterance.voice = voices.find(v => v.lang === 'fi-FI') || null;
+  utterance.onend = () => {
+    updateMicStatus("🎤 Kuuntelee...");
+    if (callback) callback();
+  };
+  synth.speak(utterance);
+  updateMicStatus("🔈 Puhuu...");
+}
+function startListening(delay = 1000) {
+  setTimeout(() => {
+    recognition.start();
+    updateMicStatus("🎤 Kuuntelee...");
+  }, delay);
+}
+function isYes(text) {
+  return ["kyllä", "joo", "ok"].some(word => text.includes(word));
+}
 
-  <script>
-    const synth = window.speechSynthesis;
-    let voices = [];
+recognition.onresult = function(event) {
+  const speech = event.results[0][0].transcript.toLowerCase();
+  log("Käyttäjä sanoi: " + speech);
+  recognition.stop();
+  updateMicStatus("⏸️ Odottaa...");
 
-    function loadVoices(callback) {
-      voices = synth.getVoices();
-      if (voices.length > 0) {
-        callback();
-      } else {
-        setTimeout(() => loadVoices(callback), 100);
-      }
-    }
-
-    function speak(text, callback) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'fi-FI';
-      utterance.voice = voices.find(v => v.lang === 'fi-FI') || null;
-      utterance.onend = () => {
-        updateMicStatus("🎤 Kuuntelee...");
-        if (callback) callback();
-      };
-      synth.speak(utterance);
-      updateMicStatus("🔈 Puhuu...");
-    }
-
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'fi-FI';
-    let stage = 0;
-    let retry = false;
-
-    function log(text) {
-      const now = new Date().toLocaleTimeString();
-      const entry = document.createElement('li');
-      entry.textContent = `${now} – ${text}`;
-      document.getElementById('log-list').appendChild(entry);
-    }
-
-    function updateMicStatus(text) {
-      document.getElementById("micStatus").textContent = text;
-    }
-
-    function startRecognitionWithDelay(delay) {
+  if (stage === 0 && isYes(speech)) {
+    speak("Jutellaanko kukista? Sano vaikka kyllä.", () => {
+      stage = 1; startListening();
+    });
+  } else if (stage === 1 && isYes(speech)) {
+    speak("On aika ottaa lääkkeet.", () => {
+      stage = 2;
       setTimeout(() => {
-        updateMicStatus("🎤 Kuuntelee...");
-        recognition.start();
-      }, delay);
-    }
-
-    function isAffirmative(transcript) {
-      return ["kyllä", "joo", "ok"].some(word => transcript.includes(word));
-    }
-
-    recognition.onstart = function() {
-      updateMicStatus("🎤 Kuuntelee...");
-    };
-
-    recognition.onend = function() {
-      updateMicStatus("⏸️ Odottaa...");
-    };
-
-    recognition.onresult = function(event) {
-      const transcript = event.results[0][0].transcript.toLowerCase();
-      log("Käyttäjä sanoi: " + transcript);
-      recognition.stop();
-
-      if (stage === 0 && transcript.includes("hyv")) {
-        speak("Jutellaanko kukista? Sano vaikka kyllä.", () => {
-          stage = 1;
-          startRecognitionWithDelay(2000);
+        speak("Otitko lääkkeet varmasti?", () => {
+          stage = 3; startListening();
         });
-      } else if (stage === 1 && isAffirmative(transcript)) {
-        speak("Kukat tuovat iloa päivään.", () => {
-          stage = 2;
-          setTimeout(() => {
-            speak("Onko aika ottaa lääke?", () => {
-              stage = 3;
-              startRecognitionWithDelay(2000);
-            });
-          }, 3000);
-        });
-      } else if (stage === 3 && isAffirmative(transcript)) {
-        speak("Hyvä. Otitko varmasti?", () => {
-          stage = 4;
-          startRecognitionWithDelay(2000);
-        });
-      } else if (stage === 4 && isAffirmative(transcript)) {
-        speak("Hienoa. Pidetään huolta hyvinvoinnistasi.");
-        stage = 5;
-      } else {
-        if (!retry) {
-          retry = true;
-          speak("En kuullut vastausta. Voit sanoa esimerkiksi kyllä, joo tai ok.", () => {
-            startRecognitionWithDelay(2000);
-          });
-        } else {
-          speak("Jatketaan myöhemmin.");
-        }
-      }
-    };
+      }, 4000);
+    });
+  } else if (stage === 3 && isYes(speech)) {
+    speak("Hienoa. Hyvä että huolehdit lääkkeistäsi.");
+    stage = 4;
+  } else {
+    speak("Voit vastata kyllä, joo tai ok.", () => {
+      startListening();
+    });
+  }
+};
+recognition.onerror = function(event) {
+  log("Virhe: " + event.error);
+  recognition.stop();
+  updateMicStatus("⏸️ Odottaa...");
+  startListening();
+};
 
-    recognition.onerror = function(event) {
-      log("Virhe: " + event.error);
-      recognition.stop();
-      startRecognitionWithDelay(2000);
-    };
-
-    window.onload = function() {
-      loadVoices(() => {
-        setTimeout(() => {
-          speak("Hei, mitä kuuluu?", () => {
-            stage = 0;
-            startRecognitionWithDelay(2000);
-          });
-        }, 2000);
+window.onload = () => {
+  loadVoices(() => {
+    setTimeout(() => {
+      speak("Terve, haluatko jutella?", () => {
+        stage = 0;
+        startListening();
       });
-    };
-  </script>
+    }, 3000);
+  });
+};
+</script>
 </body>
 </html>
