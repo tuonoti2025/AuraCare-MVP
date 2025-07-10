@@ -3,24 +3,24 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <title>AuraCare MVP – Keskusteludemo sijoittajille</title>
+  <title>AuraCare MVP – Katkeamaton puhe</title>
   <style>
-    body { font-family: Arial; background: #e8f5e9; padding: 20px; text-align: center; }
-    h1 { color: #2e7d32; }
+    body { font-family: Arial; background: #f1f8e9; padding: 20px; text-align: center; }
+    h1 { color: #33691e; }
     .log { margin-top: 30px; max-width: 600px; margin-left: auto; margin-right: auto;
            background: white; padding: 15px; border-radius: 8px;
            box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: left; }
     .mic-status {
       position: fixed; bottom: 20px; left: 20px;
-      background: #ffffffcc; border: 2px solid #66bb6a;
+      background: #ffffffcc; border: 2px solid #aed581;
       padding: 10px 15px; border-radius: 10px;
-      font-weight: bold; color: #2e7d32;
+      font-weight: bold; color: #33691e;
     }
   </style>
 </head>
 <body>
-  <h1>AuraCare MVP – Virtuaaliavustaja</h1>
-  <p>Demo sijoittajille. Avustaja kysyy, käyttäjä vastaa puheella. Mikrofoni toimii automaattisesti.</p>
+  <h1>AuraCare MVP – Korjattu puhevika</h1>
+  <p>Avustaja puhuu ilman katkeamista. Mikrofoni aktivoituu automaattisesti.</p>
   <div class="log" id="log"><h3>Tapahtumat:</h3><ul id="log-list"></ul></div>
   <div class="mic-status" id="micStatus">⏸️ Odottaa...</div>
 
@@ -45,16 +45,26 @@ function loadVoices(callback) {
   if (voices.length) callback();
   else setTimeout(() => loadVoices(callback), 100);
 }
-function speak(text, callback) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'fi-FI';
-  utterance.voice = voices.find(v => v.lang === 'fi-FI') || null;
-  utterance.onend = () => {
-    updateMicStatus("🎤 Kuuntelee...");
-    if (callback) callback();
-  };
-  synth.speak(utterance);
-  updateMicStatus("🔈 Puhuu...");
+function speakMulti(text, callback) {
+  const parts = text.match(/[^.!?]+[.!?]?/g);
+  let i = 0;
+  function speakPart() {
+    if (i < parts.length) {
+      const u = new SpeechSynthesisUtterance(parts[i]);
+      u.lang = 'fi-FI';
+      u.voice = voices.find(v => v.lang === 'fi-FI' && v.localService) || voices.find(v => v.lang === 'fi-FI');
+      u.onend = () => {
+        i++;
+        speakPart();
+      };
+      synth.speak(u);
+      updateMicStatus("🔈 Puhuu...");
+    } else {
+      updateMicStatus("⏸️ Odottaa...");
+      if (callback) callback();
+    }
+  }
+  speakPart();
 }
 function startListening(delay = 1000) {
   setTimeout(() => {
@@ -73,23 +83,23 @@ recognition.onresult = function(event) {
   updateMicStatus("⏸️ Odottaa...");
 
   if (stage === 0 && isYes(speech)) {
-    speak("Jutellaanko kukista? Sano vaikka kyllä.", () => {
+    speakMulti("Jutellaanko kukista? Sano vaikka kyllä.", () => {
       stage = 1; startListening();
     });
   } else if (stage === 1 && isYes(speech)) {
-    speak("On aika ottaa lääkkeet.", () => {
+    speakMulti("On aika ottaa lääkkeet.", () => {
       stage = 2;
       setTimeout(() => {
-        speak("Otitko lääkkeet varmasti?", () => {
+        speakMulti("Otitko lääkkeet varmasti?", () => {
           stage = 3; startListening();
         });
       }, 4000);
     });
   } else if (stage === 3 && isYes(speech)) {
-    speak("Hienoa. Hyvä että huolehdit lääkkeistäsi.");
+    speakMulti("Hienoa. Hyvä että huolehdit lääkkeistäsi.");
     stage = 4;
   } else {
-    speak("Voit vastata kyllä, joo tai ok.", () => {
+    speakMulti("Voit vastata kyllä, joo tai ok.", () => {
       startListening();
     });
   }
@@ -104,7 +114,7 @@ recognition.onerror = function(event) {
 window.onload = () => {
   loadVoices(() => {
     setTimeout(() => {
-      speak("Terve, haluatko jutella?", () => {
+      speakMulti("Terve. Haluatko jutella?", () => {
         stage = 0;
         startListening();
       });
