@@ -3,7 +3,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <title>AuraCare Avustaja – Mikrofoni ja äänen korjaus</title>
+  <title>AuraCare Avustaja – Korjattu 'Jutellaanko' ja mikrofoni</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -49,10 +49,10 @@
 </head>
 <body>
   <div class="info-box">
-    <strong>Demon kulku (mikrofonitila näkyy):</strong><br>
+    <strong>Demon kulku (korjattu):</strong><br>
     1. Avustaja: "Hei, mitä kuuluu?"<br>
     2. Käyttäjä: "Hyvää"<br>
-    3. Avustaja: "Jutellanko kukista? Sano vaikka kyllä."<br>
+    3. Avustaja: "Jutellaanko kukista? Sano vaikka kyllä."<br>
     4. Käyttäjä: "Kyllä / joo / ok"<br>
     5. Avustaja: "Kukat tuovat iloa päivään."<br>
     6. Avustaja: "Onko aika ottaa lääke?"<br>
@@ -65,7 +65,7 @@
   <div class="mic-status" id="micStatus">⏸️ Odottaa...</div>
 
   <h1>AuraCare Virtuaaliavustaja</h1>
-  <p>Avustaja etenee rauhallisesti. Puhu selkeästi, kun näet 🎤 Kuuntelee -ilmoituksen.</p>
+  <p>Avustaja etenee rauhallisesti. Puhu vasta kun näet 🎤 Kuuntelee -ilmoituksen.</p>
 
   <div class="log" id="log">
     <h3>Tapahtumat:</h3>
@@ -138,9 +138,9 @@
       recognition.stop();
 
       if (stage === 0 && transcript.includes("hyv")) {
-        speak("Jutellanko kukista? Sano vaikka kyllä.", () => {
+        speak("Jutellaanko kukista? Sano vaikka kyllä.", () => {
           stage = 1;
-          startRecognitionWithDelay(1000);
+          startRecognitionWithDelay(2000);
         });
       } else if (stage === 1 && isAffirmative(transcript)) {
         speak("Kukat tuovat iloa päivään.", () => {
@@ -148,14 +148,14 @@
           setTimeout(() => {
             speak("Onko aika ottaa lääke?", () => {
               stage = 3;
-              startRecognitionWithDelay(1000);
+              startRecognitionWithDelay(2000);
             });
           }, 3000);
         });
       } else if (stage === 3 && isAffirmative(transcript)) {
         speak("Hyvä. Otitko varmasti?", () => {
           stage = 4;
-          startRecognitionWithDelay(1000);
+          startRecognitionWithDelay(2000);
         });
       } else if (stage === 4 && isAffirmative(transcript)) {
         speak("Hienoa. Pidetään huolta hyvinvoinnistasi.");
@@ -164,7 +164,7 @@
         if (!retry) {
           retry = true;
           speak("En kuullut vastausta. Voit sanoa esimerkiksi kyllä, joo tai ok.", () => {
-            startRecognitionWithDelay(1000);
+            startRecognitionWithDelay(2000);
           });
         } else {
           speak("Jatketaan myöhemmin.");
@@ -175,7 +175,7 @@
     recognition.onerror = function(event) {
       log("Virhe: " + event.error);
       recognition.stop();
-      startRecognitionWithDelay(1000);
+      startRecognitionWithDelay(2000);
     };
 
     window.onload = function() {
@@ -183,7 +183,7 @@
         setTimeout(() => {
           speak("Hei, mitä kuuluu?", () => {
             stage = 0;
-            startRecognitionWithDelay(1000);
+            startRecognitionWithDelay(2000);
           });
         }, 2000);
       });
