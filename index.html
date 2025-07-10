@@ -3,7 +3,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <title>AuraCare Avustaja – Luotettava jatkokeskustelu</title>
+  <title>AuraCare Avustaja – Mikrofoni ja äänen korjaus</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -25,38 +25,47 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .info-box {
+    .info-box, .mic-status {
       position: fixed;
-      top: 20px;
       left: 20px;
-      width: 280px;
       background-color: #ffffffcc;
       border: 2px solid #4db6ac;
-      padding: 15px;
+      padding: 10px 15px;
       border-radius: 10px;
-      text-align: left;
       font-size: 14px;
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .info-box {
+      top: 20px;
+      width: 280px;
+      text-align: left;
+    }
+    .mic-status {
+      bottom: 20px;
+      font-weight: bold;
+      color: #00796b;
     }
   </style>
 </head>
 <body>
   <div class="info-box">
-    <strong>Demon kulku (korjattu logiikka):</strong><br>
+    <strong>Demon kulku (mikrofonitila näkyy):</strong><br>
     1. Avustaja: "Hei, mitä kuuluu?"<br>
     2. Käyttäjä: "Hyvää"<br>
     3. Avustaja: "Jutellanko kukista? Sano vaikka kyllä."<br>
-    4. Käyttäjä: "Kyllä / joo / ok / kyllä joo"<br>
-    5. Avustaja: "Kukat tuovat iloa."<br>
+    4. Käyttäjä: "Kyllä / joo / ok"<br>
+    5. Avustaja: "Kukat tuovat iloa päivään."<br>
     6. Avustaja: "Onko aika ottaa lääke?"<br>
     7. Käyttäjä: "Kyllä / joo / ok"<br>
-    8. Avustaja (4s): "Otitko varmasti?"<br>
+    8. Avustaja: "Otitko varmasti?"<br>
     9. Käyttäjä: "Kyllä / joo / ok"<br>
     🔚 Avustaja päättää keskustelun.
   </div>
 
+  <div class="mic-status" id="micStatus">⏸️ Odottaa...</div>
+
   <h1>AuraCare Virtuaaliavustaja</h1>
-  <p>Avustaja reagoi nyt luotettavasti myös monisanaisiin vastauksiin. Testaa rohkeasti!</p>
+  <p>Avustaja etenee rauhallisesti. Puhu selkeästi, kun näet 🎤 Kuuntelee -ilmoituksen.</p>
 
   <div class="log" id="log">
     <h3>Tapahtumat:</h3>
@@ -80,8 +89,12 @@
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'fi-FI';
       utterance.voice = voices.find(v => v.lang === 'fi-FI') || null;
-      if (callback) utterance.onend = callback;
+      utterance.onend = () => {
+        updateMicStatus("🎤 Kuuntelee...");
+        if (callback) callback();
+      };
       synth.speak(utterance);
+      updateMicStatus("🔈 Puhuu...");
     }
 
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -96,8 +109,13 @@
       document.getElementById('log-list').appendChild(entry);
     }
 
+    function updateMicStatus(text) {
+      document.getElementById("micStatus").textContent = text;
+    }
+
     function startRecognitionWithDelay(delay) {
       setTimeout(() => {
+        updateMicStatus("🎤 Kuuntelee...");
         recognition.start();
       }, delay);
     }
@@ -105,6 +123,14 @@
     function isAffirmative(transcript) {
       return ["kyllä", "joo", "ok"].some(word => transcript.includes(word));
     }
+
+    recognition.onstart = function() {
+      updateMicStatus("🎤 Kuuntelee...");
+    };
+
+    recognition.onend = function() {
+      updateMicStatus("⏸️ Odottaa...");
+    };
 
     recognition.onresult = function(event) {
       const transcript = event.results[0][0].transcript.toLowerCase();
@@ -114,7 +140,7 @@
       if (stage === 0 && transcript.includes("hyv")) {
         speak("Jutellanko kukista? Sano vaikka kyllä.", () => {
           stage = 1;
-          startRecognitionWithDelay(800);
+          startRecognitionWithDelay(1000);
         });
       } else if (stage === 1 && isAffirmative(transcript)) {
         speak("Kukat tuovat iloa päivään.", () => {
@@ -124,7 +150,7 @@
               stage = 3;
               startRecognitionWithDelay(1000);
             });
-          }, 4000);
+          }, 3000);
         });
       } else if (stage === 3 && isAffirmative(transcript)) {
         speak("Hyvä. Otitko varmasti?", () => {
