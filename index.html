@@ -33,7 +33,7 @@
 
         body {
             font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -52,7 +52,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
             padding: 2rem;
             text-align: center;
             color: white;
@@ -271,6 +271,13 @@
             border-radius: 10px;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .process-step:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: scale(1.02);
         }
 
         .process-step.active {
@@ -289,6 +296,17 @@
         .process-step.upcoming {
             background: #f5f5f5;
             color: #666;
+        }
+
+        .step-action {
+            font-size: 0.7rem;
+            color: #2196f3;
+            font-weight: bold;
+            margin-top: 0.2rem;
+        }
+
+        .process-step.active .step-action {
+            color: white;
         }
 
         .step-icon {
@@ -376,7 +394,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌟 AuraCare</h1>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="AuraCare Logo" style="width: 80px; height: 80px; background: white; border-radius: 50%; padding: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                <h1 style="margin: 0;">🌟 AuraCare</h1>
+            </div>
             <p>Läheisen ääni ääniohjattuna AI-avustajana - €125M markkinapotentiaali</p>
             <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; margin-top: 1rem;">
                 <strong>💡 INNOVAATIO:</strong> Timo puhuu äitinsä Hilman kanssa 200km päästä käyttäen AuraCare-palvelua. 
@@ -399,12 +420,11 @@
                 </div>
 
                 <div style="background: #e3f2fd; padding: 1rem; border-radius: 10px; margin: 1rem 0; border-left: 4px solid #2196f3;">
-                    <strong>🚀 MITÄ NÄET DEMOSSA:</strong><br>
-                    • Timo tervehtii äitiään Hilmaa ystävällisesti<br>
-                    • Muistuttaa lääkkeistä ja odottaa 5s (ei 10min kuten kilpailijat)<br>
-                    • Varmistaa turvallisesti että lääkkeet otettiin<br>
-                    • Huolehtii äidin nesteytyksen seurannasta<br>
-                    • Klikkaa Timon kuvaa alla → vaihda roolit keskenään!
+                    <strong>🎯 INTERAKTIIVINEN DEMO:</strong><br>
+                    • Klikkaa vasemmalla olevaa prosessivaihetta nähdäksesi sen toiminnassa<br>
+                    • Jokainen vaihe näyttää eri tilanteen (lääkkeet, juominen, hätätilanne, jne.)<br>
+                    • Hallintapaneeli näyttää miten asetuksia muokataan<br>
+                    • Ei tarvitse odottaa - valitse mitä haluat nähdä!
                 </div>
 
                 <div class="permission-notice" id="permissionNotice" style="display: none;">
@@ -436,15 +456,15 @@
             </div>
 
             <div class="timo-section">
-                <div style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #4facfe; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0;" class="timo-avatar">
+                <div style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #4facfe; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; flex-shrink: 0;">
                     👨
                 </div>
                 <div>
-                    <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">👨‍👩‍👦 Timo - Nyt avustajana</h4>
+                    <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">👨‍👩‍👦 Timo - Poika avustajana</h4>
                     <p style="color: #666; line-height: 1.6; margin: 0;">
                         "Asun 200km päässä äidistäni Hilmasta. AuraCare antaa minun puhua äitini kanssa oman ääninä ja kasvoillani. 
                         Äiti luottaa minuun enemmän kuin vieraan tekoälyn ääneen. 
-                        <strong>Klikkaa kuvaani vaihtaaksesi roolit - innovaation ydin!</strong>"
+                        <strong>Tämä on innovaation ydin - läheisen ääni etänä!</strong>"
                     </p>
                 </div>
             </div>
@@ -526,7 +546,6 @@
                 this.conversationState = 'initial';
                 this.waitingForResponse = false;
                 this.voiceEnabled = false;
-                this.timoSpeaking = false;
                 this.currentProcessStep = 0;
                 
                 this.initVoice();
@@ -548,59 +567,57 @@
                         </div>
                     </div>
                     
-                    <div class="process-step upcoming" id="step-1">
+                    <div class="process-step upcoming" id="step-1" data-action="greeting">
                         <div class="step-icon">📞</div>
                         <div class="step-content">
                             <div class="step-title">Yhteydenotto</div>
                             <div class="step-description">Timo soittaa äidilleen</div>
+                            <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
                         </div>
                     </div>
 
-                    <div class="process-step upcoming" id="step-2">
+                    <div class="process-step upcoming" id="step-2" data-action="medicine">
                         <div class="step-icon">💊</div>
                         <div class="step-content">
                             <div class="step-title">Lääkemuistutus</div>
-                            <div class="step-description">Muistuttaa aamulääkkeistä</div>
+                            <div class="step-description">Kysy ja varmista lääkkeet</div>
+                            <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
                         </div>
                     </div>
 
-                    <div class="process-step upcoming" id="step-3">
-                        <div class="step-icon">⏱️</div>
-                        <div class="step-content">
-                            <div class="step-title">Odotus</div>
-                            <div class="step-description">5s aika lääkkeiden otolle</div>
-                        </div>
-                    </div>
-
-                    <div class="process-step upcoming" id="step-4">
-                        <div class="step-icon">✅</div>
-                        <div class="step-content">
-                            <div class="step-title">Varmistus</div>
-                            <div class="step-description">Tarkistaa että otettiin</div>
-                        </div>
-                    </div>
-
-                    <div class="process-step upcoming" id="step-5">
+                    <div class="process-step upcoming" id="step-3" data-action="water">
                         <div class="step-icon">💧</div>
                         <div class="step-content">
-                            <div class="step-title">Nesteytys</div>
-                            <div class="step-description">Muistuttaa veden juonnista</div>
+                            <div class="step-title">Juomamuistutus</div>
+                            <div class="step-description">Muistuta veden juonnista</div>
+                            <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
                         </div>
                     </div>
 
-                    <div class="process-step upcoming" id="step-6">
+                    <div class="process-step upcoming" id="step-4" data-action="emergency">
+                        <div class="step-icon">🚨</div>
+                        <div class="step-content">
+                            <div class="step-title">Hätätilanne</div>
+                            <div class="step-description">Kaatuminen tai avunhuuto</div>
+                            <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
+                        </div>
+                    </div>
+
+                    <div class="process-step upcoming" id="step-5" data-action="chat">
                         <div class="step-icon">🌸</div>
                         <div class="step-content">
                             <div class="step-title">Seurustelu</div>
                             <div class="step-description">Mukava keskustelu</div>
+                            <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
                         </div>
                     </div>
 
-                    <div class="process-step upcoming" id="step-7">
-                        <div class="step-icon">❤️</div>
+                    <div class="process-step upcoming" id="step-6" data-action="dashboard">
+                        <div class="step-icon">📊</div>
                         <div class="step-content">
-                            <div class="step-title">Läheisyys</div>
-                            <div class="step-description">Pojan rakkaus etänä</div>
+                            <div class="step-title">Hallintapaneeli</div>
+                            <div class="step-description">Muokkaa asetuksia</div>
+                            <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
                         </div>
                     </div>
                 `;
@@ -639,13 +656,61 @@
                 this.manualStart.addEventListener('click', () => {
                     this.requestMicrophonePermission();
                 });
-                
-                // Klikkaus Timon avatariin aktivoi "läheinen puhuu" -tilan
+
+                // Klikkaukset prosessivaiheisiin
                 document.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('timo-avatar')) {
-                        this.toggleTimoSpeaking();
+                    const step = e.target.closest('.process-step');
+                    if (step && step.dataset.action) {
+                        this.handleStepClick(step.dataset.action, step.id);
                     }
                 });
+            }
+
+            handleStepClick(action, stepId) {
+                // Merkitse aktiiviseksi
+                document.querySelectorAll('.process-step').forEach(s => s.classList.remove('active'));
+                document.getElementById(stepId).classList.add('active');
+
+                // Tyhjennä keskustelu
+                this.conversationEl.innerHTML = `
+                    <div class="message assistant-message">
+                        <strong>Timo:</strong> Hei äiti! Minä olen Timo. Valitsit "${this.getActionName(action)}" - näytetään se nyt!
+                    </div>
+                `;
+
+                // Näytä valittu toiminto
+                switch(action) {
+                    case 'greeting':
+                        this.showGreeting();
+                        break;
+                    case 'medicine':
+                        this.showMedicineReminder();
+                        break;
+                    case 'water':
+                        this.showWaterReminder();
+                        break;
+                    case 'emergency':
+                        this.showEmergency();
+                        break;
+                    case 'chat':
+                        this.showChat();
+                        break;
+                    case 'dashboard':
+                        this.showDashboard();
+                        break;
+                }
+            }
+
+            getActionName(action) {
+                const names = {
+                    'greeting': 'Yhteydenotto',
+                    'medicine': 'Lääkemuistutus',
+                    'water': 'Juomamuistutus', 
+                    'emergency': 'Hätätilanne',
+                    'chat': 'Seurustelu',
+                    'dashboard': 'Hallintapaneeli'
+                };
+                return names[action] || action;
             }
 
             toggleTimoSpeaking() {
@@ -801,7 +866,7 @@
                 this.addMessage('Hei poikaseni! Kyllä, pitäisi ottaa', 'user');
                 
                 await this.delay(2000);
-                this.addMessage('Hyvä äiti! Käy ottamassa lääkkeet nyt rauhassa. Odotan täällä 5 sekuntia.', 'assistant');
+                this.addMessage('Hyvä äiti! Käy ottamassa lääkkeet nyt rauhassa. Odottelen täällä 5 sekuntia.', 'assistant');
                 this.updateProcessStep(3);
                 
                 await this.delay(5000);
@@ -809,50 +874,51 @@
                 this.updateProcessStep(4);
                 
                 await this.delay(2000);
-                this.addMessage('Kyllä poikaseni, otin kaikki', 'user');
+                this.addMessage('Kyllä poikaseni, otin kaikki tablettini', 'user');
                 
                 await this.delay(2000);
-                this.addMessage('Erinomaista äiti! Olet hoitanut asian hyvin. Nyt muistutus juomisesta - oletko juonut aamulla vettä?', 'assistant');
+                this.addMessage('Erinomaista äiti! Olet hoitanut lääkeasian hyvin. Nyt seuraava tärkeä asia - oletko juonut aamulla vettä?', 'assistant');
                 this.updateProcessStep(5);
                 
                 await this.delay(3000);
                 this.addMessage('En vielä paljoa poikaseni...', 'user');
                 
                 await this.delay(2000);
-                this.addMessage('Äiti, käy hakemassa lasi vettä nyt heti. Juominen on erityisen tärkeää lääkkeiden kanssa. Odotan että juot sen.', 'assistant');
+                this.addMessage('Äiti, tämä on tärkeää! Käy hakemassa iso lasi vettä nyt heti. Juominen on erityisen tärkeää lääkkeiden kanssa. Odotan että juot sen.', 'assistant');
                 
                 await this.delay(4000);
-                this.addMessage('Join lasillisen, Timo kulta', 'user');
+                this.addMessage('Join nyt lasillisen, Timo kulta', 'user');
+                this.updateProcessStep(6);
                 
                 await this.delay(2000);
-                this.addMessage('Kiitos äiti! Nyt sinulla on hyvä alku päivälle. Haluaisitko jutella jostain kivasta? Voisimme puhua kukista tai säästä?', 'assistant');
-                this.updateProcessStep(6);
+                this.addMessage('Kiitos äiti! Nyt sinulla on hyvä alku päivälle - lääkkeet otettu ja nesteet täydennetty. Haluaisitko jutella jostain kivasta?', 'assistant');
+                this.updateProcessStep(7);
                 
                 await this.delay(3000);
                 this.addMessage('Kyllä poikaseni, kukkien hoidosta', 'user');
                 
                 await this.delay(2000);
-                this.addMessage('Mahtavaa äiti! Onko sinulla kukkia kotona? Kesäkukkien kastelu on tärkeää näin lämpimässä säässä - aivan kuten sinunkin juominen!', 'assistant');
+                this.addMessage('Mahtavaa äiti! Onko sinulla kukkia kotona? Kesäkukkien kastelu on tärkeää - aivan kuten sinunkin säännöllinen juominen!', 'assistant');
                 
                 await this.delay(3000);
                 this.addMessage('On Timo kulta, pelargoniat ikkunalla', 'user');
                 
                 await this.delay(2000);
-                this.addMessage('Voi kuinka ihanaa äiti! Pelargoniat ovat todella kauniita. Muista kastella niitä säännöllisesti. Ja muista juoda itse myös säännöllisesti päivän aikana!', 'assistant');
+                this.addMessage('Voi kuinka ihanaa äiti! Muista kastella niitä säännöllisesti. Ja muista itse juoda vettä päivän aikana - se on yhtä tärkeää!', 'assistant');
                 
                 await this.delay(4000);
-                this.addMessage('Kiitos Timo kulta, olet niin kiltti poika', 'user');
+                this.addMessage('Kiitos Timo kulta, huolehdit minusta niin hyvin', 'user');
                 
                 await this.delay(2000);
-                this.addMessage('Rakas äiti, olen aina täällä kun tarvitset. Soitan uudelleen jos huomaan jotain. Pidä huolta itsestäsi!', 'assistant');
-                this.updateProcessStep(7);
+                this.addMessage('Rakas äiti, olen aina täällä kun tarvitset. Soitan uudelleen myöhemmin ja muistutan taas juomisesta. Pidä huolta itsestäsi!', 'assistant');
+                this.updateProcessStep(8);
                 
                 await this.delay(3000);
-                this.addMessage('✨ Demo päättynyt! Näit miten Timo hoitaa äitinsä hyvinvointia 200km päästä. Klikkaa Timon kuvaa vaihtaaksesi roolit!', 'system');
-                this.updateStatus('Demo valmis - kokeile roolien vaihtoa!', 'listening');
+                this.addMessage('✨ Demo päättynyt! Näit miten Timo hoitaa äitinsä lääke- ja juomarutiinit 200km päästä. AuraCare mahdollistaa läheisen äänen käytön etänä!', 'system');
+                this.updateStatus('Demo valmis - tämä on innovaation ydin!', 'listening');
                 
                 // Merkitse kaikki valmistuneiksi
-                for (let i = 1; i <= 7; i++) {
+                for (let i = 1; i <= 8; i++) {
                     const step = document.getElementById(`step-${i}`);
                     if (step) {
                         step.classList.remove('active', 'upcoming');
