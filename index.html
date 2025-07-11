@@ -15,20 +15,18 @@
             font-family: 'Georgia', serif;
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: #333;
         }
 
         .container {
             max-width: 900px;
-            width: 90%;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            backdrop-filter: blur(10px);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
 
         .header {
@@ -41,12 +39,6 @@
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
         }
 
         .main-content {
@@ -60,7 +52,6 @@
             margin-bottom: 2rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border: 3px solid #4facfe;
-            position: relative;
         }
 
         .avatar {
@@ -75,12 +66,6 @@
             font-size: 3rem;
             color: white;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: breathe 3s ease-in-out infinite;
-        }
-
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .conversation {
@@ -88,7 +73,7 @@
             border-radius: 10px;
             padding: 1.5rem;
             margin: 1.5rem 0;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             line-height: 1.6;
             max-height: 400px;
             overflow-y: auto;
@@ -98,12 +83,6 @@
             margin-bottom: 1rem;
             padding: 1rem;
             border-radius: 10px;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .assistant-message {
@@ -140,28 +119,60 @@
             height: 15px;
             border-radius: 50%;
             background: #4caf50;
-            animation: pulse 2s infinite;
         }
 
-        .listening-dot {
-            background: #f44336;
+        .process-tracker {
+            position: fixed;
+            left: 20px;
+            top: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #4facfe;
+            width: 280px;
+            z-index: 999;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .auto-start-notice {
-            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-            color: white;
-            padding: 1rem;
+        .process-step {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
             border-radius: 10px;
-            text-align: center;
-            margin: 1rem 0;
-            font-size: 1.1rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .process-step:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .process-step.active {
+            background: #4facfe;
+            color: white;
+        }
+
+        .step-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            width: 30px;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .step-description {
+            font-size: 0.75rem;
+            opacity: 0.8;
         }
 
         .timo-section {
@@ -180,16 +191,14 @@
             height: 80px;
             border-radius: 50%;
             border: 3px solid #4facfe;
-            object-fit: cover;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-            cursor: pointer;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2rem;
             color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .features {
@@ -205,843 +214,322 @@
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border: 2px solid #f0f0f0;
-            transition: all 0.3s ease;
         }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: #4facfe;
-        }
-
-        .demo-section {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-        }
-
-        .demo-section h3 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .permission-notice {
-            background: #fff3cd;
-            padding: 1rem;
-            border-radius: 10px;
-            border-left: 4px solid #ffc107;
-            margin: 1rem 0;
-            text-align: center;
-        }
-
-        .process-tracker {
-            position: fixed;
-            left: 20px;
-            top: 100px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border-left: 4px solid #4facfe;
-            width: 280px;
-            z-index: 999;
-            backdrop-filter: blur(10px);
-        }
-
-        .process-step {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            cursor: pointer;
-        }
-
-        .process-step:hover {
-            background: #e3f2fd;
-            border-color: #2196f3;
-            transform: scale(1.02);
-        }
-
-        .process-step.active {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        button {
+            padding: 1rem 2rem;
+            background: #4caf50;
             color: white;
-            border-color: #2196f3;
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
-        }
-
-        .process-step.completed {
-            background: #e8f5e8;
-            border-color: #4caf50;
-        }
-
-        .process-step.upcoming {
-            background: #f5f5f5;
-            color: #666;
-        }
-
-        .step-action {
-            font-size: 0.7rem;
-            color: #2196f3;
-            font-weight: bold;
-            margin-top: 0.2rem;
-        }
-
-        .process-step.active .step-action {
-            color: white;
-        }
-
-        .step-icon {
-            font-size: 1.8rem;
-            margin-right: 1rem;
-            width: 40px;
-            text-align: center;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-title {
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .step-description {
-            font-size: 0.75rem;
-            opacity: 0.8;
-        }
-
-        .process-header {
-            text-align: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #eee;
-        }
-
-        .process-header h3 {
-            color: #2c3e50;
+            border: none;
+            border-radius: 50px;
             font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .process-header .live-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #ff4757;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #ff4757;
-            border-radius: 50%;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.3; }
-        }
-
-        .status-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border-left: 4px solid #4caf50;
-            max-width: 300px;
-            z-index: 1000;
-        }
-
-        @media (max-width: 1400px) {
-            .process-tracker {
-                width: 240px;
-                left: 10px;
-            }
+            cursor: pointer;
+            margin: 1rem auto;
+            display: block;
         }
 
         @media (max-width: 1200px) {
             .process-tracker {
-                display: none !important;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .timo-section {
-                flex-direction: column;
-                text-align: center;
+                display: none;
             }
         }
     </style>
 </head>
 <body>
+    <!-- VASEMMAN REUNAN PROSESSISEURANTA -->
+    <div class="process-tracker">
+        <h3 style="text-align: center; margin-bottom: 1rem;">🔄 Demo vaiheet</h3>
+        
+        <div class="process-step" onclick="showDemo('greeting', this)">
+            <div class="step-icon">📞</div>
+            <div class="step-content">
+                <div class="step-title">Yhteydenotto</div>
+                <div class="step-description">Timo soittaa äidilleen</div>
+            </div>
+        </div>
+
+        <div class="process-step" onclick="showDemo('medicine', this)">
+            <div class="step-icon">💊</div>
+            <div class="step-content">
+                <div class="step-title">Lääkemuistutus</div>
+                <div class="step-description">Kysy ja varmista lääkkeet</div>
+            </div>
+        </div>
+
+        <div class="process-step" onclick="showDemo('water', this)">
+            <div class="step-icon">💧</div>
+            <div class="step-content">
+                <div class="step-title">Juomamuistutus</div>
+                <div class="step-description">Muistuta veden juonnista</div>
+            </div>
+        </div>
+
+        <div class="process-step" onclick="showDemo('emergency', this)">
+            <div class="step-icon">🚨</div>
+            <div class="step-content">
+                <div class="step-title">Hätätilanne</div>
+                <div class="step-description">Kaatuminen tai avun tarve</div>
+            </div>
+        </div>
+
+        <div class="process-step" onclick="showDemo('chat', this)">
+            <div class="step-icon">🌸</div>
+            <div class="step-content">
+                <div class="step-title">Seurustelu</div>
+                <div class="step-description">Mukava keskustelu</div>
+            </div>
+        </div>
+
+        <div class="process-step" onclick="showDemo('dashboard', this)">
+            <div class="step-icon">📊</div>
+            <div class="step-content">
+                <div class="step-title">Hallintapaneeli</div>
+                <div class="step-description">Asetukset ja tilastot</div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
-                <img src="./Logo.png" alt="AuraCare Logo" style="width: 80px; height: 80px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.2); object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div style="width: 80px; height: 80px; background: white; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: none; align-items: center; justify-content: center; font-size: 2rem;">🏥</div>
-                <h1 style="margin: 0;">🌟 AuraCare</h1>
+                <img src="./Logo.png" alt="AuraCare Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem;">🏥</div>
+                <h1>🌟 AuraCare</h1>
             </div>
             <p>Läheisen ääni ääniohjattuna AI-avustajana - €125M markkinapotentiaali</p>
-            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; margin-top: 1rem;">
-                <strong>💡 INNOVAATIO:</strong> Timo puhuu äitinsä Hilman kanssa 200km päästä käyttäen AuraCare-palvelua. 
-                MULLISTAVA: Timon kasvot täyttävät äidin ruudun kokonaan keskustelun aikana - tuo turvaa ja tuttuutta muistisairaille!
-            </div>
         </div>
 
         <div class="main-content">
             <div class="assistant-card">
                 <div class="avatar">👨</div>
-                <div class="status" id="status">
-                    <div class="status-dot" id="statusDot"></div>
-                    <span id="statusText">Timo käynnistyy automaattisesti...</span>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>Timo käynnistyy automaattisesti...</span>
                 </div>
 
-                <div class="auto-start-notice">
+                <div style="background: #4caf50; color: white; padding: 1rem; border-radius: 10px; text-align: center; margin: 1rem 0;">
                     ✨ <strong>LIVE-DEMO: Timo puhuu äitinsä Hilman kanssa etänä</strong><br>
-                    📺 Näet miten Timo (poika) hoitaa äitinsä lääke- ja juomarutiinit 200km päästä<br>
-                    🎤 Halutessasi voit kokeilla ääntä klikkaamalla alla
+                    📺 Klikkaa vasemmalta prosessivaihetta nähdäksesi sen toiminnassa!
                 </div>
 
-                <div style="background: #e3f2fd; padding: 1rem; border-radius: 10px; margin: 1rem 0; border-left: 4px solid #2196f3;">
-                    <strong>🎯 INTERAKTIIVINEN DEMO:</strong><br>
-                    • Klikkaa vasemmalla olevaa prosessivaihetta nähdäksesi sen toiminnassa<br>
-                    • Jokainen vaihe näyttää eri tilanteen (lääkkeet, juominen, hätätilanne, jne.)<br>
-                    • Hallintapaneeli näyttää miten asetuksia muokataan<br>
-                    • Ei tarvitse odottaa - valitse mitä haluat nähdä!
-                </div>
-
-                <div class="permission-notice" id="permissionNotice" style="display: none;">
-                    🎤 <strong>Salli mikrofonin käyttö:</strong><br>
-                    • Klikkaa "Salli" tai "Allow" kun selain kysyy<br>
-                    • Jos ei kysyy → klikkaa 🎤-ikonia osoiterivissä
-                </div>
-
-                <div class="permission-notice" id="errorNotice" style="display: none; background: #f8d7da; border-left-color: #dc3545;">
-                    ❌ <strong>Ei hätää!</strong> Mikrofonilupa evätty, mutta demo toimii silti:<br>
-                    📱 <strong>Automaattinen tekstidemo</strong> alkaa 3 sekunnin kuluttua...<br>
-                    <small>Halutessasi voit aktivoida äänen myöhemmin alta</small>
-                </div>
-
-                <button id="manualStart" style="display: block; padding: 1rem 2rem; background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: white; border: none; border-radius: 50px; font-size: 1.1rem; cursor: pointer; margin: 1rem auto; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    🎤 Kokeile äänimtoimintoja
-                </button>
+                <button onclick="startVoice()">🎤 Kokeile äänintoimintoja</button>
 
                 <div class="conversation" id="conversation">
                     <div class="message system-message">
                         💫 AuraCare demo käynnistyy - Timo puhuu äitinsä kanssa automaattisesti...
                     </div>
                 </div>
-                
-                <div id="statusIndicator" class="status-indicator" style="display: none;">
-                    <div style="font-weight: bold; margin-bottom: 0.5rem;">📺 TIMO & HILMA LIVE</div>
-                    <div id="currentStep">Odottaa...</div>
-                </div>
             </div>
 
             <div class="timo-section">
-                <div class="timo-avatar">👨</div>
+                <div class="timo-avatar" onclick="toggleTimo()">👨</div>
                 <div>
-                    <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">👨‍👩‍👦 Timo - Poika avustajana</h4>
-                    <p style="color: #666; line-height: 1.6; margin: 0;">
-                        "Asun 200km päästä äidistäni Hilmasta. AuraCare antaa minun puhua äitini kanssa oman ääninä ja kasvoillani. 
-                        <strong>INNOVAATIO: Timon kasvot täyttävät äidin ruudun kokonaan kun he juttelevat - tuo turvaa muistisairaille!</strong>"
-                    </p>
+                    <h4>👨‍👩‍👦 Timo - Poika avustajana</h4>
+                    <p>"Asun 200km päästä äidistäni Hilmasta. AuraCare antaa minun puhua äitini kanssa oman ääninä ja kasvoillani. <strong>Klikkaa minua kokeillaksesi roolin vaihtoa!</strong>"</p>
                 </div>
             </div>
 
-            <div class="demo-section">
+            <div style="background: #f8f9fa; padding: 2rem; border-radius: 10px; margin: 2rem 0;">
                 <h3>🎯 Kuinka AuraCare toimii</h3>
                 <div class="features">
                     <div class="feature-card">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+                        <div style="font-size: 2rem;">🚀</div>
                         <h4>Automaattinen käynnistys</h4>
-                        <p>Ei painikkeita - Aura kysyy automaattisesti "Haluatko jutella?"</p>
+                        <p>Ei painikkeita - kysyy automaattisesti "Haluatko jutella?"</p>
                     </div>
                     <div class="feature-card">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🧠</div>
-                        <h4>AI-älykkäisyys</h4>
-                        <p>Vastaa kaikkiin Hilman kysymyksiin ja hakee tietoa internetistä</p>
-                    </div>
-                    <div class="feature-card">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💊</div>
+                        <div style="font-size: 2rem;">💊</div>
                         <h4>Lääkerutiinit</h4>
-                        <p>Muistuttaa → Odottaa (5s) → Varmistaa ottamisen → Turvallisesti hoidettu</p>
+                        <p>Muistuttaa → Odottaa → Varmistaa ottamisen</p>
                     </div>
                     <div class="feature-card">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💧</div>
+                        <div style="font-size: 2rem;">💧</div>
                         <h4>Juomamuistutukset</h4>
-                        <p>Säännöllinen nesteiden nauttiminen - erityisen tärkeää lääkkeiden kanssa</p>
+                        <p>Säännöllinen nesteiden nauttiminen</p>
                     </div>
                     <div class="feature-card">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍👩‍👦</div>
-                        <h4>Läheisen ääni</h4>
-                        <p>Timon ääni voi puhua Hilman puolesta - klikkaa Timon kuvaa kokeillaksesi!</p>
+                        <div style="font-size: 2rem;">🚨</div>
+                        <h4>Hätätilanteet</h4>
+                        <p>Automaattinen tunnistus ja avun hälyttäminen</p>
                     </div>
                 </div>
             </div>
 
-            <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color: white; padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: center;">
-                <h3 style="margin-bottom: 1rem; font-size: 1.8rem;">🎯 SIJOITUSMAHDOLLISUUS</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div style="background: #ff6b6b; color: white; padding: 2rem; border-radius: 15px; text-align: center;">
+                <h3>🎯 SIJOITUSMAHDOLLISUUS</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
                     <div>
-                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">1.2M</h4>
+                        <h4 style="font-size: 2rem;">1.2M</h4>
                         <p>Ikäihmistä Suomessa</p>
                     </div>
                     <div>
-                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">30%</h4>
-                        <p>Asuu yksin (360k henkilöä)</p>
-                    </div>
-                    <div>
-                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">€29/kk</h4>
+                        <h4 style="font-size: 2rem;">€29/kk</h4>
                         <p>Realistinen hinnoittelu</p>
                     </div>
                     <div>
-                        <h4 style="font-size: 2rem; margin-bottom: 0.5rem;">€125M</h4>
-                        <p>Kokonaismarkkina (TAM)</p>
+                        <h4 style="font-size: 2rem;">€125M</h4>
+                        <p>Kokonaismarkkina</p>
                     </div>
                 </div>
-                <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.2); border-radius: 10px;">
-                    <strong>🚀 SKAALAUTUVUUS:</strong> Pohjoismaat (5M ikäihmistä) → €1.7B markkina
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Prosessiseuranta vasemmalla -->
-    <div class="process-tracker">
-        <div class="process-header">
-            <h3>🔄 Hoivaprosessi</h3>
-            <div class="live-indicator">
-                <div class="live-dot"></div>
-                LIVE DEMO
-            </div>
-        </div>
-        
-        <div class="process-step upcoming" id="step-1" data-action="greeting">
-            <div class="step-icon">📞</div>
-            <div class="step-content">
-                <div class="step-title">Yhteydenotto</div>
-                <div class="step-description">Timo soittaa äidilleen</div>
-                <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
-            </div>
-        </div>
-
-        <div class="process-step upcoming" id="step-2" data-action="medicine">
-            <div class="step-icon">💊</div>
-            <div class="step-content">
-                <div class="step-title">Lääkemuistutus</div>
-                <div class="step-description">Kysy ja varmista lääkkeet</div>
-                <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
-            </div>
-        </div>
-
-        <div class="process-step upcoming" id="step-3" data-action="water">
-            <div class="step-icon">💧</div>
-            <div class="step-content">
-                <div class="step-title">Juomamuistutus</div>
-                <div class="step-description">Muistuta veden juonnista</div>
-                <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
-            </div>
-        </div>
-
-        <div class="process-step upcoming" id="step-4" data-action="emergency">
-            <div class="step-icon">🚨</div>
-            <div class="step-content">
-                <div class="step-title">Hätätilanne</div>
-                <div class="step-description">Kaatuminen tai avunhuuto</div>
-                <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
-            </div>
-        </div>
-
-        <div class="process-step upcoming" id="step-5" data-action="chat">
-            <div class="step-icon">🌸</div>
-            <div class="step-content">
-                <div class="step-title">Seurustelu</div>
-                <div class="step-description">Mukava keskustelu</div>
-                <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
-            </div>
-        </div>
-
-        <div class="process-step upcoming" id="step-6" data-action="dashboard">
-            <div class="step-icon">📊</div>
-            <div class="step-content">
-                <div class="step-title">Hallintapaneeli</div>
-                <div class="step-description">Muokkaa asetuksia</div>
-                <div class="step-action">👆 KLIKKAA NÄHDÄKSESI</div>
             </div>
         </div>
     </div>
 
     <script>
-        class AuraCareAI {
-            constructor() {
-                this.recognition = null;
-                this.synthesis = window.speechSynthesis;
-                this.conversationEl = document.getElementById('conversation');
-                this.statusEl = document.getElementById('status');
-                this.statusDot = document.getElementById('statusDot');
-                this.statusText = document.getElementById('statusText');
-                this.permissionNotice = document.getElementById('permissionNotice');
-                this.errorNotice = document.getElementById('errorNotice');
-                this.manualStart = document.getElementById('manualStart');
-                this.statusIndicator = document.getElementById('statusIndicator');
-                this.currentStep = document.getElementById('currentStep');
-                
-                this.isListening = false;
-                this.conversationState = 'initial';
-                this.waitingForResponse = false;
-                this.voiceEnabled = false;
-                this.currentProcessStep = 0;
-                this.timoSpeaking = false;
-                
-                this.initVoice();
-                this.setupEventListeners();
-                this.startDemo();
+        let isTimoMode = true;
+        
+        // AUTOMAATTINEN DEMO KÄYNNISTYS
+        setTimeout(() => {
+            startAutoDemo();
+        }, 3000);
+
+        function startAutoDemo() {
+            addMessage('📱 Aloitetaan automaattinen demo...', 'system');
+            setTimeout(() => showDemo('greeting', null), 2000);
+        }
+
+        function addMessage(text, type) {
+            const conversation = document.getElementById('conversation');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            if (type === 'assistant') {
+                messageDiv.innerHTML = `<strong>Timo:</strong> ${text}`;
+            } else if (type === 'user') {
+                messageDiv.innerHTML = `<strong>Hilma:</strong> ${text}`;
+            } else {
+                messageDiv.innerHTML = text;
+            }
+            
+            conversation.appendChild(messageDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        function showDemo(type, element) {
+            // Aktivoi valittu vaihe
+            document.querySelectorAll('.process-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            if (element) {
+                element.classList.add('active');
             }
 
-            updateProcessStep(stepNumber) {
-                document.querySelectorAll('.process-step').forEach(step => {
-                    step.classList.remove('active');
-                    step.classList.add('upcoming');
-                });
-
-                for (let i = 1; i < stepNumber; i++) {
-                    const step = document.getElementById(`step-${i}`);
-                    if (step) {
-                        step.classList.remove('upcoming', 'active');
-                        step.classList.add('completed');
-                    }
-                }
-
-                const currentStep = document.getElementById(`step-${stepNumber}`);
-                if (currentStep) {
-                    currentStep.classList.remove('upcoming', 'completed');
-                    currentStep.classList.add('active');
-                }
-
-                this.currentProcessStep = stepNumber;
-            }
-
-            setupEventListeners() {
-                this.manualStart.addEventListener('click', () => {
-                    this.requestMicrophonePermission();
-                });
-
-                document.addEventListener('click', (e) => {
-                    const step = e.target.closest('.process-step');
-                    if (step && step.dataset.action) {
-                        this.handleStepClick(step.dataset.action, step.id);
-                    }
-
-                    const timoAvatar = e.target.closest('.timo-avatar');
-                    if (timoAvatar) {
-                        this.toggleTimoSpeaking();
-                    }
-                });
-            }
-
-            handleStepClick(action, stepId) {
-                document.querySelectorAll('.process-step').forEach(s => s.classList.remove('active'));
-                document.getElementById(stepId).classList.add('active');
-
-                this.conversationEl.innerHTML = `
-                    <div class="message assistant-message">
-                        <strong>Timo:</strong> Hei äiti! Minä olen Timo. Valitsit "${this.getActionName(action)}" - näytetään se nyt!
-                    </div>
-                `;
-
-                switch(action) {
-                    case 'greeting':
-                        this.showGreeting();
-                        break;
-                    case 'medicine':
-                        this.showMedicineReminder();
-                        break;
-                    case 'water':
-                        this.showWaterReminder();
-                        break;
-                    case 'emergency':
-                        this.showEmergency();
-                        break;
-                    case 'chat':
-                        this.showChat();
-                        break;
-                    case 'dashboard':
-                        this.showDashboard();
-                        break;
-                }
-            }
-
-            getActionName(action) {
-                const names = {
-                    'greeting': 'Yhteydenotto',
-                    'medicine': 'Lääkemuistutus',
-                    'water': 'Juomamuistutus', 
-                    'emergency': 'Hätätilanne',
-                    'chat': 'Seurustelu',
-                    'dashboard': 'Hallintapaneeli'
-                };
-                return names[action] || action;
-            }
-
-            async showGreeting() {
-                this.addMessage('📞 Soittaa äidilleen...', 'system');
-                await this.delay(2000);
-                this.addMessage('Hei äiti! Minä olen Timo. Miten jaksat tänään?', 'assistant');
-                await this.delay(2000);
-                this.addMessage('Hei poikaseni! Kyllä jaksan hyvin, kiitos kun soitit!', 'user');
-                this.updateDemoStep('📞 Yhteydenotto onnistui');
-            }
-
-            async showMedicineReminder() {
-                this.addMessage('💊 Tarkistaa lääkeasiat...', 'system');
-                await this.delay(2000);
-                this.addMessage('Äiti, onko aika ottaa aamulääkkeet? Tarkistan listan.', 'assistant');
-                await this.delay(2000);
-                this.addMessage('Kyllä poikaseni, pitäisi ottaa ne nyt', 'user');
-                await this.delay(2000);
-                this.addMessage('Hyvä äiti! Käy ottamassa lääkkeet rauhassa. Odotan täällä 5 sekuntia.', 'assistant');
-                await this.delay(5000);
-                this.addMessage('Otitko lääkkeet, äiti?', 'assistant');
-                await this.delay(2000);
-                this.addMessage('Kyllä Timo kulta, otin kaikki tablettini', 'user');
-                this.addMessage('Erinomaista äiti! ✅ Lääkeasiat hoidettu turvallisesti.', 'assistant');
-                this.updateDemoStep('💊 Lääkkeet otettu ja varmistettu');
-            }
-
-            async showWaterReminder() {
-                this.addMessage('💧 Tarkistaa nesteiden saantia...', 'system');
-                await this.delay(2000);
-                this.addMessage('Äiti, oletko juonut aamulla vettä? Tämä on tärkeää lääkkeiden kanssa.', 'assistant');
-                await this.delay(2000);
-                this.addMessage('En vielä paljoa poikaseni...', 'user');
-                await this.delay(2000);
-                this.addMessage('Käy hakemassa iso lasi vettä nyt heti. Odotan että juot sen.', 'assistant');
-                await this.delay(4000);
-                this.addMessage('Join nyt lasillisen, Timo kulta', 'user');
-                this.addMessage('Kiitos äiti! ✅ Nestetasapaino hoidettu.', 'assistant');
-                this.updateDemoStep('💧 Nesteytys varmistettu');
-            }
-
-            async showEmergency() {
-                this.addMessage('🚨 HÄTÄTILANNE havaittu!', 'system');
-                await this.delay(2000);
-                this.addMessage('Äiti, kuulin kolinaa! Onko kaikki kunnossa?', 'assistant');
-                await this.delay(2000);
-                this.addMessage('Timo kulta, kaaduin vähän mutta en satuttanut itseäni', 'user');
-                await this.delay(2000);
-                this.addMessage('Olen huolissani äiti. Pystytkö liikkumaan normaalisti? Tarkistan että olet kunnossa.', 'assistant');
-                await this.delay(2000);
-                this.addMessage('Kyllä pystyn, en loukannut mitään', 'user');
-                await this.delay(2000);
-                this.addMessage('✅ Hyvä äiti! Mutta jos tuntuu pahalta, soita heti 112. Ilmoitan myös Timolle.', 'assistant');
-                this.updateDemoStep('🚨 Hätätilanne käsitelty turvallisesti');
-            }
-
-            async showChat() {
-                this.addMessage('🌸 Aloittaa mukavan keskustelun...', 'system');
-                await this.delay(2000);
-                this.addMessage('Äiti, haluaisitko jutella jostain kivasta? Mitä kuuluu kukillesi?', 'assistant');
-                await this.delay(2000);
-                this.addMessage('Pelargoniat kukkivat kauniisti ikkunalla!', 'user');
-                await this.delay(2000);
-                this.addMessage('Voi kuinka ihanaa äiti! Muista kastella niitä säännöllisesti, aivan kuten itse juot vettä.', 'assistant');
-                await this.delay(2000);
-                this.addMessage('Kiitos Timo kulta, huolehdit minusta niin hyvin', 'user');
-                this.updateDemoStep('🌸 Sosiaalinen kontakti ylläpidetty');
-            }
-
-            async showDashboard() {
-                this.addMessage('📊 Näytetään hallintapaneeli...', 'system');
-                await this.delay(2000);
-                this.addMessage('Tässä on Timon hallintapaneeli:', 'system');
-                
-                const dashboardHTML = `
-                    <div style="background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px; padding: 1rem; margin: 1rem 0;">
-                        <h4 style="margin-bottom: 1rem; color: #495057;">⚙️ AURACARE HALLINTA</h4>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="background: white; padding: 0.8rem; border-radius: 5px; border-left: 3px solid #28a745;">
-                                <strong>💊 Lääkeajat</strong><br>
-                                <small>Aamulla 08:00 ✅<br>Illalla 20:00 ⏰</small>
+            // Tyhjennä keskustelu
+            document.getElementById('conversation').innerHTML = '';
+            
+            switch(type) {
+                case 'greeting':
+                    setTimeout(() => addMessage('Hei äiti! Minä olen Timo. Miten jaksat tänään?', 'assistant'), 500);
+                    setTimeout(() => addMessage('Hei poikaseni! Kyllä jaksan hyvin, kiitos kun soitit!', 'user'), 2000);
+                    setTimeout(() => addMessage('✅ Yhteydenotto onnistui - Timo saa kontaktin äitiinsä', 'system'), 3500);
+                    break;
+                    
+                case 'medicine':
+                    setTimeout(() => addMessage('Äiti, onko aika ottaa aamulääkkeet?', 'assistant'), 500);
+                    setTimeout(() => addMessage('Kyllä poikaseni, pitäisi ottaa ne', 'user'), 2000);
+                    setTimeout(() => addMessage('Käy ottamassa ne rauhassa. Odotan 5 sekuntia.', 'assistant'), 3000);
+                    setTimeout(() => addMessage('Otitko lääkkeet?', 'assistant'), 8000);
+                    setTimeout(() => addMessage('Kyllä, otin kaikki tablettini', 'user'), 9000);
+                    setTimeout(() => addMessage('✅ Lääkkeet otettu turvallisesti ja varmistettu', 'system'), 10000);
+                    break;
+                    
+                case 'water':
+                    setTimeout(() => addMessage('Äiti, oletko juonut tänään vettä?', 'assistant'), 500);
+                    setTimeout(() => addMessage('En vielä paljoa poikaseni...', 'user'), 2000);
+                    setTimeout(() => addMessage('Käy hakemassa iso lasi vettä nyt heti!', 'assistant'), 3000);
+                    setTimeout(() => addMessage('Join nyt lasillisen, Timo kulta', 'user'), 6000);
+                    setTimeout(() => addMessage('✅ Nestetasapaino hoidettu - tärkeää lääkkeiden kanssa', 'system'), 7000);
+                    break;
+                    
+                case 'emergency':
+                    setTimeout(() => addMessage('🚨 Äiti, kuulin kolinaa! Onko kaikki kunnossa?', 'assistant'), 500);
+                    setTimeout(() => addMessage('Kaaduin vähän mutta en satuttanut itseäni', 'user'), 2000);
+                    setTimeout(() => addMessage('Pystytkö liikkumaan normaalisti?', 'assistant'), 3000);
+                    setTimeout(() => addMessage('Kyllä pystyn, en loukannut mitään', 'user'), 4000);
+                    setTimeout(() => addMessage('✅ Hätätilanne käsitelty - ilmoitan Timolle', 'system'), 5000);
+                    break;
+                    
+                case 'chat':
+                    setTimeout(() => addMessage('Äiti, haluaisitko jutella jostain kivasta?', 'assistant'), 500);
+                    setTimeout(() => addMessage('Kyllä poikaseni, kukkien hoidosta', 'user'), 2000);
+                    setTimeout(() => addMessage('Onko sinulla kukkia kotona?', 'assistant'), 3000);
+                    setTimeout(() => addMessage('On, pelargoniat kukkivat ikkunalla!', 'user'), 4000);
+                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty - yksinäisyys vähenee', 'system'), 5000);
+                    break;
+                    
+                case 'dashboard':
+                    setTimeout(() => addMessage('📊 Timon hallintapaneeli:', 'system'), 500);
+                    setTimeout(() => {
+                        const dashboardHTML = `
+                            <div style="background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px; padding: 1rem; margin: 1rem 0;">
+                                <h4>⚙️ AURACARE HALLINTA</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;">
+                                    <div style="background: white; padding: 0.8rem; border-radius: 5px;">
+                                        <strong>💊 Lääkeajat</strong><br>
+                                        <small>Aamu 08:00 ✅<br>Ilta 20:00 ⏰</small>
+                                    </div>
+                                    <div style="background: white; padding: 0.8rem; border-radius: 5px;">
+                                        <strong>💧 Juominen</strong><br>
+                                        <small>2h välein ⏰<br>Viimeksi: 10:30 ✅</small>
+                                    </div>
+                                </div>
+                                <div style="background: #fff3cd; padding: 0.8rem; border-radius: 5px;">
+                                    <strong>📈 Tänään:</strong> Lääkkeet 1/2, Vettä 3 lasia, Keskusteluja 2 kpl
+                                </div>
                             </div>
-                            <div style="background: white; padding: 0.8rem; border-radius: 5px; border-left: 3px solid #007bff;">
-                                <strong>💧 Juomamuistutukset</strong><br>
-                                <small>2 tunnin välein ⏰<br>Viimeksi: 10:30 ✅</small>
-                            </div>
-                        </div>
-                        
-                        <div style="background: white; padding: 0.8rem; border-radius: 5px; border-left: 3px solid #6f42c1; margin-bottom: 1rem;">
-                            <strong>👨‍👩‍👦 Läheisten yhteystiedot</strong><br>
-                            <small>Timo (poika): 040-123-4567<br>Anna (tytär): 050-987-6543</small>
-                        </div>
-                        
-                        <div style="background: #fff3cd; padding: 0.8rem; border-radius: 5px; border-left: 3px solid #ffc107;">
-                            <strong>🎯 Tämän päivän tilastot:</strong><br>
-                            <small>• Lääkkeet otettu: 1/2<br>• Vettä juotu: 3 lasia<br>• Keskusteluja: 2 kpl<br>• Kaatumisia: 0 kpl ✅</small>
-                        </div>
-                    </div>
-                `;
-                
-                this.conversationEl.insertAdjacentHTML('beforeend', dashboardHTML);
-                this.conversationEl.scrollTop = this.conversationEl.scrollHeight;
-                this.updateDemoStep('📊 Hallintapaneeli näytetty');
-            }
-
-            toggleTimoSpeaking() {
-                this.timoSpeaking = !this.timoSpeaking;
-                const timoAvatar = document.querySelector('.timo-avatar');
-                
-                if (this.timoSpeaking) {
-                    timoAvatar.style.border = '4px solid #4caf50';
-                    timoAvatar.style.animation = 'pulse 1s infinite';
-                    timoAvatar.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
-                    timoAvatar.innerHTML = '👵';
-                    this.addMessage('🔄 ROOLIT VAIHDETTU: Nyt Hilma puhuu Timon sijasta! (klikkaa vaihtaaksesi takaisin)', 'system');
-                    this.updateDemoStep('👵 Hilma puhuu nyt');
-                } else {
-                    timoAvatar.style.border = '3px solid #4facfe';
-                    timoAvatar.style.animation = '';
-                    timoAvatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    timoAvatar.innerHTML = '👨';
-                    this.addMessage('🔄 TAKAISIN NORMAALIIN: Timo puhuu taas äitinsä kanssa 200km päästä', 'system');
-                    this.updateDemoStep('👨 Timo avustajana');
-                }
-            }
-
-            updateDemoStep(step) {
-                this.currentStep.innerHTML = step;
-                this.statusIndicator.style.display = 'block';
-            }
-
-            async startDemo() {
-                this.updateStatus('AuraCare demo käynnistyy...', 'loading');
-                this.addMessage('💫 Tervetuloa AuraCare-demoon!', 'system');
-                
-                await this.delay(2000);
-                
-                setTimeout(() => {
-                    if (!this.voiceEnabled) {
-                        this.addMessage('📱 Aloitetaan Timo & Hilma demo...', 'system');
-                        this.startTextDemo();
-                    }
-                }, 5000);
-                
-                this.updateStatus('Klikkaa alla kokeillaksesi ääntä tai odota automaattista demoa', 'loading');
-            }
-
-            async requestMicrophonePermission() {
-                try {
-                    this.permissionNotice.style.display = 'block';
-                    this.errorNotice.style.display = 'none';
-                    this.manualStart.style.display = 'none';
-                    
-                    await navigator.mediaDevices.getUserMedia({ audio: true });
-                    
-                    this.voiceEnabled = true;
-                    this.permissionNotice.style.display = 'none';
-                    await this.startVoiceDemo();
-                    
-                } catch (error) {
-                    console.log('Mikrofoni-virhe:', error);
-                    this.showPermissionError();
-                }
-            }
-
-            initVoice() {
-                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    this.recognition = new SpeechRecognition();
-                    this.recognition.lang = 'fi-FI';
-                    this.recognition.continuous = true;
-                    this.recognition.interimResults = false;
-                    
-                    this.recognition.onresult = (event) => {
-                        const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
-                        if (transcript && !this.waitingForResponse) {
-                            this.handleVoiceInput(transcript);
-                        }
-                    };
-                    
-                    this.recognition.onerror = (event) => {
-                        console.log('Puheentunnistus virhe:', event.error);
-                        if (event.error === 'not-allowed') {
-                            this.showPermissionError();
-                        }
-                    };
-                    
-                    this.recognition.onend = () => {
-                        if (this.isListening) {
-                            setTimeout(() => {
-                                try {
-                                    this.recognition.start();
-                                } catch (e) {
-                                    console.log('Uudelleenkäynnistys epäonnistui');
-                                }
-                            }, 1000);
-                        }
-                    };
-                }
-            }
-
-            async startVoiceDemo() {
-                this.updateStatus('Aura käynnistyy...', 'loading');
-                
-                try {
-                    this.recognition.start();
-                    this.isListening = true;
-                    
-                    await this.delay(1000);
-                    this.updateStatus('Aura kuuntelee sinua', 'listening');
-                    
-                    await this.delay(1000);
-                    const greeting = 'Hei! Minä olen Aura. Haluatko jutella hetken kanssani?';
-                    this.addMessage(greeting, 'assistant');
-                    this.speak(greeting);
-                    this.conversationState = 'greeting';
-                    
-                } catch (error) {
-                    console.log('Puheentunnistus-virhe:', error);
-                    this.showPermissionError();
-                }
-            }
-
-            showPermissionError() {
-                this.permissionNotice.style.display = 'none';
-                this.errorNotice.style.display = 'block';
-                this.updateStatus('Tekstidemo alkaa...', 'loading');
-                
-                setTimeout(() => {
-                    this.errorNotice.style.display = 'none';
-                    this.startTextDemo();
-                }, 3000);
-            }
-
-            async startTextDemo() {
-                this.updateStatus('Timo soittaa äidilleen', 'loading');
-                this.updateProcessStep(1);
-                
-                await this.delay(1000);
-                this.addMessage('Hei äiti! Minä olen Timo. Miten jaksat tänään? Onko aika ottaa aamulääkkeet?', 'assistant');
-                this.updateProcessStep(2);
-                
-                await this.delay(3000);
-                this.addMessage('Hei poikaseni! Kyllä, pitäisi ottaa', 'user');
-                
-                await this.delay(2000);
-                this.addMessage('Hyvä äiti! Käy ottamassa lääkkeet nyt rauhassa. Odottelen täällä 5 sekuntia.', 'assistant');
-                this.updateProcessStep(3);
-                
-                await this.delay(5000);
-                this.addMessage('Otitko lääkkeet, äiti?', 'assistant');
-                
-                await this.delay(2000);
-                this.addMessage('Kyllä poikaseni, otin kaikki tablettini', 'user');
-                
-                await this.delay(2000);
-                this.addMessage('Erinomaista äiti! Nyt seuraava tärkeä asia - oletko juonut aamulla vettä?', 'assistant');
-                
-                await this.delay(3000);
-                this.addMessage('En vielä paljoa poikaseni...', 'user');
-                
-                await this.delay(2000);
-                this.addMessage('Käy hakemassa iso lasi vettä nyt heti. Odotan että juot sen.', 'assistant');
-                
-                await this.delay(4000);
-                this.addMessage('Join nyt lasillisen, Timo kulta', 'user');
-                
-                await this.delay(2000);
-                this.addMessage('Kiitos äiti! Haluaisitko jutella jostain kivasta?', 'assistant');
-                
-                await this.delay(3000);
-                this.addMessage('✨ Demo päättynyt! Vasemmalta voit klikata eri vaiheita kokeillaksesi niitä.', 'system');
-                this.updateStatus('Demo valmis - kokeile vasemman reunan painikkeita!', 'listening');
-            }
-
-            handleVoiceInput(transcript) {
-                if (this.waitingForResponse) return;
-                
-                this.addMessage(transcript, 'user');
-                this.waitingForResponse = true;
-                
-                let response = 'Kuulen sinua! Kiitos kun puhut kanssani.';
-                
-                setTimeout(() => {
-                    this.addMessage(response, 'assistant');
-                    this.speak(response);
-                    this.waitingForResponse = false;
-                }, 1000);
-            }
-
-            speak(text) {
-                if (this.synthesis) {
-                    this.synthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'fi-FI';
-                    utterance.rate = 0.8;
-                    utterance.pitch = 1.1;
-                    utterance.volume = 0.9;
-                    this.synthesis.speak(utterance);
-                }
-            }
-
-            addMessage(text, type) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${type}-message`;
-                
-                let content = '';
-                if (type === 'assistant') {
-                    content = `<strong>Timo:</strong> ${text}`;
-                } else if (type === 'user') {
-                    content = `<strong>Hilma:</strong> ${text}`;
-                } else {
-                    content = text;
-                }
-                
-                messageDiv.innerHTML = content;
-                this.conversationEl.appendChild(messageDiv);
-                this.conversationEl.scrollTop = this.conversationEl.scrollHeight;
-            }
-
-            updateStatus(text, type) {
-                this.statusText.textContent = text;
-                this.statusDot.className = 'status-dot';
-                
-                if (type === 'listening') {
-                    this.statusDot.classList.add('listening-dot');
-                } else if (type === 'error') {
-                    this.statusDot.style.background = '#f44336';
-                } else if (type === 'loading') {
-                    this.statusDot.style.background = '#ff9800';
-                }
-            }
-
-            delay(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
+                        `;
+                        document.getElementById('conversation').insertAdjacentHTML('beforeend', dashboardHTML);
+                    }, 1000);
+                    break;
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            new AuraCareAI();
-        });
+        function toggleTimo() {
+            const avatar = document.querySelector('.timo-avatar');
+            if (isTimoMode) {
+                avatar.innerHTML = '👵';
+                avatar.style.background = '#4caf50';
+                addMessage('🔄 ROOLIT VAIHDETTU: Nyt Hilma puhuu Timon sijasta!', 'system');
+                isTimoMode = false;
+            } else {
+                avatar.innerHTML = '👨';
+                avatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                addMessage('🔄 TAKAISIN: Timo puhuu taas äitinsä kanssa 200km päästä', 'system');
+                isTimoMode = true;
+            }
+        }
+
+        function startVoice() {
+            addMessage('🎤 Äänimtoiminnot aktivoitu! Sano "Hei" aloittaaksesi.', 'system');
+            
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'fi-FI';
+                recognition.start();
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    addMessage(transcript, 'user');
+                    
+                    setTimeout(() => {
+                        addMessage('Kuulen sinua! Kiitos kun puhut kanssani.', 'assistant');
+                        
+                        // Puhu takaisin
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance('Kuulen sinua! Kiitos kun puhut kanssani.');
+                            utterance.lang = 'fi-FI';
+                            speechSynthesis.speak(utterance);
+                        }
+                    }, 1000);
+                };
+                
+                recognition.onerror = function() {
+                    addMessage('❌ Mikrofonilupa tarvitaan. Demo jatkuu tekstinä.', 'system');
+                };
+            } else {
+                addMessage('❌ Selain ei tue puheentunnistusta. Demo jatkuu tekstinä.', 'system');
+            }
+        }
     </script>
 </body>
 </html>
