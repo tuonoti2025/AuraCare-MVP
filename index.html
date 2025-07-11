@@ -75,7 +75,7 @@
             margin: 1.5rem 0;
             font-size: 1.1rem;
             line-height: 1.6;
-            max-height: 400px;
+            max-height: 600px;
             overflow-y: auto;
         }
 
@@ -292,8 +292,8 @@
     <div class="container">
         <div class="header">
             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
-                <img src="./Timo.png" alt="Timo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem;">👨</div>
+                <img src="./Logo.png" alt="AuraCare Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem;">🏥</div>
                 <h1>🌟 AuraCare</h1>
             </div>
             <p>Läheisen ääni ääniohjattuna AI-avustajana - €125M markkinapotentiaali</p>
@@ -301,7 +301,8 @@
 
         <div class="main-content">
             <div class="assistant-card">
-                <div class="avatar">👨</div>
+                <img src="./Timo.png" alt="Timo" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="avatar" style="display: none;">👨</div>
                 <div class="status">
                     <div class="status-dot"></div>
                     <span>Timo käynnistyy automaattisesti...</span>
@@ -322,7 +323,8 @@
             </div>
 
             <div class="timo-section">
-                <div class="timo-avatar" onclick="toggleTimo()">👨</div>
+                <img src="./Timo.png" alt="Timo" class="timo-avatar" style="object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="timo-avatar" onclick="toggleTimo()" style="display: none;">👨</div>
                 <div>
                     <h4>👨‍👩‍👦 Timo - Poika avustajana</h4>
                     <p>"Asun 200km päästä äidistäni Hilmasta. AuraCare antaa minun puhua äitini kanssa oman ääninä ja kasvoillani. <strong>Klikkaa minua kokeillaksesi roolin vaihtoa!</strong>"</p>
@@ -444,18 +446,24 @@
                 case 'medicine':
                     setTimeout(() => addMessage('Äiti, onko aika ottaa aamulääkkeet?', 'assistant'), 500);
                     setTimeout(() => addMessage('Kyllä poikaseni, pitäisi ottaa ne', 'user'), 2000);
-                    setTimeout(() => addMessage('Käy ottamassa ne rauhassa. Odotan 5 sekuntia.', 'assistant'), 3000);
+                    setTimeout(() => addMessage('Hyvä äiti! Käy ottamassa ne rauhassa. Odotan 5 sekuntia.', 'assistant'), 3000);
+                    setTimeout(() => addMessage('(Hilma menee hakemaan lääkkeet...)', 'system'), 5000);
                     setTimeout(() => addMessage('Otitko lääkkeet?', 'assistant'), 8000);
                     setTimeout(() => addMessage('Kyllä, otin kaikki tablettini', 'user'), 9000);
-                    setTimeout(() => addMessage('✅ Lääkkeet otettu turvallisesti ja varmistettu', 'system'), 10000);
+                    setTimeout(() => addMessage('Erinomaista äiti! Näitä lääkkeitä otetaan: Verenpainelääke, D-vitamiini ja Kalsium. Kaikki tärkeää terveydellesi.', 'assistant'), 10000);
+                    setTimeout(() => addMessage('Kiitos että muistutit, Timo kulta', 'user'), 11500);
+                    setTimeout(() => addMessage('✅ Lääkkeet otettu turvallisesti ja varmistettu', 'system'), 12500);
                     break;
                     
                 case 'water':
                     setTimeout(() => addMessage('Äiti, oletko juonut tänään vettä?', 'assistant'), 500);
                     setTimeout(() => addMessage('En vielä paljoa poikaseni...', 'user'), 2000);
-                    setTimeout(() => addMessage('Käy hakemassa iso lasi vettä nyt heti!', 'assistant'), 3000);
-                    setTimeout(() => addMessage('Join nyt lasillisen, Timo kulta', 'user'), 6000);
-                    setTimeout(() => addMessage('✅ Nestetasapaino hoidettu - tärkeää lääkkeiden kanssa', 'system'), 7000);
+                    setTimeout(() => addMessage('Tämä on tärkeää! Käy hakemassa iso lasi vettä nyt heti. Erityisesti lääkkeiden kanssa pitää juoda riittävästi.', 'assistant'), 3000);
+                    setTimeout(() => addMessage('(Hilma menee hakemaan vettä...)', 'system'), 5000);
+                    setTimeout(() => addMessage('Join nyt lasillisen, Timo kulta', 'user'), 7000);
+                    setTimeout(() => addMessage('Hienoa äiti! Muista juoda vettä koko päivän ajan. Tavoite on 6-8 lasia päivässä.', 'assistant'), 8000);
+                    setTimeout(() => addMessage('Yritän muistaa, kiitos kun huolehdit', 'user'), 9500);
+                    setTimeout(() => addMessage('✅ Nestetasapaino hoidettu - tärkeää lääkkeiden kanssa', 'system'), 10500);
                     break;
                     
                 case 'emergency':
@@ -469,9 +477,13 @@
                 case 'chat':
                     setTimeout(() => addMessage('Äiti, haluaisitko jutella jostain kivasta?', 'assistant'), 500);
                     setTimeout(() => addMessage('Kyllä poikaseni, kukkien hoidosta', 'user'), 2000);
-                    setTimeout(() => addMessage('Onko sinulla kukkia kotona?', 'assistant'), 3000);
-                    setTimeout(() => addMessage('On, pelargoniat kukkivat ikkunalla!', 'user'), 4000);
-                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty - yksinäisyys vähenee', 'system'), 5000);
+                    setTimeout(() => addMessage('Mahtavaa! Onko sinulla kukkia kotona?', 'assistant'), 3000);
+                    setTimeout(() => addMessage('On, pelargoniat kukkivat kauniisti ikkunalla!', 'user'), 4000);
+                    setTimeout(() => addMessage('Voi kuinka ihanaa äiti! Pelargoniat ovat niin kauniita. Muista kastella niitä säännöllisesti.', 'assistant'), 5000);
+                    setTimeout(() => addMessage('Kastelen joka toinen päivä. Ne viihtyvät hyvin etelä-ikkunassa.', 'user'), 6500);
+                    setTimeout(() => addMessage('Hienoa äiti! Kukat tuovat iloa kotiin, aivan kuten sinä tuot iloa minun elämääni.', 'assistant'), 8000);
+                    setTimeout(() => addMessage('Voi Timo kulta, olet niin kiltti', 'user'), 9500);
+                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty - yksinäisyys vähenee', 'system'), 10500);
                     break;
                     
                 case 'dashboard':
@@ -502,16 +514,26 @@
         }
 
         function toggleTimo() {
-            const avatar = document.querySelector('.timo-avatar');
+            const avatars = document.querySelectorAll('.timo-avatar');
+            avatars.forEach(avatar => {
+                if (isTimoMode) {
+                    avatar.innerHTML = '👵';
+                    avatar.style.background = '#4caf50';
+                    avatar.style.borderColor = '#4caf50';
+                } else {
+                    avatar.innerHTML = '👨';
+                    avatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    avatar.style.borderColor = '#4facfe';
+                }
+            });
+            
             if (isTimoMode) {
-                avatar.innerHTML = '👵';
-                avatar.style.background = '#4caf50';
                 addMessage('🔄 ROOLIT VAIHDETTU: Nyt Hilma puhuu Timon sijasta!', 'system');
+                speak('Roolit vaihdettu. Nyt Hilma puhuu Timon sijasta.');
                 isTimoMode = false;
             } else {
-                avatar.innerHTML = '👨';
-                avatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                 addMessage('🔄 TAKAISIN: Timo puhuu taas äitinsä kanssa 200km päästä', 'system');
+                speak('Takaisin normaaliin. Timo puhuu taas äitinsä kanssa.');
                 isTimoMode = true;
             }
         }
