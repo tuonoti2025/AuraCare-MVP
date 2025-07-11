@@ -387,7 +387,7 @@
 
         function startAutoDemo() {
             addMessage('📱 Aloitetaan automaattinen demo...', 'system');
-            setTimeout(() => showDemo('greeting', null), 2000);
+            setTimeout(() => showDemo('chat', null), 2000);
         }
 
         // PUHESYNTEESI FUNKTIO
@@ -476,14 +476,21 @@
                     
                 case 'chat':
                     setTimeout(() => addMessage('Äiti, haluaisitko jutella jostain kivasta?', 'assistant'), 1000);
-                    setTimeout(() => addMessage('Kyllä poikaseni, kukkien hoidosta', 'user'), 3500);
-                    setTimeout(() => addMessage('Mahtavaa! Onko sinulla kukkia kotona?', 'assistant'), 6000);
-                    setTimeout(() => addMessage('On, pelargoniat kukkivat kauniisti ikkunalla!', 'user'), 8500);
-                    setTimeout(() => addMessage('Voi kuinka ihanaa äiti! Pelargoniat ovat niin kauniita. Muista kastella niitä säännöllisesti.', 'assistant'), 11000);
-                    setTimeout(() => addMessage('Kastelen joka toinen päivä. Ne viihtyvät hyvin etelä-ikkunassa.', 'user'), 14000);
-                    setTimeout(() => addMessage('Hienoa äiti! Kukat tuovat iloa kotiin, aivan kuten sinä tuot iloa minun elämääni.', 'assistant'), 16500);
-                    setTimeout(() => addMessage('Voi Timo kulta, olet niin kiltti', 'user'), 19000);
-                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty - yksinäisyys vähenee', 'system'), 21000);
+                    setTimeout(() => addMessage('(Odottaa Hilman vastausta...)', 'system'), 4000);
+                    setTimeout(() => addMessage('Kyllä poikaseni, kukkien hoidosta', 'user'), 7000);
+                    setTimeout(() => addMessage('(Timo ilahtuu äitinsä vastauksesta)', 'system'), 9000);
+                    setTimeout(() => addMessage('Mahtavaa! Onko sinulla kukkia kotona?', 'assistant'), 11000);
+                    setTimeout(() => addMessage('(Hilma miettii hetken...)', 'system'), 14000);
+                    setTimeout(() => addMessage('On, pelargoniat kukkivat kauniisti ikkunalla!', 'user'), 16000);
+                    setTimeout(() => addMessage('(Timo hymyilee kuullessaan tämän)', 'system'), 18000);
+                    setTimeout(() => addMessage('Voi kuinka ihanaa äiti! Pelargoniat ovat niin kauniita. Muista kastella niitä säännöllisesti.', 'assistant'), 20000);
+                    setTimeout(() => addMessage('(Hilma naurahtaa)', 'system'), 23000);
+                    setTimeout(() => addMessage('Kastelen joka toinen päivä. Ne viihtyvät hyvin etelä-ikkunassa.', 'user'), 25000);
+                    setTimeout(() => addMessage('(Timo kuuntelee tarkkaavaisesti)', 'system'), 27000);
+                    setTimeout(() => addMessage('Hienoa äiti! Kukat tuovat iloa kotiin, aivan kuten sinä tuot iloa minun elämääni.', 'assistant'), 29000);
+                    setTimeout(() => addMessage('(Hilma liikuttuu)', 'system'), 32000);
+                    setTimeout(() => addMessage('Voi Timo kulta, olet niin kiltti', 'user'), 34000);
+                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty - yksinäisyys vähenee', 'system'), 36000);
                     break;
                     
                 case 'dashboard':
@@ -545,13 +552,11 @@
         function startVoice() {
             isVoiceActive = true;
             conversationStep = 0;
-            addMessage('🎤 Äänimtoiminnot aktivoitu! Demo alkaa...', 'system');
-            speak('Äänimtoiminnot aktivoitu. Demo alkaa.');
             
-            // Aloita demo automaattisesti
+            // Aloita demo heti ilman viestiä
             setTimeout(() => {
                 startVoiceDemo();
-            }, 2000);
+            }, 1000);
         }
 
         function startVoiceDemo() {
