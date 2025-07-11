@@ -1,4 +1,24 @@
-<!DOCTYPE html>
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #4caf50;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        .demo-step {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }<!DOCTYPE html>
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
@@ -182,8 +202,6 @@
             border: 3px solid #4facfe;
             object-fit: cover;
             flex-shrink: 0;
-            transition: all 0.3s ease;
-            cursor: pointer;
         }
 
         .features {
@@ -348,28 +366,6 @@
             51%, 100% { opacity: 0.3; }
         }
 
-        .status-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border-left: 4px solid #4caf50;
-            max-width: 300px;
-            z-index: 1000;
-        }
-
-        .demo-step {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
-            padding: 0.5rem;
-            margin: 0.5rem 0;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-
         @media (max-width: 1400px) {
             .process-tracker {
                 width: 240px;
@@ -399,7 +395,7 @@
     <div class="container">
         <div class="header">
             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
-                <img src="./Logo.png" alt="AuraCare Logo" style="width: 80px; height: 80px; background: white; border-radius: 50%; padding: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2);" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <img src="./logo.png" alt="AuraCare Logo" style="width: 80px; height: 80px; background: white; border-radius: 50%; padding: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2);" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div style="width: 80px; height: 80px; background: white; border-radius: 50%; padding: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: none; align-items: center; justify-content: center; font-size: 2rem;">🏥</div>
                 <h1 style="margin: 0;">🌟 AuraCare</h1>
             </div>
@@ -461,8 +457,8 @@
             </div>
 
             <div class="timo-section">
-                <img src="./Timo.png" alt="Timo" class="timo-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="timo-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: none; align-items: center; justify-content: center; font-size: 2rem; color: white;">👨</div>
+                <img src="./timo.jpg" alt="Timo" id="timoAvatar" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #4facfe; object-fit: cover; flex-shrink: 0; transition: all 0.3s ease; cursor: pointer;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div id="timoAvatarFallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #4facfe; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: none; align-items: center; justify-content: center; font-size: 2rem; color: white; flex-shrink: 0; transition: all 0.3s ease; cursor: pointer;">👨</div>
                 <div>
                     <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">👨‍👩‍👦 Timo - Poika avustajana</h4>
                     <p style="color: #666; line-height: 1.6; margin: 0;">
@@ -550,7 +546,6 @@
                 this.waitingForResponse = false;
                 this.voiceEnabled = false;
                 this.currentProcessStep = 0;
-                this.timoSpeaking = false;
                 
                 this.initVoice();
                 this.setupEventListeners();
@@ -558,6 +553,7 @@
             }
 
             initProcessTracker() {
+                // Luo prosessiseuranta dynaamisesti
                 const processTracker = document.createElement('div');
                 processTracker.id = 'processTracker';
                 processTracker.className = 'process-tracker';
@@ -630,11 +626,13 @@
             }
 
             updateProcessStep(stepNumber) {
+                // Piilota kaikki aktiiviset
                 document.querySelectorAll('.process-step').forEach(step => {
                     step.classList.remove('active');
                     step.classList.add('upcoming');
                 });
 
+                // Merkitse aiemmat valmistuneiksi
                 for (let i = 1; i < stepNumber; i++) {
                     const step = document.getElementById(`step-${i}`);
                     if (step) {
@@ -643,6 +641,7 @@
                     }
                 }
 
+                // Merkitse nykyinen aktiiviseksi
                 const currentStep = document.getElementById(`step-${stepNumber}`);
                 if (currentStep) {
                     currentStep.classList.remove('upcoming', 'completed');
@@ -657,29 +656,28 @@
                     this.requestMicrophonePermission();
                 });
 
+                // Klikkaukset prosessivaiheisiin
                 document.addEventListener('click', (e) => {
                     const step = e.target.closest('.process-step');
                     if (step && step.dataset.action) {
                         this.handleStepClick(step.dataset.action, step.id);
                     }
-
-                    const timoAvatar = e.target.closest('.timo-avatar');
-                    if (timoAvatar) {
-                        this.toggleTimoSpeaking();
-                    }
                 });
             }
 
             handleStepClick(action, stepId) {
+                // Merkitse aktiiviseksi
                 document.querySelectorAll('.process-step').forEach(s => s.classList.remove('active'));
                 document.getElementById(stepId).classList.add('active');
 
+                // Tyhjennä keskustelu
                 this.conversationEl.innerHTML = `
                     <div class="message assistant-message">
                         <strong>Timo:</strong> Hei äiti! Minä olen Timo. Valitsit "${this.getActionName(action)}" - näytetään se nyt!
                     </div>
                 `;
 
+                // Näytä valittu toiminto
                 switch(action) {
                     case 'greeting':
                         this.showGreeting();
@@ -704,4 +702,387 @@
 
             getActionName(action) {
                 const names = {
-                    'greeting': 'Yhteyden
+                    'greeting': 'Yhteydenotto',
+                    'medicine': 'Lääkemuistutus',
+                    'water': 'Juomamuistutus', 
+                    'emergency': 'Hätätilanne',
+                    'chat': 'Seurustelu',
+                    'dashboard': 'Hallintapaneeli'
+                };
+                return names[action] || action;
+            }
+
+            toggleTimoSpeaking() {
+                this.timoSpeaking = !this.timoSpeaking;
+                const timoAvatar = document.querySelector('.timo-avatar');
+                
+                if (this.timoSpeaking) {
+                    timoAvatar.style.border = '4px solid #4caf50';
+                    timoAvatar.style.animation = 'pulse 1s infinite';
+                    timoAvatar.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
+                    timoAvatar.innerHTML = '👵';
+                    this.addMessage('🔄 ROOLIT VAIHDETTU: Nyt Hilma puhuu Timon sijasta! (klikkaa vaihtaaksesi takaisin)', 'system');
+                    this.updateDemoStep('👵 Hilma puhuu nyt');
+                } else {
+                    timoAvatar.style.border = '3px solid #4facfe';
+                    timoAvatar.style.animation = '';
+                    timoAvatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    timoAvatar.innerHTML = '👨';
+                    this.addMessage('🔄 TAKAISIN NORMAALIIN: Timo puhuu taas äitinsä kanssa 200km päästä', 'system');
+                    this.updateDemoStep('👨 Timo avustajana');
+                }
+            }
+
+            async startDemo() {
+                this.updateStatus('AuraCare demo käynnistyy...', 'loading');
+                this.addMessage('💫 Tervetuloa AuraCare-demoon!', 'system');
+                
+                // Luo ja näytä prosessiseuranta
+                this.initProcessTracker();
+                
+                await this.delay(2000);
+                
+                // Aloita tekstidemo automaattisesti 5 sekunnin kuluttua
+                setTimeout(() => {
+                    if (!this.voiceEnabled) {
+                        this.addMessage('📱 Aloitetaan Timo & Hilma demo...', 'system');
+                        this.startTextDemo();
+                    }
+                }, 5000);
+                
+                this.updateStatus('Klikkaa alla kokeillaksesi ääntä tai odota automaattista demoa', 'loading');
+            }
+
+            async requestMicrophonePermission() {
+                try {
+                    this.permissionNotice.style.display = 'block';
+                    this.errorNotice.style.display = 'none';
+                    this.manualStart.style.display = 'none';
+                    
+                    // Pyydä mikrofonin käyttölupa
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    
+                    // Jos onnistui, käynnistä puheentunnistus
+                    this.voiceEnabled = true;
+                    this.permissionNotice.style.display = 'none';
+                    await this.startVoiceDemo();
+                    
+                } catch (error) {
+                    console.log('Mikrofoni-virhe:', error);
+                    this.showPermissionError();
+                }
+            }
+
+            initVoice() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.lang = 'fi-FI';
+                    this.recognition.continuous = true;
+                    this.recognition.interimResults = false;
+                    
+                    this.recognition.onresult = (event) => {
+                        const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+                        if (transcript && !this.waitingForResponse) {
+                            this.handleVoiceInput(transcript);
+                        }
+                    };
+                    
+                    this.recognition.onerror = (event) => {
+                        console.log('Puheentunnistus virhe:', event.error);
+                        if (event.error === 'not-allowed') {
+                            this.showPermissionError();
+                        } else if (event.error === 'no-speech') {
+                            // Ei ongelmaa, jatka kuuntelua
+                        } else {
+                            this.updateStatus('Puheentunnistusvirhe', 'error');
+                        }
+                    };
+                    
+                    this.recognition.onend = () => {
+                        if (this.isListening) {
+                            setTimeout(() => {
+                                try {
+                                    this.recognition.start();
+                                } catch (e) {
+                                    console.log('Uudelleenkäynnistys epäonnistui');
+                                }
+                            }, 1000);
+                        }
+                    };
+                }
+            }
+
+            async startVoiceDemo() {
+                this.updateStatus('Aura käynnistyy...', 'loading');
+                
+                try {
+                    this.recognition.start();
+                    this.isListening = true;
+                    
+                    await this.delay(1000);
+                    this.updateStatus('Aura kuuntelee sinua', 'listening');
+                    
+                    // Aloita automaattisesti
+                    await this.delay(1000);
+                    const greeting = 'Hei! Minä olen Aura. Haluatko jutella hetken kanssani?';
+                    this.addMessage(greeting, 'assistant');
+                    this.speak(greeting);
+                    this.conversationState = 'greeting';
+                    
+                } catch (error) {
+                    console.log('Puheentunnistus-virhe:', error);
+                    this.showPermissionError();
+                }
+            }
+
+            showPermissionError() {
+                this.permissionNotice.style.display = 'none';
+                this.errorNotice.style.display = 'block';
+                this.updateStatus('Tekstidemo alkaa...', 'loading');
+                
+                // Aloita tekstidemo automaattisesti 3 sekunnin kuluttua
+                setTimeout(() => {
+                    this.errorNotice.style.display = 'none';
+                    this.startTextDemo();
+                }, 3000);
+            }
+
+            updateDemoStep(step) {
+                this.currentStep.innerHTML = step;
+                this.statusIndicator.style.display = 'block';
+            }
+
+            async startTextDemo() {
+                this.updateStatus('Timo soittaa äidilleen', 'loading');
+                this.updateProcessStep(1);
+                
+                await this.delay(1000);
+                this.addMessage('Hei äiti! Minä olen Timo. Miten jaksat tänään? Onko aika ottaa aamulääkkeet?', 'assistant');
+                this.updateProcessStep(2);
+                
+                await this.delay(3000);
+                this.addMessage('Hei poikaseni! Kyllä, pitäisi ottaa', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Hyvä äiti! Käy ottamassa lääkkeet nyt rauhassa. Odottelen täällä 5 sekuntia.', 'assistant');
+                this.updateProcessStep(3);
+                
+                await this.delay(5000);
+                this.addMessage('Otitko lääkkeet, äiti?', 'assistant');
+                this.updateProcessStep(4);
+                
+                await this.delay(2000);
+                this.addMessage('Kyllä poikaseni, otin kaikki tablettini', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Erinomaista äiti! Olet hoitanut lääkeasian hyvin. Nyt seuraava tärkeä asia - oletko juonut aamulla vettä?', 'assistant');
+                this.updateProcessStep(5);
+                
+                await this.delay(3000);
+                this.addMessage('En vielä paljoa poikaseni...', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Äiti, tämä on tärkeää! Käy hakemassa iso lasi vettä nyt heti. Juominen on erityisen tärkeää lääkkeiden kanssa. Odotan että juot sen.', 'assistant');
+                
+                await this.delay(4000);
+                this.addMessage('Join nyt lasillisen, Timo kulta', 'user');
+                this.updateProcessStep(6);
+                
+                await this.delay(2000);
+                this.addMessage('Kiitos äiti! Nyt sinulla on hyvä alku päivälle - lääkkeet otettu ja nesteet täydennetty. Haluaisitko jutella jostain kivasta?', 'assistant');
+                this.updateProcessStep(7);
+                
+                await this.delay(3000);
+                this.addMessage('Kyllä poikaseni, kukkien hoidosta', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Mahtavaa äiti! Onko sinulla kukkia kotona? Kesäkukkien kastelu on tärkeää - aivan kuten sinunkin säännöllinen juominen!', 'assistant');
+                
+                await this.delay(3000);
+                this.addMessage('On Timo kulta, pelargoniat ikkunalla', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Voi kuinka ihanaa äiti! Muista kastella niitä säännöllisesti. Ja muista itse juoda vettä päivän aikana - se on yhtä tärkeää!', 'assistant');
+                
+                await this.delay(4000);
+                this.addMessage('Kiitos Timo kulta, huolehdit minusta niin hyvin', 'user');
+                
+                await this.delay(2000);
+                this.addMessage('Rakas äiti, olen aina täällä kun tarvitset. Soitan uudelleen myöhemmin ja muistutan taas juomisesta. Pidä huolta itsestäsi!', 'assistant');
+                this.updateProcessStep(8);
+                
+                await this.delay(3000);
+                this.addMessage('✨ Demo päättynyt! Näit miten Timo hoitaa äitinsä lääke- ja juomarutiinit 200km päästä. AuraCare mahdollistaa läheisen äänen käytön etänä!', 'system');
+                this.updateStatus('Demo valmis - tämä on innovaation ydin!', 'listening');
+                
+                // Merkitse kaikki valmistuneiksi
+                for (let i = 1; i <= 8; i++) {
+                    const step = document.getElementById(`step-${i}`);
+                    if (step) {
+                        step.classList.remove('active', 'upcoming');
+                        step.classList.add('completed');
+                    }
+                }
+            }
+
+            handleVoiceInput(transcript) {
+                if (this.waitingForResponse) return;
+                
+                this.addMessage(transcript, 'user');
+                this.waitingForResponse = true;
+                
+                let response = '';
+                
+                switch (this.conversationState) {
+                    case 'greeting':
+                        if (transcript.includes('kyllä') || transcript.includes('joo') || transcript.includes('halua')) {
+                            response = 'Ihanaa! Sopiiko sinulle, jos juttelemme kukista?';
+                            this.conversationState = 'topic_choice';
+                        } else if (transcript.includes('ei') || transcript.includes('en')) {
+                            response = 'Ei se mitään. Olen täällä aina kun tarvitset. Pidä huolta itsestäsi!';
+                            this.conversationState = 'ending';
+                        } else {
+                            response = 'En aivan ymmärtänyt. Haluatko jutella kanssani? Voit sanoa kyllä tai ei.';
+                        }
+                        break;
+                        
+                    case 'topic_choice':
+                        if (transcript.includes('kyllä') || transcript.includes('joo') || transcript.includes('sopi')) {
+                            response = 'Mahtavaa! Onko sinulla kukkia kotona? Minä rakastan kesäkukkia - ne tuovat niin paljon iloa!';
+                            this.conversationState = 'chat';
+                        } else {
+                            response = 'Selvä! Mistä haluaisit jutella? Voisimme puhua säästä, perheestä tai mistä tahansa?';
+                            this.conversationState = 'chat';
+                        }
+                        break;
+                        
+                    case 'chat':
+                        response = this.generateSmartResponse(transcript);
+                        break;
+                        
+                    default:
+                        if (transcript.includes('hei') || transcript.includes('moi') || transcript.includes('terve')) {
+                            response = 'Hei! Minä olen Aura. Haluatko jutella hetken kanssani?';
+                            this.conversationState = 'greeting';
+                        } else {
+                            response = 'Kuulen sinua! Sano "hei" niin aloitetaan keskustelu.';
+                        }
+                }
+                
+                setTimeout(() => {
+                    this.addMessage(response, 'assistant');
+                    this.speak(response);
+                    this.waitingForResponse = false;
+                }, 1000);
+            }
+
+            generateSmartResponse(input) {
+                // Yksinkertainen AI-simulaatio - oikeassa tuotteessa käytettäisiin GPT API:a
+                const responses = {
+                    kukat: [
+                        'Kukkien hoito on tärkeää! Muista kastella niitä säännöllisesti.',
+                        'Pelargoniat ovat todella kauniita. Oletko muistanut kastella niitä?',
+                        'Kesäkukkien kastelua tarvitaan lämpimässä säässä. Ja muista juoda itse myös vettä!'
+                    ],
+                    sää: [
+                        'Tänään on kaunis päivä! Muista juoda riittävästi vettä lämpimässä säässä.',
+                        'Säätiedotuksen mukaan tulee olemaan aurinkoista. Hyvä päivä ulkoiluun!'
+                    ],
+                    lääke: [
+                        'Lääkkeiden otto on tärkeää. Oletko muistanut ottaa tämän päivän lääkkeet?',
+                        'Jos unohdat lääkkeet, älä ota kaksinkertaista annosta. Ota vain seuraava normaali annos.'
+                    ],
+                    perhe: [
+                        'Perhe on tärkeä! Onko sinulla yhteyttä läheisiin säännöllisesti?',
+                        'Mukava kuulla perheestä. Soittavatko lapset ja lastenlapset usein?'
+                    ],
+                    piha: [
+                        'Pihassa on varmasti kaunista nyt kesällä! Viihdytkö ulkona?',
+                        'Piha-askareet voivat olla mukavaa puuhaa. Muista kuitenkin levätä välillä.'
+                    ],
+                    kiitos_ei: [
+                        'Selvä! Jos tulee mieleen jotain muuta, olen täällä. Pidä huolta itsestäsi!',
+                        'Hyvä on. Soitan Timolle jos tarvitset apua. Muista juoda vettä päivän aikana!',
+                        'Ymmärrän. Olen täällä aina kun tarvitset. Hyvää päivänjatkoa, Hilma!'
+                    ],
+                    default: [
+                        'Se kuulostaa mielenkiintoiselta! Kerro lisää.',
+                        'Ymmärrän. Onko jotain muuta mielessäsi?',
+                        'Kiitos kun jaat ajatuksiasi kanssani. Mitä muuta voisi jutella?'
+                    ]
+                };
+                
+                let category = 'default';
+                
+                // Tunnista "ei kiitos" tyyppisiä vastauksia
+                if ((input.includes('kiitos') && input.includes('ei')) || 
+                    input.includes('ei kiitos') || 
+                    (input.includes('ei') && input.length < 10)) {
+                    category = 'kiitos_ei';
+                }
+                else if (input.includes('kukka') || input.includes('kasvi') || input.includes('puutarha') || input.includes('ruusu') || input.includes('pihassa')) category = 'kukat';
+                else if (input.includes('sää') || input.includes('lämpö') || input.includes('aurinko')) category = 'sää';
+                else if (input.includes('lääke') || input.includes('tabletti') || input.includes('resepti')) category = 'lääke';
+                else if (input.includes('perhe') || input.includes('lapsi') || input.includes('poika') || input.includes('tyttö')) category = 'perhe';
+                else if (input.includes('piha') || input.includes('puutarha') || input.includes('ulko')) category = 'piha';
+                
+                const categoryResponses = responses[category];
+                return categoryResponses[Math.floor(Math.random() * categoryResponses.length)];
+            }
+
+            speak(text) {
+                if (this.synthesis) {
+                    this.synthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'fi-FI';
+                    utterance.rate = 0.8;
+                    utterance.pitch = 1.1;
+                    utterance.volume = 0.9;
+                    this.synthesis.speak(utterance);
+                }
+            }
+
+            addMessage(text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}-message`;
+                
+                let content = '';
+                if (type === 'assistant') {
+                    content = `<strong>Aura:</strong> ${text}`;
+                } else if (type === 'user') {
+                    content = `<strong>Hilma:</strong> ${text}`;
+                } else {
+                    content = text;
+                }
+                
+                messageDiv.innerHTML = content;
+                this.conversationEl.appendChild(messageDiv);
+                this.conversationEl.scrollTop = this.conversationEl.scrollHeight;
+            }
+
+            updateStatus(text, type) {
+                this.statusText.textContent = text;
+                this.statusDot.className = 'status-dot';
+                
+                if (type === 'listening') {
+                    this.statusDot.classList.add('listening-dot');
+                } else if (type === 'error') {
+                    this.statusDot.style.background = '#f44336';
+                } else if (type === 'loading') {
+                    this.statusDot.style.background = '#ff9800';
+                }
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Käynnistä AuraCare automaattisesti
+        document.addEventListener('DOMContentLoaded', () => {
+            new AuraCareAI();
+        });
+    </script>
+</body>
+</html>
