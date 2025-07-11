@@ -292,8 +292,8 @@
     <div class="container">
         <div class="header">
             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
-                <img src="./Logo.png" alt="AuraCare Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem;">🏥</div>
+                <img src="./Timo.png" alt="Timo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem;">👨</div>
                 <h1>🌟 AuraCare</h1>
             </div>
             <p>Läheisen ääni ääniohjattuna AI-avustajana - €125M markkinapotentiaali</p>
@@ -388,6 +388,19 @@
             setTimeout(() => showDemo('greeting', null), 2000);
         }
 
+        // PUHESYNTEESI FUNKTIO
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel(); // Pysäytä aiempi puhe
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fi-FI';
+                utterance.rate = 0.8;
+                utterance.pitch = 1.0;
+                utterance.volume = 0.9;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
         function addMessage(text, type) {
             const conversation = document.getElementById('conversation');
             const messageDiv = document.createElement('div');
@@ -395,6 +408,10 @@
             
             if (type === 'assistant') {
                 messageDiv.innerHTML = `<strong>Timo:</strong> ${text}`;
+                // PUHU TIMON VIESTIT ÄÄNEEN
+                if (!text.includes('✅') && !text.includes('📊') && !text.includes('🚨')) {
+                    speak(text);
+                }
             } else if (type === 'user') {
                 messageDiv.innerHTML = `<strong>Hilma:</strong> ${text}`;
             } else {
@@ -501,6 +518,7 @@
 
         function startVoice() {
             addMessage('🎤 Äänimtoiminnot aktivoitu! Sano "Hei" aloittaaksesi.', 'system');
+            speak('Äänimtoiminnot aktivoitu. Sano hei aloittaaksesi.');
             
             if ('webkitSpeechRecognition' in window) {
                 const recognition = new webkitSpeechRecognition();
@@ -512,14 +530,9 @@
                     addMessage(transcript, 'user');
                     
                     setTimeout(() => {
-                        addMessage('Kuulen sinua! Kiitos kun puhut kanssani.', 'assistant');
-                        
-                        // Puhu takaisin
-                        if ('speechSynthesis' in window) {
-                            const utterance = new SpeechSynthesisUtterance('Kuulen sinua! Kiitos kun puhut kanssani.');
-                            utterance.lang = 'fi-FI';
-                            speechSynthesis.speak(utterance);
-                        }
+                        const response = 'Kuulen sinua! Kiitos kun puhut kanssani.';
+                        addMessage(response, 'assistant');
+                        speak(response);
                     }, 1000);
                 };
                 
