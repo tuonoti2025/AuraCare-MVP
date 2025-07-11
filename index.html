@@ -248,6 +248,14 @@
             </div>
         </div>
 
+        <div class="process-step" onclick="showDemo('chat', this)">
+            <div class="step-icon">🌸</div>
+            <div class="step-content">
+                <div class="step-title">Seurustelu</div>
+                <div class="step-description">Mukava keskustelu</div>
+            </div>
+        </div>
+
         <div class="process-step" onclick="showDemo('medicine', this)">
             <div class="step-icon">💊</div>
             <div class="step-content">
@@ -269,14 +277,6 @@
             <div class="step-content">
                 <div class="step-title">Hätätilanne</div>
                 <div class="step-description">Kaatuminen tai avun tarve</div>
-            </div>
-        </div>
-
-        <div class="process-step" onclick="showDemo('chat', this)">
-            <div class="step-icon">🌸</div>
-            <div class="step-content">
-                <div class="step-title">Seurustelu</div>
-                <div class="step-description">Mukava keskustelu</div>
             </div>
         </div>
 
@@ -444,26 +444,26 @@
                     break;
                     
                 case 'medicine':
-                    setTimeout(() => addMessage('Äiti, onko aika ottaa aamulääkkeet?', 'assistant'), 500);
-                    setTimeout(() => addMessage('Kyllä poikaseni, pitäisi ottaa ne', 'user'), 2000);
-                    setTimeout(() => addMessage('Hyvä äiti! Käy ottamassa ne rauhassa. Odotan 5 sekuntia.', 'assistant'), 3000);
-                    setTimeout(() => addMessage('(Hilma menee hakemaan lääkkeet...)', 'system'), 5000);
-                    setTimeout(() => addMessage('Otitko lääkkeet?', 'assistant'), 8000);
-                    setTimeout(() => addMessage('Kyllä, otin kaikki tablettini', 'user'), 9000);
-                    setTimeout(() => addMessage('Erinomaista äiti! Näitä lääkkeitä otetaan: Verenpainelääke, D-vitamiini ja Kalsium. Kaikki tärkeää terveydellesi.', 'assistant'), 10000);
-                    setTimeout(() => addMessage('Kiitos että muistutit, Timo kulta', 'user'), 11500);
-                    setTimeout(() => addMessage('✅ Lääkkeet otettu turvallisesti ja varmistettu', 'system'), 12500);
+                    setTimeout(() => addMessage('Äiti, onko aika ottaa aamulääkkeet?', 'assistant'), 1000);
+                    setTimeout(() => addMessage('Kyllä poikaseni, pitäisi ottaa ne', 'user'), 3500);
+                    setTimeout(() => addMessage('Hyvä äiti! Käy ottamassa ne rauhassa. Odotan 5 sekuntia.', 'assistant'), 6000);
+                    setTimeout(() => addMessage('(Hilma menee hakemaan lääkkeet...)', 'system'), 8500);
+                    setTimeout(() => addMessage('Otitko lääkkeet?', 'assistant'), 14000);
+                    setTimeout(() => addMessage('Kyllä, otin kaikki tablettini', 'user'), 16500);
+                    setTimeout(() => addMessage('Erinomaista äiti! Näitä lääkkeitä otetaan: Verenpainelääke, D-vitamiini ja Kalsium. Kaikki tärkeää terveydellesi.', 'assistant'), 19000);
+                    setTimeout(() => addMessage('Kiitos että muistutit, Timo kulta', 'user'), 22000);
+                    setTimeout(() => addMessage('✅ Lääkkeet otettu turvallisesti ja varmistettu', 'system'), 24000);
                     break;
                     
                 case 'water':
-                    setTimeout(() => addMessage('Äiti, oletko juonut tänään vettä?', 'assistant'), 500);
-                    setTimeout(() => addMessage('En vielä paljoa poikaseni...', 'user'), 2000);
-                    setTimeout(() => addMessage('Tämä on tärkeää! Käy hakemassa iso lasi vettä nyt heti. Erityisesti lääkkeiden kanssa pitää juoda riittävästi.', 'assistant'), 3000);
-                    setTimeout(() => addMessage('(Hilma menee hakemaan vettä...)', 'system'), 5000);
-                    setTimeout(() => addMessage('Join nyt lasillisen, Timo kulta', 'user'), 7000);
-                    setTimeout(() => addMessage('Hienoa äiti! Muista juoda vettä koko päivän ajan. Tavoite on 6-8 lasia päivässä.', 'assistant'), 8000);
-                    setTimeout(() => addMessage('Yritän muistaa, kiitos kun huolehdit', 'user'), 9500);
-                    setTimeout(() => addMessage('✅ Nestetasapaino hoidettu - tärkeää lääkkeiden kanssa', 'system'), 10500);
+                    setTimeout(() => addMessage('Äiti, oletko juonut tänään vettä?', 'assistant'), 1000);
+                    setTimeout(() => addMessage('En vielä paljoa poikaseni...', 'user'), 3500);
+                    setTimeout(() => addMessage('Tämä on tärkeää! Käy hakemassa iso lasi vettä nyt heti. Erityisesti lääkkeiden kanssa pitää juoda riittävästi.', 'assistant'), 6000);
+                    setTimeout(() => addMessage('(Hilma menee hakemaan vettä...)', 'system'), 9000);
+                    setTimeout(() => addMessage('Join nyt lasillisen, Timo kulta', 'user'), 12000);
+                    setTimeout(() => addMessage('Hienoa äiti! Muista juoda vettä koko päivän ajan. Tavoite on 6-8 lasia päivässä.', 'assistant'), 14500);
+                    setTimeout(() => addMessage('Yritän muistaa, kiitos kun huolehdit', 'user'), 17500);
+                    setTimeout(() => addMessage('✅ Nestetasapaino hoidettu - tärkeää lääkkeiden kanssa', 'system'), 19500);
                     break;
                     
                 case 'emergency':
@@ -475,15 +475,15 @@
                     break;
                     
                 case 'chat':
-                    setTimeout(() => addMessage('Äiti, haluaisitko jutella jostain kivasta?', 'assistant'), 500);
-                    setTimeout(() => addMessage('Kyllä poikaseni, kukkien hoidosta', 'user'), 2000);
-                    setTimeout(() => addMessage('Mahtavaa! Onko sinulla kukkia kotona?', 'assistant'), 3000);
-                    setTimeout(() => addMessage('On, pelargoniat kukkivat kauniisti ikkunalla!', 'user'), 4000);
-                    setTimeout(() => addMessage('Voi kuinka ihanaa äiti! Pelargoniat ovat niin kauniita. Muista kastella niitä säännöllisesti.', 'assistant'), 5000);
-                    setTimeout(() => addMessage('Kastelen joka toinen päivä. Ne viihtyvät hyvin etelä-ikkunassa.', 'user'), 6500);
-                    setTimeout(() => addMessage('Hienoa äiti! Kukat tuovat iloa kotiin, aivan kuten sinä tuot iloa minun elämääni.', 'assistant'), 8000);
-                    setTimeout(() => addMessage('Voi Timo kulta, olet niin kiltti', 'user'), 9500);
-                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty - yksinäisyys vähenee', 'system'), 10500);
+                    setTimeout(() => addMessage('Äiti, haluaisitko jutella jostain kivasta?', 'assistant'), 1000);
+                    setTimeout(() => addMessage('Kyllä poikaseni, kukkien hoidosta', 'user'), 3500);
+                    setTimeout(() => addMessage('Mahtavaa! Onko sinulla kukkia kotona?', 'assistant'), 6000);
+                    setTimeout(() => addMessage('On, pelargoniat kukkivat kauniisti ikkunalla!', 'user'), 8500);
+                    setTimeout(() => addMessage('Voi kuinka ihanaa äiti! Pelargoniat ovat niin kauniita. Muista kastella niitä säännöllisesti.', 'assistant'), 11000);
+                    setTimeout(() => addMessage('Kastelen joka toinen päivä. Ne viihtyvät hyvin etelä-ikkunassa.', 'user'), 14000);
+                    setTimeout(() => addMessage('Hienoa äiti! Kukat tuovat iloa kotiin, aivan kuten sinä tuot iloa minun elämääni.', 'assistant'), 16500);
+                    setTimeout(() => addMessage('Voi Timo kulta, olet niin kiltti', 'user'), 19000);
+                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty - yksinäisyys vähenee', 'system'), 21000);
                     break;
                     
                 case 'dashboard':
@@ -545,21 +545,53 @@
             if ('webkitSpeechRecognition' in window) {
                 const recognition = new webkitSpeechRecognition();
                 recognition.lang = 'fi-FI';
+                recognition.continuous = true;
+                recognition.interimResults = false;
+                
                 recognition.start();
                 
                 recognition.onresult = function(event) {
-                    const transcript = event.results[0][0].transcript;
+                    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
                     addMessage(transcript, 'user');
                     
+                    let response = '';
+                    if (transcript.includes('hei') || transcript.includes('moi')) {
+                        response = 'Hei! Minä olen Timo. Haluatko jutella hetken kanssani?';
+                    } else if (transcript.includes('kyllä') || transcript.includes('haluan')) {
+                        response = 'Mahtavaa! Kerro minulle, miten voit tänään? Oletko ottanut lääkkeesi?';
+                    } else if (transcript.includes('lääkkeet') || transcript.includes('otin')) {
+                        response = 'Hienoa että muistit lääkkeet! Entä juominen - oletko juonut riittävästi vettä tänään?';
+                    } else if (transcript.includes('vesi') || transcript.includes('join')) {
+                        response = 'Erinomaista! Nestetasapaino on tärkeää. Haluaisitko jutella jostain mukavasta, vaikkapa kukkien hoidosta?';
+                    } else if (transcript.includes('kukat') || transcript.includes('pelargoniat')) {
+                        response = 'Voi kuinka ihanaa! Kukkien hoito on niin antoisaa. Kasteletko niitä säännöllisesti?';
+                    } else if (transcript.includes('kastelen') || transcript.includes('hyvin')) {
+                        response = 'Olet todella hyvä hoitamaan kaikkea - sekä kukkia että itseäsi. Olen ylpeä sinusta, äiti!';
+                    } else if (transcript.includes('kiitos')) {
+                        response = 'Ole hyvä, äiti! Huolehdin sinusta aina. Soitan taas myöhemmin ja tarkistan että kaikki on kunnossa.';
+                    } else {
+                        response = 'Kuulen sinua! Kerro lisää, äiti. Olen täällä sinua varten.';
+                    }
+                    
                     setTimeout(() => {
-                        const response = 'Kuulen sinua! Kiitos kun puhut kanssani.';
                         addMessage(response, 'assistant');
                         speak(response);
-                    }, 1000);
+                    }, 2000);
                 };
                 
                 recognition.onerror = function() {
                     addMessage('❌ Mikrofonilupa tarvitaan. Demo jatkuu tekstinä.', 'system');
+                };
+                
+                recognition.onend = function() {
+                    // Jatka kuuntelua
+                    setTimeout(() => {
+                        try {
+                            recognition.start();
+                        } catch (e) {
+                            console.log('Kuuntelu päättyi');
+                        }
+                    }, 1000);
                 };
             } else {
                 addMessage('❌ Selain ei tue puheentunnistusta. Demo jatkuu tekstinä.', 'system');
