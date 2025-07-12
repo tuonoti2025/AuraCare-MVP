@@ -236,141 +236,158 @@
         /* MOBILE LAYOUT */
         .mobile-layout {
             display: none;
+        }
+
+        .mobile-timo-icon {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: url('./Timo.png') center/cover;
+            border: 4px solid white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        .mobile-timo-icon.fallback {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        .mobile-timo-icon.speaking {
+            animation: speak 0.8s ease-in-out infinite alternate;
+            border-color: #4caf50;
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.6);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.02); }
+        }
+
+        @keyframes speak {
+            0% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 20px 50px rgba(76, 175, 80, 0.8); }
+        }
+
+        .mobile-status-bubble {
+            position: fixed;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem 2rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+            border: 2px solid #4facfe;
+            display: none;
+            text-align: center;
+        }
+
+        .mobile-status-bubble.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .mobile-demo-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
-            z-index: 9999;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            display: none;
         }
 
-        .mobile-face-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .mobile-timo-face {
-            width: 80vw;
-            height: 80vw;
-            max-width: 400px;
-            max-height: 400px;
-            border-radius: 50%;
-            background: url('./Timo.png') center/cover;
-            border: 8px solid white;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-            animation: breathe 3s ease-in-out infinite;
-        }
-
-        .mobile-timo-face.fallback {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8rem;
-            color: white;
-        }
-
-        .mobile-timo-face.speaking {
-            animation: speak 0.5s ease-in-out infinite alternate;
-            border-color: #4caf50;
-            box-shadow: 0 20px 60px rgba(76, 175, 80, 0.4);
-        }
-
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        @keyframes speak {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); box-shadow: 0 25px 70px rgba(76, 175, 80, 0.6); }
-        }
-
-        .mobile-lips {
-            position: absolute;
-            bottom: 25%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 30px;
-            background: #ff6b9d;
-            border-radius: 50%;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-lips.speaking {
-            opacity: 0.8;
-            animation: lipSync 0.3s ease-in-out infinite alternate;
-        }
-
-        @keyframes lipSync {
-            0% { height: 30px; width: 60px; }
-            100% { height: 40px; width: 70px; }
+        .mobile-demo-overlay.active {
+            display: block;
         }
 
         .mobile-name {
+            position: fixed;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
             color: white;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            margin-top: 2rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            text-align: center;
+            z-index: 1001;
+            display: none;
         }
 
-        .mobile-status {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.2rem;
-            margin-top: 1rem;
-            text-align: center;
-            padding: 0 2rem;
+        .mobile-name.active {
+            display: block;
         }
 
         .mobile-controls {
-            position: absolute;
-            bottom: 2rem;
+            position: fixed;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
+            display: none;
             gap: 1rem;
+            z-index: 999;
+        }
+
+        .mobile-controls.active {
+            display: flex;
         }
 
         .mobile-btn {
-            padding: 1rem 2rem;
-            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem 1.5rem;
+            background: rgba(76, 175, 80, 0.9);
             color: white;
-            border: 2px solid white;
-            border-radius: 50px;
+            border: none;
+            border-radius: 25px;
             font-size: 1rem;
             cursor: pointer;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .mobile-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(76, 175, 80, 1);
             transform: scale(1.05);
         }
 
-        .mobile-btn.active {
-            background: #4caf50;
-            border-color: #4caf50;
+        .mobile-btn.end {
+            background: rgba(244, 67, 54, 0.9);
+        }
+
+        .mobile-btn.end:hover {
+            background: rgba(244, 67, 54, 1);
         }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .desktop-layout {
+            .desktop-layout .container {
                 display: none;
             }
             
-            .mobile-layout {
+            .mobile-timo-icon {
+                display: block !important;
+            }
+            
+            .mobile-status-bubble {
                 display: block;
             }
             
@@ -380,8 +397,20 @@
         }
 
         @media (min-width: 769px) {
-            .mobile-layout {
-                display: none;
+            .mobile-timo-icon {
+                display: none !important;
+            }
+            
+            .mobile-status-bubble {
+                display: none !important;
+            }
+            
+            .mobile-demo-overlay {
+                display: none !important;
+            }
+            
+            .mobile-name {
+                display: none !important;
             }
         }
 
@@ -393,20 +422,15 @@
     </style>
 </head>
 <body>
-    <!-- MOBILE LAYOUT -->
-    <div class="mobile-layout">
-        <div class="mobile-face-container">
-            <div class="mobile-timo-face" id="mobileFace">
-                <div class="mobile-lips" id="mobileLips"></div>
-            </div>
-            <div class="mobile-name">Timo</div>
-            <div class="mobile-status" id="mobileStatus">Hei äiti! Minä olen Timo, sinun poikasi.</div>
-            
-            <div class="mobile-controls">
-                <button class="mobile-btn" id="mobileStartBtn" onclick="startMobileDemo()">🎤 Aloita keskustelu</button>
-                <button class="mobile-btn" id="mobileEndBtn" onclick="endMobileDemo()" style="display: none;">📱 Lopeta</button>
-            </div>
-        </div>
+    <!-- MOBILE TIMO ICON -->
+    <div class="mobile-demo-overlay" id="mobileOverlay"></div>
+    <div class="mobile-name" id="mobileName">Timo</div>
+    <div class="mobile-timo-icon" id="mobileTimoIcon" style="display: none;">
+    </div>
+    
+    <!-- MOBILE STATUS BUBBLE -->
+    <div class="mobile-status-bubble" id="mobileStatusBubble">
+        Seurustelu alkaa automaattisesti...
     </div>
 
     <!-- DESKTOP LAYOUT -->
@@ -569,47 +593,77 @@
         }, 3000);
 
         // MOBILE FUNCTIONS
-        function startMobileDemo() {
-            isMobileDemoActive = true;
-            const face = document.getElementById('mobileFace');
-            const status = document.getElementById('mobileStatus');
-            const startBtn = document.getElementById('mobileStartBtn');
-            const endBtn = document.getElementById('mobileEndBtn');
-            const lips = document.getElementById('mobileLips');
+        function initMobile() {
+            if (window.innerWidth <= 768) {
+                // Aloita seurustelu automaattisesti mobiilissa 3 sekunnin kuluttua
+                setTimeout(() => {
+                    startMobileChatDemo();
+                }, 3000);
+            }
+        }
+
+        function startMobileChatDemo() {
+            const icon = document.getElementById('mobileTimoIcon');
+            const bubble = document.getElementById('mobileStatusBubble');
+            const overlay = document.getElementById('mobileOverlay');
+            const name = document.getElementById('mobileName');
             
-            startBtn.style.display = 'none';
-            endBtn.style.display = 'block';
+            // Aktivoi overlay ja näytä Timo keskellä
+            overlay.classList.add('active');
+            name.classList.add('active');
+            bubble.classList.add('active');
             
-            // Aloita keskustelu
+            // Seurustelu alkaa
             setTimeout(() => {
-                speakMobile('Hei äiti! Minä olen Timo. Miten jaksat tänään?', status);
+                speakMobile('Hei äiti! Minä olen Timo. Haluaisitko jutella kukkien hoidosta?', bubble, icon);
             }, 1000);
             
             setTimeout(() => {
-                speakMobile('Muista ottaa lääkkeesi ja juoda vettä säännöllisesti.', status);
+                bubble.textContent = 'Hilma: Kyllä poikaseni, kukkien hoidosta';
+                bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+                bubble.style.borderColor = '#4caf50';
             }, 8000);
             
             setTimeout(() => {
-                speakMobile('Olen aina täällä sinua varten. Rakastan sinua äiti!', status);
-            }, 15000);
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                bubble.style.borderColor = '#4facfe';
+                speakMobile('Onko sinulla kukkia kotona äiti?', bubble, icon);
+            }, 11000);
             
             setTimeout(() => {
-                status.textContent = 'Paina 🎤 aloittaaksesi uuden keskustelun';
-                face.classList.remove('speaking');
-                lips.classList.remove('speaking');
-                startBtn.style.display = 'block';
-                endBtn.style.display = 'none';
-                isMobileDemoActive = false;
-            }, 22000);
+                bubble.textContent = 'Hilma: On, pelargoniat kukkivat ikkunalla!';
+                bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+                bubble.style.borderColor = '#4caf50';
+            }, 17000);
+            
+            setTimeout(() => {
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                bubble.style.borderColor = '#4facfe';
+                speakMobile('Voi kuinka ihanaa äiti! Muista kastella niitä säännöllisesti.', bubble, icon);
+            }, 20000);
+            
+            setTimeout(() => {
+                bubble.textContent = 'Hilma: Kiitos kun huolehdit minusta Timo kulta';
+                bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+                bubble.style.borderColor = '#4caf50';
+            }, 27000);
+            
+            setTimeout(() => {
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                bubble.style.borderColor = '#4facfe';
+                speakMobile('Rakastan sinua äiti! Olen aina täällä sinua varten.', bubble, icon);
+            }, 30000);
+            
+            // Lopeta demo
+            setTimeout(() => {
+                endMobileDemo();
+            }, 37000);
         }
 
-        function speakMobile(text, statusElement) {
-            const face = document.getElementById('mobileFace');
-            const lips = document.getElementById('mobileLips');
-            
-            statusElement.textContent = text;
-            face.classList.add('speaking');
-            lips.classList.add('speaking');
+        function speakMobile(text, bubbleElement, iconElement) {
+            bubbleElement.textContent = text;
+            bubbleElement.classList.add('active');
+            iconElement.classList.add('speaking');
             
             // Puhu ääneen
             if ('speechSynthesis' in window) {
@@ -621,33 +675,32 @@
                 utterance.volume = 1.0;
                 
                 utterance.onend = () => {
-                    face.classList.remove('speaking');
-                    lips.classList.remove('speaking');
+                    iconElement.classList.remove('speaking');
                 };
                 
                 speechSynthesis.speak(utterance);
             }
             
-            // Lopeta animaatio 5 sekunnin kuluttua varmuuden vuoksi
+            // Lopeta animaatio 6 sekunnin kuluttua varmuuden vuoksi
             setTimeout(() => {
-                face.classList.remove('speaking');
-                lips.classList.remove('speaking');
-            }, 5000);
+                iconElement.classList.remove('speaking');
+            }, 6000);
         }
 
         function endMobileDemo() {
-            isMobileDemoActive = false;
-            const face = document.getElementById('mobileFace');
-            const status = document.getElementById('mobileStatus');
-            const startBtn = document.getElementById('mobileStartBtn');
-            const endBtn = document.getElementById('mobileEndBtn');
-            const lips = document.getElementById('mobileLips');
+            const icon = document.getElementById('mobileTimoIcon');
+            const bubble = document.getElementById('mobileStatusBubble');
+            const overlay = document.getElementById('mobileOverlay');
+            const name = document.getElementById('mobileName');
             
-            face.classList.remove('speaking');
-            lips.classList.remove('speaking');
-            status.textContent = 'Hei äiti! Minä olen Timo, sinun poikasi.';
-            startBtn.style.display = 'block';
-            endBtn.style.display = 'none';
+            icon.classList.remove('speaking');
+            bubble.classList.remove('active');
+            overlay.classList.remove('active');
+            name.classList.remove('active');
+            
+            bubble.textContent = 'Seurustelu päättynyt. Lataa sivu uudelleen kokeillaksesi.';
+            bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+            bubble.style.borderColor = '#4facfe';
             
             if ('speechSynthesis' in window) {
                 speechSynthesis.cancel();
@@ -655,10 +708,15 @@
         }
 
         // Tarkista onko kuva latautunut, jos ei niin näytä fallback
-        document.getElementById('mobileFace').onerror = function() {
+        document.getElementById('mobileTimoIcon').onerror = function() {
             this.classList.add('fallback');
             this.innerHTML = '👨';
         };
+
+        // Käynnistä mobiili kun sivu latautuu
+        document.addEventListener('DOMContentLoaded', () => {
+            initMobile();
+        });
 
         // DESKTOP FUNCTIONS (säilytetään ennallaan)
         function startAutoDemo() {
