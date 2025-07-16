@@ -353,6 +353,14 @@
                 display: block;
             }
             
+            .mobile-demo-overlay {
+                display: block;
+            }
+            
+            .mobile-name {
+                display: block;
+            }
+            
             .process-tracker {
                 display: none;
             }
@@ -382,31 +390,159 @@
             }
         }
 
-        /* Pienemmille mobiileille */
-        @media (max-width: 480px) {
-            .mobile-timo-icon {
-                width: 350px;
-                height: 350px;
-            }
-            
-            .mobile-status-bubble {
-                max-width: 300px;
-                font-size: 1.1rem;
-                padding: 1.5rem 2rem;
-            }
+        /* MOBILE SIMULATOR FOR DESKTOP */
+        .mobile-simulator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 700px;
+            background: #000;
+            border-radius: 25px;
+            padding: 20px;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .mobile-simulator.active {
+            display: block;
+        }
+
+        .mobile-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mobile-sim-timo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: url('./Timo.png') center/cover;
+            border: 4px solid white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            animation: breathe 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-sim-timo.fallback {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            color: white;
+        }
+
+        .mobile-sim-timo.speaking {
+            animation: speak 0.8s ease-in-out infinite alternate;
+            border-color: #4caf50;
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 20px 50px rgba(76, 175, 80, 0.6);
+        }
+
+        .mobile-sim-name {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .mobile-sim-bubble {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            max-width: 300px;
+            font-size: 1rem;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid #4facfe;
+            backdrop-filter: blur(10px);
+        }
+
+        .mobile-sim-controls {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .mobile-sim-btn {
+            padding: 0.5rem 1rem;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .mobile-sim-btn.end {
+            background: #f44336;
+        }
+
+        .mobile-sim-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            display: none;
+        }
+
+        .mobile-sim-overlay.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- MOBILE TIMO ICON -->
+    <!-- MOBILE TIMO ICON (for real mobile devices) -->
     <div class="mobile-demo-overlay" id="mobileOverlay"></div>
     <div class="mobile-name" id="mobileName">Timo</div>
     <div class="mobile-timo-icon" id="mobileTimoIcon" style="display: none;">
     </div>
     
-    <!-- MOBILE STATUS BUBBLE -->
+    <!-- MOBILE STATUS BUBBLE (for real mobile devices) -->
     <div class="mobile-status-bubble" id="mobileStatusBubble">
         Seurustelu alkaa automaattisesti...
+    </div>
+
+    <!-- MOBILE SIMULATOR FOR DESKTOP -->
+    <div class="mobile-sim-overlay" id="mobileSimOverlay" onclick="closeMobileSimulator()"></div>
+    <div class="mobile-simulator" id="mobileSimulator">
+        <div class="mobile-screen">
+            <div class="mobile-sim-name">Timo</div>
+            <div class="mobile-sim-timo" id="mobileSimTimo">
+            </div>
+            <div class="mobile-sim-bubble" id="mobileSimBubble">
+                Hei äiti! Klikkaa aloittaaksesi keskustelu.
+            </div>
+            <div class="mobile-sim-controls">
+                <button class="mobile-sim-btn" onclick="startMobileSimDemo()">🎤 Aloita</button>
+                <button class="mobile-sim-btn end" onclick="closeMobileSimulator()">❌ Sulje</button>
+            </div>
+        </div>
     </div>
 
     <!-- DESKTOP LAYOUT -->
@@ -488,10 +624,13 @@
                         ✨ <strong>ÄÄNIDEMO:</strong><br>
                         🎤 <strong>Klikkaa "Kokeile äänimtoimintoja"</strong> → Alkaa yhteydenotolla<br>
                         💬 Sano "joo", "kyllä", "haluan" jne. → Keskustelu etenee<br>
-                        📱 <strong>Mobiilissa: Timo täyttää ruudun (450px iso kuva)!</strong>
+                        📱 <strong>Mobiilisimulaattori: Klikkaa "📱 Näytä mobiiliversio"</strong>
                     </div>
 
-                    <button onclick="startMainVoiceDemo()" id="mainVoiceBtn">🎤 Kokeile äänimtoimintoja</button>
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin: 1rem 0;">
+                        <button onclick="startMainVoiceDemo()" id="mainVoiceBtn">🎤 Kokeile äänimtoimintoja</button>
+                        <button onclick="toggleMobileSimulator()" id="mobileSimBtn" style="background: #ff9800;">📱 Näytä mobiiliversio</button>
+                    </div>
                     <div id="voiceStatus" style="text-align: center; margin: 1rem 0; font-weight: bold; color: #2196f3;"></div>
 
                     <div class="conversation" id="conversation">
@@ -563,7 +702,203 @@
         let isStepVoiceActive = false;
         let currentRecognition = null;
         let conversationStep = 0;
-        let isMobileDemoActive = false;
+        let isMobileSimActive = false;
+
+        // MOBILE SIMULATOR FUNCTIONS
+        function toggleMobileSimulator() {
+            const simulator = document.getElementById('mobileSimulator');
+            const overlay = document.getElementById('mobileSimOverlay');
+            const btn = document.getElementById('mobileSimBtn');
+            
+            // Tarkista että elementit ovat olemassa
+            if (!simulator || !overlay || !btn) {
+                console.log('Simulaattorielementit eivät ole saatavilla');
+                return;
+            }
+            
+            if (simulator.classList.contains('active')) {
+                closeMobileSimulator();
+            } else {
+                simulator.classList.add('active');
+                overlay.classList.add('active');
+                btn.textContent = '❌ Sulje mobiili';
+                btn.style.background = '#f44336';
+                
+                // Tarkista kuva turvallisesti ja lisää debug
+                const simTimo = document.getElementById('mobileSimTimo');
+                if (simTimo && !simTimo.style.backgroundImage) {
+                    console.log('Simulaattori avattu - testataan kuva uudelleen');
+                    // Testaa onko kuva saatavilla
+                    const testImg = new Image();
+                    testImg.onload = function() {
+                        console.log('✅ Kuva latautui simulaattoriin');
+                        if (simTimo) {
+                            simTimo.style.backgroundImage = 'url(./Timo.png)';
+                            simTimo.style.backgroundSize = 'cover';
+                            simTimo.style.backgroundPosition = 'center';
+                        }
+                    };
+                    testImg.onerror = function() {
+                        console.log('❌ Kuva ei latautunut simulaattoriin - käytetään fallback');
+                        if (simTimo && simTimo.classList) {
+                            simTimo.classList.add('fallback');
+                            simTimo.innerHTML = '👨';
+                            simTimo.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        }
+                    };
+                    testImg.src = './Timo.png';
+                } else if (simTimo) {
+                    console.log('Simulaattori kuva on jo asetettu tai elementti puuttuu');
+                }
+            }
+        }
+
+        function closeMobileSimulator() {
+            const simulator = document.getElementById('mobileSimulator');
+            const overlay = document.getElementById('mobileSimOverlay');
+            const btn = document.getElementById('mobileSimBtn');
+            
+            if (simulator && simulator.classList) {
+                simulator.classList.remove('active');
+            }
+            if (overlay && overlay.classList) {
+                overlay.classList.remove('active');
+            }
+            if (btn) {
+                btn.textContent = '📱 Näytä mobiiliversio';
+                btn.style.background = '#ff9800';
+            }
+            
+            // Lopeta demo
+            endMobileSimDemo();
+        }
+
+        function startMobileSimDemo() {
+            if (isMobileSimActive) {
+                endMobileSimDemo();
+                return;
+            }
+            
+            isMobileSimActive = true;
+            const timo = document.getElementById('mobileSimTimo');
+            const bubble = document.getElementById('mobileSimBubble');
+            
+            if (!timo || !bubble) {
+                console.log('Simulaattorielementit eivät ole saatavilla');
+                return;
+            }
+            
+            // Seurustelu demo
+            setTimeout(() => {
+                speakMobileSim('Hei äiti! Minä olen Timo. Haluaisitko jutella kukkien hoidosta?', bubble, timo);
+            }, 1000);
+            
+            setTimeout(() => {
+                if (bubble) {
+                    bubble.textContent = 'Hilma: Kyllä poikaseni, kukkien hoidosta';
+                    bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+                    bubble.style.borderColor = '#4caf50';
+                }
+            }, 8000);
+            
+            setTimeout(() => {
+                if (bubble) {
+                    bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                    bubble.style.borderColor = '#4facfe';
+                }
+                speakMobileSim('Onko sinulla kukkia kotona äiti?', bubble, timo);
+            }, 11000);
+            
+            setTimeout(() => {
+                if (bubble) {
+                    bubble.textContent = 'Hilma: On, pelargoniat kukkivat ikkunalla!';
+                    bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+                    bubble.style.borderColor = '#4caf50';
+                }
+            }, 17000);
+            
+            setTimeout(() => {
+                if (bubble) {
+                    bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                    bubble.style.borderColor = '#4facfe';
+                }
+                speakMobileSim('Voi kuinka ihanaa äiti! Muista kastella niitä säännöllisesti.', bubble, timo);
+            }, 20000);
+            
+            setTimeout(() => {
+                if (bubble) {
+                    bubble.textContent = 'Hilma: Kiitos kun huolehdit minusta Timo kulta';
+                    bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+                    bubble.style.borderColor = '#4caf50';
+                }
+            }, 27000);
+            
+            setTimeout(() => {
+                if (bubble) {
+                    bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                    bubble.style.borderColor = '#4facfe';
+                }
+                speakMobileSim('Rakastan sinua äiti! Olen aina täällä sinua varten.', bubble, timo);
+            }, 30000);
+            
+            // Lopeta demo
+            setTimeout(() => {
+                endMobileSimDemo();
+            }, 37000);
+        }
+
+        function speakMobileSim(text, bubbleElement, timoElement) {
+            if (!bubbleElement || !timoElement) return;
+            
+            bubbleElement.textContent = text;
+            if (timoElement.classList) {
+                timoElement.classList.add('speaking');
+            }
+            
+            // Puhu ääneen
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fi-FI';
+                utterance.rate = 0.8;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                utterance.onend = () => {
+                    if (timoElement && timoElement.classList) {
+                        timoElement.classList.remove('speaking');
+                    }
+                };
+                
+                speechSynthesis.speak(utterance);
+            }
+            
+            // Lopeta animaatio 6 sekunnin kuluttua varmuuden vuoksi
+            setTimeout(() => {
+                if (timoElement && timoElement.classList) {
+                    timoElement.classList.remove('speaking');
+                }
+            }, 6000);
+        }
+
+        function endMobileSimDemo() {
+            isMobileSimActive = false;
+            const timo = document.getElementById('mobileSimTimo');
+            const bubble = document.getElementById('mobileSimBubble');
+            
+            if (timo && timo.classList) {
+                timo.classList.remove('speaking');
+            }
+            if (bubble) {
+                bubble.textContent = 'Hei äiti! Klikkaa aloittaaksesi keskustelu.';
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                bubble.style.borderColor = '#4facfe';
+            }
+            
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+        }
         
         // Automaattinen demo käynnistys (SEURUSTELU)
         setTimeout(() => {
@@ -572,11 +907,15 @@
 
         // MOBILE FUNCTIONS
         function initMobile() {
+            // Tarkista onko oikea mobiililaite (alle 768px)
             if (window.innerWidth <= 768) {
+                console.log('Mobiililaite havaittu - käynnistetään mobiilidemoa');
                 // Aloita seurustelu automaattisesti mobiilissa 3 sekunnin kuluttua
                 setTimeout(() => {
                     startMobileChatDemo();
                 }, 3000);
+            } else {
+                console.log('Desktop-laite - mobiilidemoa ei käynnistetä automaattisesti');
             }
         }
 
@@ -585,6 +924,12 @@
             const bubble = document.getElementById('mobileStatusBubble');
             const overlay = document.getElementById('mobileOverlay');
             const name = document.getElementById('mobileName');
+            
+            // Tarkista että elementit ovat olemassa
+            if (!icon || !bubble || !overlay || !name) {
+                console.log('Mobiilielementit eivät ole saatavilla');
+                return;
+            }
             
             // Aktivoi overlay ja näytä Timo keskellä
             overlay.classList.add('active');
@@ -639,9 +984,15 @@
         }
 
         function speakMobile(text, bubbleElement, iconElement) {
+            if (!bubbleElement || !iconElement) return;
+            
             bubbleElement.textContent = text;
-            bubbleElement.classList.add('active');
-            iconElement.classList.add('speaking');
+            if (bubbleElement.classList) {
+                bubbleElement.classList.add('active');
+            }
+            if (iconElement.classList) {
+                iconElement.classList.add('speaking');
+            }
             
             // Puhu ääneen
             if ('speechSynthesis' in window) {
@@ -653,7 +1004,9 @@
                 utterance.volume = 1.0;
                 
                 utterance.onend = () => {
-                    iconElement.classList.remove('speaking');
+                    if (iconElement && iconElement.classList) {
+                        iconElement.classList.remove('speaking');
+                    }
                 };
                 
                 speechSynthesis.speak(utterance);
@@ -661,7 +1014,9 @@
             
             // Lopeta animaatio 6 sekunnin kuluttua varmuuden vuoksi
             setTimeout(() => {
-                iconElement.classList.remove('speaking');
+                if (iconElement && iconElement.classList) {
+                    iconElement.classList.remove('speaking');
+                }
             }, 6000);
         }
 
@@ -671,14 +1026,24 @@
             const overlay = document.getElementById('mobileOverlay');
             const name = document.getElementById('mobileName');
             
-            icon.classList.remove('speaking');
-            bubble.classList.remove('active');
-            overlay.classList.remove('active');
-            name.classList.remove('active');
+            if (icon && icon.classList) {
+                icon.classList.remove('speaking');
+            }
+            if (bubble && bubble.classList) {
+                bubble.classList.remove('active');
+            }
+            if (overlay && overlay.classList) {
+                overlay.classList.remove('active');
+            }
+            if (name && name.classList) {
+                name.classList.remove('active');
+            }
             
-            bubble.textContent = 'Seurustelu päättynyt. Lataa sivu uudelleen kokeillaksesi.';
-            bubble.style.background = 'rgba(255, 255, 255, 0.95)';
-            bubble.style.borderColor = '#4facfe';
+            if (bubble) {
+                bubble.textContent = 'Seurustelu päättynyt. Lataa sivu uudelleen kokeillaksesi.';
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                bubble.style.borderColor = '#4facfe';
+            }
             
             if ('speechSynthesis' in window) {
                 speechSynthesis.cancel();
@@ -1169,13 +1534,70 @@
         }
 
         // Tarkista onko kuva latautunut, jos ei niin näytä fallback
-        document.getElementById('mobileTimoIcon').onerror = function() {
-            this.classList.add('fallback');
-            this.innerHTML = '👨';
-        };
-
-        // Käynnistä mobiili kun sivu latautuu
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM latautunut - tarkistetaan kuvat');
+            
+            // Mobile icon fallback
+            const mobileIcon = document.getElementById('mobileTimoIcon');
+            if (mobileIcon) {
+                console.log('Mobile icon löytyi, testataan kuva: ./Timo.png');
+                const img = new Image();
+                img.onload = function() {
+                    console.log('✅ Timo.png latautui onnistuneesti mobile iconille');
+                    mobileIcon.style.backgroundImage = 'url(./Timo.png)';
+                    mobileIcon.style.backgroundSize = 'cover';
+                    mobileIcon.style.backgroundPosition = 'center';
+                };
+                img.onerror = function() {
+                    console.log('❌ Timo.png ei latautunut - käytetään fallback emojia');
+                    mobileIcon.classList.add('fallback');
+                    mobileIcon.innerHTML = '👨';
+                    mobileIcon.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                };
+                img.src = './Timo.png';
+            } else {
+                console.log('Mobile icon elementtiä ei löytynyt');
+            }
+            
+            // Mobile simulator fallback
+            const simTimo = document.getElementById('mobileSimTimo');
+            if (simTimo) {
+                console.log('Simulator icon löytyi, testataan kuva');
+                const img2 = new Image();
+                img2.onload = function() {
+                    console.log('✅ Timo.png latautui onnistuneesti simulaattorille');
+                    simTimo.style.backgroundImage = 'url(./Timo.png)';
+                    simTimo.style.backgroundSize = 'cover';
+                    simTimo.style.backgroundPosition = 'center';
+                };
+                img2.onerror = function() {
+                    console.log('❌ Timo.png ei latautunut simulaattorille - käytetään fallback');
+                    simTimo.classList.add('fallback');
+                    simTimo.innerHTML = '👨';
+                };
+                img2.src = './Timo.png';
+            } else {
+                console.log('Simulator icon elementtiä ei löytynyt');
+            }
+            
+            // Desktop avatar tarkistus
+            const desktopImg = document.querySelector('img[src="./Timo.png"]');
+            if (desktopImg) {
+                console.log('Desktop Timo kuva löytyi');
+                desktopImg.onload = function() {
+                    console.log('✅ Desktop Timo.png latautui onnistuneesti');
+                };
+                desktopImg.onerror = function() {
+                    console.log('❌ Desktop Timo.png ei latautunut');
+                    this.style.display = 'none';
+                    const fallback = this.nextElementSibling;
+                    if (fallback) {
+                        fallback.style.display = 'flex';
+                    }
+                };
+            }
+            
+            // Käynnistä mobiili
             initMobile();
         });
     </script>
