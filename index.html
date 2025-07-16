@@ -895,80 +895,81 @@
                 return;
             }
             
-            console.log('🎵 Yritetään puhua:', text);
+            console.log('🎵 Mobiilisimulaattori yrittää puhua KOVAA:', text);
             bubbleElement.textContent = text;
             if (timoElement.classList) {
                 timoElement.classList.add('speaking');
             }
             
-            // PAKOTTAA äänen toimimaan - useita yrityksiä
+            // MAKSIMI ÄÄNI - pakota toimimaan
             if ('speechSynthesis' in window) {
-                console.log('✅ SpeechSynthesis saatavilla');
-                
-                // Pysäytä kaikki aiemmat äänet
                 speechSynthesis.cancel();
                 
-                // Odota hetki ja yritä uudelleen
                 setTimeout(() => {
-                    console.log('🚀 Luodaan utterance...');
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'fi-FI';
-                    utterance.rate = 0.8;
-                    utterance.pitch = 1.0;
-                    utterance.volume = 1.0;
+                    utterance.rate = 0.6; // HITAAMPI = selkeämpi
+                    utterance.pitch = 1.3; // KORKEAMPI sävel
+                    utterance.volume = 1.0; // MAKSIMI äänenvoimakkuus
+                    
+                    // Hae parhaat äänet
+                    const voices = speechSynthesis.getVoices();
+                    console.log('🎤 Käytettävissä ääniä:', voices.length);
+                    
+                    // Etsi suomalainen ääni tai käytä ensimmäistä
+                    const finnishVoice = voices.find(voice => 
+                        voice.lang.includes('fi') || 
+                        voice.name.includes('Finnish') ||
+                        voice.name.includes('Satu')
+                    ) || voices[0];
+                    
+                    if (finnishVoice) {
+                        utterance.voice = finnishVoice;
+                        console.log('🔊 Käytetään KOVAA ääntä:', finnishVoice.name);
+                    }
                     
                     utterance.onstart = () => {
-                        console.log('🔊 ÄÄNI ALKOI:', text.substring(0, 20));
+                        console.log('🔊 MOBIILI ÄÄNI ALKOI (KOVAA):', text.substring(0, 20));
                     };
                     
                     utterance.onend = () => {
-                        console.log('✅ ÄÄNI PÄÄTTYI');
+                        console.log('✅ MOBIILI ÄÄNI PÄÄTTYI');
                         if (timoElement && timoElement.classList) {
                             timoElement.classList.remove('speaking');
                         }
                     };
                     
                     utterance.onerror = (e) => {
-                        console.log('❌ ÄÄNIVIRHE:', e.error);
+                        console.log('❌ MOBIILI ÄÄNIVIRHE:', e.error);
                         if (timoElement && timoElement.classList) {
                             timoElement.classList.remove('speaking');
                         }
                     };
                     
-                    // Tarkista että speechSynthesis on valmis
-                    if (speechSynthesis.pending) {
-                        console.log('⏳ SpeechSynthesis on kiireinen, odotetaan...');
-                        speechSynthesis.cancel();
-                        setTimeout(() => {
-                            console.log('🔄 Yritetään uudelleen...');
-                            speechSynthesis.speak(utterance);
-                        }, 100);
-                    } else {
-                        console.log('🎯 Käynnistetään puhe nyt!');
-                        speechSynthesis.speak(utterance);
-                    }
+                    console.log('🎯 MAKSIMI ÄÄNI:', utterance.volume, 'Pitch:', utterance.pitch);
+                    speechSynthesis.speak(utterance);
                     
-                    // PAKKO-fallback: jos ääni ei toimi 3 sekunnin kuluessa
+                    // Tarkista 2 sekunnin kuluttua
                     setTimeout(() => {
-                        if (speechSynthesis.speaking) {
-                            console.log('✅ Ääni toimii normaalisti');
-                        } else {
+                        if (!speechSynthesis.speaking) {
                             console.log('⚠️ Ääni ei alkanut, yritetään uudelleen...');
                             speechSynthesis.speak(utterance);
+                        } else {
+                            console.log('✅ Ääni toimii normaalisti');
                         }
-                    }, 3000);
+                    }, 2000);
                     
-                }, 200);
+                }, 300);
             } else {
                 console.log('❌ SpeechSynthesis EI OLE saatavilla');
             }
             
-            // Lopeta animaatio 10 sekunnin kuluttua varmuuden vuoksi
+            // Lopeta animaatio 12 sekunnin kuluttua
             setTimeout(() => {
                 if (timoElement && timoElement.classList) {
                     timoElement.classList.remove('speaking');
                 }
-            }, 10000);
+            }, 12000);
         }
 
         function endMobileSimDemo() {
@@ -1143,7 +1144,8 @@
         // DESKTOP FUNCTIONS
 
         function startAutoDemo() {
-            addMessage('📱 Aloitetaan automaattinen demo...', 'system');
+            addMessage('📱 Aloitetaan automaattinen seurustelu...', 'system');
+            // VAIN SEURUSTELU - ei muita!
             setTimeout(() => showDemo('chat', null), 2000);
         }
 
@@ -1467,8 +1469,10 @@
         }
 
         function showDemo(type, element) {
-            // Lopeta mahdollinen äänimkokeilu
-            stopAllVoice();
+            // Lopeta mahdollinen äänimkokeilu - MUTTA vain jos se EI ole seurustelu
+            if (type !== 'chat') {
+                stopAllVoice();
+            }
             
             document.querySelectorAll('.process-step').forEach(step => {
                 step.classList.remove('active');
@@ -1481,13 +1485,24 @@
             
             // Jos klikataan lääke/vesi/hätätilanne, tarjoa äänimkokeilua
             if (type === 'medicine' || type === 'water' || type === 'emergency') {
-                addMessage(`🎤 ${getStepName(type)} demo alkaa. Halutessasi voit kokeilla äänimtoimintoja klikkaamalla alla.`, 'system');
+                addMessage(`🎤 ${getStepName(type)} demo alkaa. Klikkaa alla kokeillaksesi äänellä:`, 'system');
                 
                 const voiceBtn = document.createElement('button');
                 voiceBtn.textContent = `🎤 Kokeile ${getStepName(type)} äänellä`;
-                voiceBtn.onclick = () => startStepVoiceDemo(type);
+                voiceBtn.onclick = () => {
+                    // VARMISTA että ääni toimii ennen käynnistystä
+                    audioInitialized = true;
+                    startStepVoiceDemo(type);
+                };
                 voiceBtn.style.margin = '1rem auto';
                 voiceBtn.style.display = 'block';
+                voiceBtn.style.background = '#2196f3';
+                voiceBtn.style.color = 'white';
+                voiceBtn.style.border = 'none';
+                voiceBtn.style.borderRadius = '25px';
+                voiceBtn.style.padding = '1rem 2rem';
+                voiceBtn.style.fontSize = '1rem';
+                voiceBtn.style.cursor = 'pointer';
                 document.getElementById('conversation').appendChild(voiceBtn);
                 
                 setTimeout(() => {
@@ -1495,6 +1510,7 @@
                     runTextDemo(type);
                 }, 2000);
             } else {
+                // Seurustelu ja muut normaalit demot
                 runTextDemo(type);
             }
         }
