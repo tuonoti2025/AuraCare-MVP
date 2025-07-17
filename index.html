@@ -755,8 +755,392 @@
                 speechSynthesis.speak(utterance);
                 
                 // Tarkista äänet
-                console.log('📋 Käytettävissä olevat äänet:', speechSynthesis.getVoices().length);
-                if (speechSynthesis.getVoices().length === 0) {
-                    console.log('⏳ Äänet latautuvat vielä...');
-                    speechSynthesis.addEventListener('voiceschanged', () => {
-                        console.log('✅
+                setTimeout(() => {
+                    console.log('📋 Käytettävissä olevat äänet:', speechSynthesis.getVoices().length);
+                }, 100);
+                
+            } else {
+                console.log('❌ SpeechSynthesis ei ole tuettu tässä selaimessa');
+                document.getElementById('voiceStatus').textContent = '❌ Selain ei tue puhesynteesiä';
+                document.getElementById('voiceStatus').style.color = '#f44336';
+            }
+        }
+
+        // KORJATTU speak funktio - MAKSIMI äänenvoimakkuus
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.volume = 1.0; // MAKSIMI
+                utterance.rate = 1.0;   // NORMAALI nopeus
+                utterance.pitch = 1.0;  // NORMAALI sävel
+                utterance.lang = 'fi-FI';
+                
+                console.log('🎵 Puhe:', text.substring(0, 30) + '...');
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // ========== MOBILE SIMULATOR FUNCTIONS ==========
+        
+        function toggleMobileSimulator() {
+            const simulator = document.getElementById('mobileSimulator');
+            const overlay = document.getElementById('mobileSimOverlay');
+            const btn = document.getElementById('mobileSimBtn');
+            
+            if (!simulator || !overlay || !btn) {
+                console.log('Simulaattorielementit eivät ole saatavilla');
+                return;
+            }
+            
+            if (simulator.classList.contains('active')) {
+                closeMobileSimulator();
+            } else {
+                // AKTIVOI ÄÄNI HETI
+                audioInitialized = true;
+                console.log('🔊 Ääni aktivoitu mobiilisimulaattorin avautuessa');
+                
+                simulator.classList.add('active');
+                overlay.classList.add('active');
+                btn.textContent = '❌ Sulje mobiili';
+                btn.style.background = '#f44336';
+                
+                // Aloita demo automaattisesti
+                setTimeout(() => {
+                    const bubble = document.getElementById('mobileSimBubble');
+                    if (bubble) {
+                        bubble.textContent = 'Demo alkaa...';
+                    }
+                    setTimeout(() => startMobileSimDemo(), 2000);
+                }, 1000);
+            }
+        }
+
+        function startMobileSimDemo() {
+            console.log('🎬 MOBIILISIMULAATTORI DEMO ALKAA');
+            
+            if (isMobileSimActive) {
+                endMobileSimDemo();
+                return;
+            }
+            
+            isMobileSimActive = true;
+            const timo = document.getElementById('mobileSimTimo');
+            const bubble = document.getElementById('mobileSimBubble');
+            
+            if (!timo || !bubble) {
+                console.log('❌ Simulaattorielementit puuttuvat');
+                return;
+            }
+            
+            // Ensimmäinen viesti HETI
+            speakMobileSim('Hei äiti! Minä olen Timo. Haluaisitko jutella kukkien hoidosta?', bubble, timo);
+            
+            // Jatka demo
+            setTimeout(() => {
+                bubble.textContent = 'Hilma: Kyllä poikaseni, kukkien hoidosta';
+                bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+            }, 7000);
+            
+            setTimeout(() => {
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                speakMobileSim('Onko sinulla kukkia kotona äiti?', bubble, timo);
+            }, 12000);
+            
+            setTimeout(() => {
+                bubble.textContent = 'Hilma: On, pelargoniat kukkivat ikkunalla!';
+                bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+            }, 18000);
+            
+            setTimeout(() => {
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                speakMobileSim('Voi kuinka ihanaa äiti! Muista kastella niitä säännöllisesti.', bubble, timo);
+            }, 22000);
+            
+            setTimeout(() => endMobileSimDemo(), 30000);
+        }
+
+        function speakMobileSim(text, bubbleElement, timoElement) {
+            if (!bubbleElement || !timoElement) return;
+            
+            console.log('🎵 MOBIILI puhe:', text);
+            bubbleElement.textContent = text;
+            timoElement.classList.add('speaking');
+            
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.volume = 1.0; // MAKSIMI
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.lang = 'fi-FI';
+                
+                utterance.onend = () => {
+                    timoElement.classList.remove('speaking');
+                };
+                
+                speechSynthesis.speak(utterance);
+            }
+            
+            setTimeout(() => timoElement.classList.remove('speaking'), 8000);
+        }
+
+        function closeMobileSimulator() {
+            const simulator = document.getElementById('mobileSimulator');
+            const overlay = document.getElementById('mobileSimOverlay');
+            const btn = document.getElementById('mobileSimBtn');
+            
+            if (simulator) simulator.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+            if (btn) {
+                btn.textContent = '📱 Näytä mobiiliversio';
+                btn.style.background = '#ff9800';
+            }
+            
+            endMobileSimDemo();
+        }
+
+        function endMobileSimDemo() {
+            isMobileSimActive = false;
+            const timo = document.getElementById('mobileSimTimo');
+            const bubble = document.getElementById('mobileSimBubble');
+            
+            if (timo) timo.classList.remove('speaking');
+            if (bubble) {
+                bubble.textContent = 'Hei äiti! Klikkaa aloittaaksesi keskustelu.';
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+            
+            speechSynthesis.cancel();
+        }
+
+        // ========== MAIN VOICE DEMO ==========
+        
+        function startMainVoiceDemo() {
+            if (isMainVoiceActive || isStepVoiceActive) {
+                stopAllVoice();
+                return;
+            }
+            
+            // AKTIVOI ääni
+            audioInitialized = true;
+            
+            isMainVoiceActive = true;
+            conversationStep = 0;
+            document.getElementById('mainVoiceBtn').textContent = '🔴 Lopeta ääni';
+            document.getElementById('voiceStatus').textContent = '🎤 Äänikeskustelu alkaa...';
+            
+            document.getElementById('conversation').innerHTML = '';
+            
+            setTimeout(() => startMainVoiceConversation(), 1000);
+        }
+
+        function startMainVoiceConversation() {
+            if (!isMainVoiceActive) return;
+            
+            const greeting = 'Hei äiti! Minä olen Timo. Haluatko jutella hetken kanssani?';
+            addMessage(greeting, 'assistant');
+            speak(greeting);
+            
+            setTimeout(() => {
+                if (isMainVoiceActive) {
+                    document.getElementById('voiceStatus').textContent = '🎤 Vastaa: "Joo", "Kyllä", "Haluan"';
+                    startListening('main_greeting');
+                }
+            }, 4000);
+        }
+
+        function startListening(context) {
+            if (!isMainVoiceActive && !isStepVoiceActive) return;
+            
+            if ('webkitSpeechRecognition' in window) {
+                if (currentRecognition) currentRecognition.stop();
+                
+                currentRecognition = new webkitSpeechRecognition();
+                currentRecognition.lang = 'fi-FI';
+                currentRecognition.continuous = false;
+                currentRecognition.interimResults = false;
+                
+                currentRecognition.start();
+                
+                currentRecognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript.toLowerCase();
+                    addMessage(transcript, 'user');
+                    setTimeout(() => handleVoiceResponse(context, transcript), 1500);
+                };
+                
+                currentRecognition.onerror = function() {
+                    setTimeout(() => {
+                        if (isMainVoiceActive || isStepVoiceActive) askAgain(context);
+                    }, 2000);
+                };
+            } else {
+                addMessage('❌ Selain ei tue puheentunnistusta.', 'system');
+                stopAllVoice();
+            }
+        }
+
+        function handleVoiceResponse(context, transcript) {
+            if (context.startsWith('main_')) {
+                handleMainVoiceConversation(transcript);
+            }
+        }
+
+        function handleMainVoiceConversation(transcript) {
+            conversationStep++;
+            
+            let response = '';
+            let nextContext = '';
+            
+            switch(conversationStep) {
+                case 1:
+                    if (transcript.includes('kyllä') || transcript.includes('joo') || transcript.includes('haluan')) {
+                        response = 'Mahtavaa äiti! Miten jaksat tänään?';
+                        nextContext = 'main_health';
+                    } else {
+                        response = 'Ei se mitään äiti. Pidä huolta itsestäsi!';
+                        stopAllVoice();
+                        return;
+                    }
+                    break;
+                    
+                case 2:
+                    response = 'Hienoa kuulla! Oletko muistanut ottaa lääkkeesi?';
+                    nextContext = 'main_medicine';
+                    break;
+                    
+                case 3:
+                    response = 'Erinomaista äiti! Rakastan sinua!';
+                    setTimeout(() => {
+                        addMessage(response, 'assistant');
+                        speak(response);
+                        setTimeout(() => {
+                            addMessage('✅ Äänimkeskustelu päättynyt!', 'system');
+                            stopAllVoice();
+                        }, 4000);
+                    }, 1500);
+                    return;
+            }
+            
+            addMessage(response, 'assistant');
+            speak(response);
+            
+            setTimeout(() => {
+                if (isMainVoiceActive) startListening(nextContext);
+            }, 4000);
+        }
+
+        function askAgain(context) {
+            const question = 'Kuulitko äiti? Haluatko jutella kanssani?';
+            addMessage(question, 'assistant');
+            speak(question);
+            setTimeout(() => startListening(context), 3000);
+        }
+
+        function stopAllVoice() {
+            isMainVoiceActive = false;
+            isStepVoiceActive = false;
+            
+            if (currentRecognition) {
+                currentRecognition.stop();
+                currentRecognition = null;
+            }
+            
+            speechSynthesis.cancel();
+            
+            document.getElementById('mainVoiceBtn').textContent = '🎤 Kokeile äänimtoimintoja';
+            document.getElementById('voiceStatus').textContent = '';
+        }
+
+        function addMessage(text, type) {
+            const conversation = document.getElementById('conversation');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            if (type === 'assistant') {
+                messageDiv.innerHTML = `<strong>Timo:</strong> ${text}`;
+            } else if (type === 'user') {
+                messageDiv.innerHTML = `<strong>Hilma:</strong> ${text}`;
+            } else {
+                messageDiv.innerHTML = text;
+            }
+            
+            conversation.appendChild(messageDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        // ========== DEMO FUNCTIONS ==========
+        
+        function showDemo(type, element) {
+            if (type !== 'chat') stopAllVoice();
+            
+            document.querySelectorAll('.process-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            if (element) element.classList.add('active');
+
+            document.getElementById('conversation').innerHTML = '';
+            runTextDemo(type);
+        }
+
+        function runTextDemo(type) {
+            switch(type) {
+                case 'greeting':
+                    setTimeout(() => addMessage('Hei äiti! Miten jaksat?', 'assistant'), 1000);
+                    setTimeout(() => addMessage('Hei Timo! Kyllä jaksan hyvin!', 'user'), 3500);
+                    setTimeout(() => addMessage('✅ Yhteydenotto onnistui', 'system'), 5500);
+                    break;
+                    
+                case 'chat':
+                    setTimeout(() => addMessage('Äiti, haluaisitko jutella kukkien hoidosta?', 'assistant'), 1000);
+                    setTimeout(() => addMessage('Kyllä poikaseni, se olisi kivaa', 'user'), 4000);
+                    setTimeout(() => addMessage('Onko sinulla kukkia kotona?', 'assistant'), 7000);
+                    setTimeout(() => addMessage('On, pelargoniat kukkivat kauniisti!', 'user'), 10000);
+                    setTimeout(() => addMessage('Voi kuinka ihanaa äiti!', 'assistant'), 13000);
+                    setTimeout(() => addMessage('✅ Sosiaalinen kontakti ylläpidetty', 'system'), 16000);
+                    break;
+                    
+                case 'medicine':
+                    setTimeout(() => addMessage('Äiti, onko aika ottaa lääkkeet?', 'assistant'), 1000);
+                    setTimeout(() => addMessage('Kyllä poikaseni, pitäisi ottaa', 'user'), 3500);
+                    setTimeout(() => addMessage('Hyvä äiti! Käy ottamassa ne.', 'assistant'), 6000);
+                    setTimeout(() => addMessage('Otin lääkkeet, Timo kulta', 'user'), 10000);
+                    setTimeout(() => addMessage('✅ Lääkkeet otettu turvallisesti', 'system'), 12000);
+                    break;
+            }
+        }
+
+        function toggleTimo() {
+            isTimoMode = !isTimoMode;
+            addMessage(isTimoMode ? '🔄 Timo puhuu taas' : '🔄 Nyt Hilma puhuu', 'system');
+        }
+
+        // ========== INITIALIZATION ==========
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 AuraCare ladattu');
+            
+            // Testaa kuvat
+            const testImg = new Image();
+            testImg.onerror = function() {
+                console.log('❌ Timo.png ei latautunut - käytetään fallback');
+                document.querySelectorAll('.mobile-timo-icon, .mobile-sim-timo').forEach(el => {
+                    if (el.classList) {
+                        el.classList.add('fallback');
+                        el.innerHTML = '👨';
+                    }
+                });
+            };
+            testImg.src = './Timo.png';
+            
+            // Automaattinen demo
+            setTimeout(() => {
+                addMessage('📱 Automaattinen seurustelu alkaa...', 'system');
+                setTimeout(() => showDemo('chat', null), 2000);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
