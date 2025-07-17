@@ -820,9 +820,19 @@
         async function startMobileSimDemo() {
             console.log('🎬 MOBIILISIMULAATTORI DEMO ALKAA');
             
+            // PAKOTA LOPETUS JA NOLLAUS
             if (isMobileSimActive) {
+                console.log('🔄 Demo oli käynnissä - pysäytetään ja aloitetaan alusta');
                 endMobileSimDemo();
-                return;
+                // Odota hetki että kaikki on nollattu
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            // PYSÄYTÄ KAIKKI ÄÄNET
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                console.log('🔇 Kaikki äänet pysäytetty');
+                await new Promise(resolve => setTimeout(resolve, 300));
             }
             
             isMobileSimActive = true;
@@ -833,6 +843,13 @@
                 console.log('❌ Simulaattorielementit puuttuvat');
                 return;
             }
+            
+            // NOLLAA VISUAALISET TILAT
+            timo.classList.remove('speaking');
+            bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+            bubble.style.borderColor = '#4facfe';
+            
+            console.log('✅ Demo NOLLATTU - aloitetaan puhtaalta pöydältä');
             
             // SYNKRONINEN DEMO - odottaa jokaisen puheen loppumista
             
