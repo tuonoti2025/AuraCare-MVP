@@ -834,8 +834,17 @@
                 return;
             }
             
+            // TARKISTA speechSynthesis status
+            console.log('🔍 SpeechSynthesis status:', {
+                speaking: speechSynthesis.speaking,
+                pending: speechSynthesis.pending,
+                paused: speechSynthesis.paused
+            });
+            
             // 1. Timon ensimmäinen viesti
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 1. Timon tervehdys');
                 bubble.style.background = 'rgba(255, 255, 255, 0.95)';
                 bubble.style.borderColor = '#4facfe';
                 speakMobileSim('Hei äiti! Minä olen Timo. Haluaisitko jutella kukkien hoidosta?', bubble, timo, false);
@@ -843,57 +852,72 @@
             
             // 2. Hilman vastaus
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 2. Hilman vastaus');
                 bubble.style.background = 'rgba(232, 245, 232, 0.95)';
                 bubble.style.borderColor = '#4caf50';
                 speakMobileSim('Kyllä poikaseni, kukkien hoidosta olisi kiva jutella', bubble, timo, true);
-            }, 8000);
+            }, 9000); // Pidentetty aikaa
             
             // 3. Timon kysymys
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 3. Timon kysymys');
                 bubble.style.background = 'rgba(255, 255, 255, 0.95)';
                 bubble.style.borderColor = '#4facfe';
                 speakMobileSim('Onko sinulla kukkia kotona äiti?', bubble, timo, false);
-            }, 13000);
+            }, 15000);
             
             // 4. Hilman vastaus
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 4. Hilman kukkavastaus');
                 bubble.style.background = 'rgba(232, 245, 232, 0.95)';
                 bubble.style.borderColor = '#4caf50';
                 speakMobileSim('On, pelargoniat kukkivat kauniisti ikkunalla!', bubble, timo, true);
-            }, 17000);
+            }, 20000);
             
             // 5. Timon kehu
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 5. Timon kehu');
                 bubble.style.background = 'rgba(255, 255, 255, 0.95)';
                 bubble.style.borderColor = '#4facfe';
                 speakMobileSim('Voi kuinka ihanaa äiti! Muista kastella niitä säännöllisesti.', bubble, timo, false);
-            }, 22000);
+            }, 26000);
             
             // 6. Hilman kiitos
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 6. Hilman kiitos');
                 bubble.style.background = 'rgba(232, 245, 232, 0.95)';
                 bubble.style.borderColor = '#4caf50';
                 speakMobileSim('Kiitos kun muistat huolehtia minusta, Timo kulta', bubble, timo, true);
-            }, 28000);
+            }, 33000);
             
             // 7. Timon rakkaudenosoitus
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 7. Timon rakkaudenosoitus');
                 bubble.style.background = 'rgba(255, 255, 255, 0.95)';
                 bubble.style.borderColor = '#4facfe';
                 speakMobileSim('Rakastan sinua äiti! Olen aina täällä sinua varten.', bubble, timo, false);
-            }, 33000);
+            }, 40000);
             
             // 8. Hilman loppukommentti
             setTimeout(() => {
+                if (!isMobileSimActive) return;
+                console.log('📢 8. Hilman loppukommentti');
                 bubble.style.background = 'rgba(232, 245, 232, 0.95)';
                 bubble.style.borderColor = '#4caf50';
                 speakMobileSim('Minäkin rakastan sinua poikaseni. Tämä keskustelu lämmitti sydäntäni.', bubble, timo, true);
-            }, 38000);
+            }, 46000);
             
             // Lopetus
             setTimeout(() => {
+                console.log('🔚 Demo päättyy');
                 endMobileSimDemo();
-            }, 44000);
+            }, 54000);
         }
 
         function speakMobileSim(text, bubbleElement, timoElement, isHilma = false) {
@@ -908,11 +932,20 @@
             }
             
             if ('speechSynthesis' in window) {
-                // PYSÄYTÄ edelliset puheet
-                speechSynthesis.cancel();
+                // UUSI: Vain pysäytä jos on aktiivinen puhe
+                if (speechSynthesis.speaking) {
+                    console.log('⏹️ Pysäytetään edellinen puhe');
+                    speechSynthesis.cancel();
+                    
+                    // ODOTA pidempään että cancel toimii
+                    setTimeout(() => {
+                        startSpeech();
+                    }, 300);
+                } else {
+                    startSpeech();
+                }
                 
-                // ODOTA hetki että cancel varmasti toimii
-                setTimeout(() => {
+                function startSpeech() {
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.volume = 1.0; // MAKSIMI
                     utterance.rate = isHilma ? 0.9 : 1.0; // Hilma hieman hitaammin
@@ -936,27 +969,28 @@
                     
                     utterance.onstart = () => {
                         const speaker = isHilma ? 'HILMA' : 'TIMO';
-                        console.log(`✅ ${speaker} ÄÄNI ALKOI:`, text.substring(0, 20));
+                        console.log(`✅ ${speaker} ÄÄNI ALKOI:`, text.substring(0, 30));
                     };
                     
                     utterance.onend = () => {
                         const speaker = isHilma ? 'HILMA' : 'TIMO';
-                        console.log(`✅ ${speaker} ÄÄNI PÄÄTTYI`);
+                        console.log(`✅ ${speaker} ÄÄNI PÄÄTTYI NORMAALISTI`);
                         if (!isHilma) {
                             timoElement.classList.remove('speaking');
                         }
                     };
                     
                     utterance.onerror = (e) => {
-                        console.log('❌ MOBIILI ÄÄNIVIRHE:', e.error);
+                        const speaker = isHilma ? 'HILMA' : 'TIMO';
+                        console.log(`❌ ${speaker} ÄÄNIVIRHE:`, e.error);
                         if (!isHilma) {
                             timoElement.classList.remove('speaking');
                         }
                     };
                     
-                    console.log('🚀 MOBIILI PUHE KÄYNNISTYY...', isHilma ? 'HILMA' : 'TIMO');
+                    console.log('🚀 KÄYNNISTETÄÄN PUHE:', isHilma ? 'HILMA' : 'TIMO');
                     speechSynthesis.speak(utterance);
-                }, 150);
+                }
             }
             
             // Varmuuden vuoksi lopeta animaatio
@@ -964,7 +998,7 @@
                 if (!isHilma) {
                     timoElement.classList.remove('speaking');
                 }
-            }, 8000);
+            }, 10000); // Pidempään aikaa
         }
 
         function closeMobileSimulator() {
