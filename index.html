@@ -700,7 +700,6 @@
         let conversationStep = 0;
         let isMobileSimActive = false;
         let audioInitialized = false;
-        let currentUtterance = null; // UUSI: Lisätty tämä
 
         // ========== ÄÄNIFUNKTIOT (KORJATTU) ==========
         
@@ -772,8 +771,6 @@
                 utterance.rate = 1.0;   // NORMAALI nopeus
                 utterance.pitch = 1.0;  // NORMAALI sävel
                 utterance.lang = 'fi-FI';
-                
-                currentUtterance = utterance; // Aseta globaali muuttuja
                 
                 console.log('🎵 Puhe:', text.substring(0, 30) + '...');
                 speechSynthesis.speak(utterance);
@@ -920,84 +917,87 @@
         }
 
         function speakMobileSim(text, bubbleElement, timoElement, isHilma = false) {
-            if (!bubbleElement || !timoElement) return;
-            
-            console.log('🎵 MOBIILI puhe:', text, isHilma ? '(Hilma)' : '(Timo)');
-            bubbleElement.textContent = text;
-            
-            // Animaatio vain Timolle
-            if (!isHilma) {
-                timoElement.classList.add('speaking');
-            }
-            
-            if ('speechSynthesis' in window) {
-                // UUSI: Vain pysäytä jos on aktiivinen puhe
-                if (speechSynthesis.speaking) {
-                    console.log('⏹️ Pysäytetään edellinen puhe');
-                    speechSynthesis.cancel();
-                    
-                    // ODOTA pidempään että cancel toimii
-                    setTimeout(() => {
-                        startSpeech();
-                    }, 300);
-                } else {
-                    startSpeech();
+            return new Promise((resolve, reject) => { // TÄRKEÄ MUUTOS: Palauttaa Promisen
+                if (!bubbleElement || !timoElement) {
+                    console.log('❌ speakMobileSim: Elementit puuttuvat.');
+                    reject('Elementit puuttuvat'); // Hylkää Promise, jos elementit puuttuvat
+                    return;
                 }
-                
-                function startSpeech() {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.volume = 1.0; // MAKSIMI
-                    utterance.rate = isHilma ? 0.9 : 1.0; // Hilma hieman hitaammin
-                    utterance.pitch = isHilma ? 1.2 : 1.0; // Hilma korkeampi ääni
-                    utterance.lang = 'fi-FI';
-                    
-                    // Yritä löytää naisen ääni Hilmalle
-                    if (isHilma) {
-                        const voices = speechSynthesis.getVoices();
-                        const femaleVoice = voices.find(voice => 
-                            voice.lang.includes('fi') && 
-                            (voice.name.toLowerCase().includes('female') || 
-                             voice.name.toLowerCase().includes('woman') ||
-                             voice.name.toLowerCase().includes('nainen'))
-                        );
-                        if (femaleVoice) {
-                            utterance.voice = femaleVoice;
-                            console.log('👩 Hilmalle valittu naisen ääni:', femaleVoice.name);
-                        }
-                    }
-                    
-                    utterance.onstart = () => {
-                        const speaker = isHilma ? 'HILMA' : 'TIMO';
-                        console.log(`✅ ${speaker} ÄÄNI ALKOI:`, text.substring(0, 30));
-                    };
-                    
-                    utterance.onend = () => {
-                        const speaker = isHilma ? 'HILMA' : 'TIMO';
-                        console.log(`✅ ${speaker} ÄÄNI PÄÄTTYI NORMAALISTI`);
-                        if (!isHilma) {
-                            timoElement.classList.remove('speaking');
-                        }
-                    };
-                    
-                    utterance.onerror = (e) => {
-                        const speaker = isHilma ? 'HILMA' : 'TIMO';
-                        console.log(`❌ ${speaker} ÄÄNIVIRHE:`, e.error);
-                        if (!isHilma) {
-                            timoElement.classList.remove('speaking');
-                        }
-                    };
-                    
-                    console.log('🚀 KÄYNNISTETÄÄN PUHE:', isHilma ? 'HILMA' : 'TIMO');
-                    speechSynthesis.speak(utterance);
-                }
-            }
-            
-            // Varmuuden vuoksi lopeta animaatio
-            setTimeout(() => {
+
+                console.log('🎵 MOBIILI puhe:', text, isHilma ? '(Hilma)' : '(Timo)');
+                bubbleElement.textContent = text;
+
+                // Animaatio vain Timolle
                 if (!isHilma) {
-                    timoElement.classList.remove('speaking');
+                    timoElement.classList.add('speaking');
                 }
-            }, 10000); // Pidempään aikaa
+
+                if ('speechSynthesis' in window) {
+                    const startSpeech = () => {
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.volume = 1.0; // MAKSIMI
+                        utterance.rate = isHilma ? 0.9 : 1.0; // Hilma hieman hitaammin
+                        utterance.pitch = isHilma ? 1.2 : 1.0; // Hilma korkeampi ääni
+                        utterance.lang = 'fi-FI';
+
+                        // Yritä löytää naisen ääni Hilmalle
+                        if (isHilma) {
+                            const voices = speechSynthesis.getVoices();
+                            const femaleVoice = voices.find(voice =>
+                                voice.lang.includes('fi') &&
+                                (voice.name.toLowerCase().includes('female') ||
+                                 voice.name.toLowerCase().includes('woman') ||
+                                 voice.name.toLowerCase().includes('nainen'))
+                            );
+                            if (femaleVoice) {
+                                utterance.voice = femaleVoice;
+                                console.log('👩 Hilmalle valittu naisen ääni:', femaleVoice.name);
+                            } else {
+                                console.log('⚠️ Hilmalle ei löytynyt suomalaista naisen ääntä. Käytetään oletusta.');
+                            }
+                        }
+
+                        utterance.onstart = () => {
+                            const speaker = isHilma ? 'HILMA' : 'TIMO';
+                            console.log(`✅ ${speaker} ÄÄNI ALKOI:`, text.substring(0, 30));
+                        };
+
+                        utterance.onend = () => {
+                            const speaker = isHilma ? 'HILMA' : 'TIMO';
+                            console.log(`✅ ${speaker} ÄÄNI PÄÄTTYI NORMAALISTI`);
+                            if (!isHilma) {
+                                timoElement.classList.remove('speaking');
+                            }
+                            resolve(); // TÄRKEÄ MUUTOS: Promise ratkeaa, kun puhe loppuu
+                        };
+
+                        utterance.onerror = (e) => {
+                            const speaker = isHilma ? 'HILMA' : 'TIMO';
+                            console.log(`❌ ${speaker} ÄÄNIVIRHE:`, e.error);
+                            if (!isHilma) {
+                                timoElement.classList.remove('speaking');
+                            }
+                            reject(e); // TÄRKEÄ MUUTOS: Promise hylätään virheen sattuessa
+                        };
+
+                        console.log('🚀 KÄYNNISTETÄÄN PUHE:', isHilma ? 'HILMA' : 'TIMO');
+                        speechSynthesis.speak(utterance);
+                    };
+
+                    // UUSI: Vain pysäytä jos on aktiivinen puhe
+                    if (speechSynthesis.speaking) {
+                        console.log('⏹️ Pysäytetään edellinen puhe');
+                        speechSynthesis.cancel();
+                        // ODOTA pidempään että cancel toimii ja kutsu sitten startSpeech
+                        setTimeout(startSpeech, 300);
+                    } else {
+                        startSpeech();
+                    }
+                } else {
+                    console.log('❌ SpeechSynthesis ei ole tuettu tässä selaimessa.');
+                    reject('SpeechSynthesis ei tuettu');
+                }
+            });
         }
 
         function closeMobileSimulator() {
@@ -1012,31 +1012,21 @@
                 btn.style.background = '#ff9800';
             }
             
-            // Call endMobileSimDemo safely
             endMobileSimDemo();
         }
 
         function endMobileSimDemo() {
-            console.log('🛑 MOBIILISIMULAATTORI DEMO LOPPUU');
-            isMobileSimActive = false; // Aseta tila inaktiiviseksi
-
-            // Check if currentUtterance exists before canceling
-            if ('speechSynthesis' in window && currentUtterance) {
-                speechSynthesis.cancel();
-                currentUtterance = null; // Clear it after canceling
-                console.log('🔇 Mobiilidemon äänet pysäytetty.');
-            }
-
+            isMobileSimActive = false;
             const timo = document.getElementById('mobileSimTimo');
             const bubble = document.getElementById('mobileSimBubble');
             
-            // Add checks before manipulating elements
             if (timo) timo.classList.remove('speaking');
             if (bubble) {
                 bubble.textContent = 'Hei äiti! Klikkaa aloittaaksesi keskustelu.';
-                bubble.style.background = 'rgba(255, 255, 255, 0.95)'; // Palauta oletusväri
-                bubble.style.borderColor = '#4facfe'; // Palauta oletusväri
+                bubble.style.background = 'rgba(255, 255, 255, 0.95)';
             }
+            
+            speechSynthesis.cancel();
         }
 
         // ========== MAIN VOICE DEMO ==========
