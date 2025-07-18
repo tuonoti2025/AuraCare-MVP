@@ -617,13 +617,13 @@
 
                     <div style="background: #4caf50; color: white; padding: 1rem; border-radius: 10px; text-align: center; margin: 1rem 0;">
                         ✨ <strong>ÄÄNIDEMO:</strong><br>
-                        🎤 <strong>Klikkaa "Kokeile äänimtoimintoja"</strong> → Alkaa yhteydenotolla<br>
+                        🎤 <strong>Klikkaa "Kokeile äänitoimintoja"</strong> → Alkaa yhteydenotolla<br>
                         💬 Sano "joo", "kyllä", "haluan" jne. → Keskustelu etenee<br>
                         📱 <strong>Mobiilisimulaattori: Klikkaa "📱 Näytä mobiiliversio"</strong>
                     </div>
 
                     <div style="display: flex; gap: 1rem; justify-content: center; margin: 1rem 0;">
-                        <button onclick="startMainVoiceDemo()" id="mainVoiceBtn">🎤 Kokeile äänimtoimintoja</button>
+                        <button onclick="startMainVoiceDemo()" id="mainVoiceBtn">🎤 Kokeile äänitoimintoja</button>
                         <button onclick="toggleMobileSimulator()" id="mobileSimBtn" style="background: #ff9800;">📱 Näytä mobiiliversio</button>
                         <button onclick="testAudio()" style="background: #9c27b0;">🔊 Testaa ääni</button>
                     </div>
@@ -631,7 +631,7 @@
 
                     <div class="conversation" id="conversation">
                         <div class="message system-message">
-                            💫 AuraCare valmis - klikkaa vasemmalta haluamasi toiminto tai kokeile äänimtoimintoja
+                            💫 AuraCare valmis - klikkaa vasemmalta haluamasi toiminto tai kokeile äänitoimintoja
                         </div>
                     </div>
                 </div>
@@ -656,7 +656,7 @@
                         <div class="feature-card">
                             <div style="font-size: 2rem;">🎤</div>
                             <h4>Selkeä äänimkokeilu</h4>
-                            <p>Klikkaa "Kokeile äänimtoimintoja" → alkaa yhteydenotolla</p>
+                            <p>Klikkaa "Kokeile äänitoimintoja" → alkaa yhteydenotolla</p>
                         </div>
                         <div class="feature-card">
                             <div style="font-size: 2rem;">💬</div>
@@ -703,7 +703,7 @@
 
         // ========== ÄÄNIFUNKTIOT (KORJATTU) ==========
         
-        // PUUTTUI! testAudio funktio
+        // Testaa äänen toistaminen
         function testAudio() {
             console.log('🔊 Testataan ääni...');
             
@@ -1067,11 +1067,13 @@
 
         function startListening(context) {
             if (!isMainVoiceActive && !isStepVoiceActive) return;
-            
-            if ('webkitSpeechRecognition' in window) {
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (SpeechRecognition) {
                 if (currentRecognition) currentRecognition.stop();
-                
-                currentRecognition = new webkitSpeechRecognition();
+
+                currentRecognition = new SpeechRecognition();
                 currentRecognition.lang = 'fi-FI';
                 currentRecognition.continuous = false;
                 currentRecognition.interimResults = false;
@@ -1163,7 +1165,7 @@
             
             speechSynthesis.cancel();
             
-            document.getElementById('mainVoiceBtn').textContent = '🎤 Kokeile äänimtoimintoja';
+            document.getElementById('mainVoiceBtn').textContent = '🎤 Kokeile äänitoimintoja';
             document.getElementById('voiceStatus').textContent = '';
         }
 
