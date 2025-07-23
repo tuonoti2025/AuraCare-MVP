@@ -690,41 +690,57 @@
             </div>
         </div>
     </div>
-
-    <script>
+<script>
     let audioInitialized = false;
     let isMobileSimActive = false;
     let demoTimeoutIds = [];
     let currentSpeech = null;
 
-    // --- KORJAUS 1: YLEINEN PUHEFUNKTIO ---
-    // Tämä funktio hoitaa kaiken puheen ja varmistaa, että ääni on aktivoitu.
-    function speak(text, lang = 'fi-FI') {
+    // --- KORJAUS 1: ÄLYKKÄÄMPI PUHEFUNKTIO, JOKA HALLINNOI ANIMAATIOTA ---
+    // Funktio ottaa nyt vastaan myös elementin, jota animoidaan.
+    function speak(text, elementToAnimate = null, lang = 'fi-FI') {
         if (!audioInitialized || !('speechSynthesis' in window)) {
             console.log("Puhetta ei aloitettu: ääniä ei ole aktivoitu tai selain ei tue toimintoa.");
             return;
         }
 
-        // Keskeytä edellinen puhe, jos sellainen on käynnissä
-        if (currentSpeech && speechSynthesis.speaking) {
+        if (speechSynthesis.speaking) {
             speechSynthesis.cancel();
         }
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
         currentSpeech = utterance;
+
+        // Kytke animaatio päälle, kun puhe alkaa
+        utterance.onstart = () => {
+            if (elementToAnimate) {
+                elementToAnimate.classList.add('speaking');
+            }
+        };
+
+        // Kytke animaatio pois päältä, kun puhe päättyy (TÄMÄ ON TÄRKEIN KORJAUS)
+        utterance.onend = () => {
+            if (elementToAnimate) {
+                elementToAnimate.classList.remove('speaking');
+            }
+        };
         
-        // Pieni viive varmistaa, että edellinen puhe ehtii keskeytyä kunnolla
+        // Varmistetaan, että animaatio sammuu myös virhetilanteessa tai jos puhe keskeytetään
+        utterance.onerror = () => {
+            if (elementToAnimate) {
+                elementToAnimate.classList.remove('speaking');
+            }
+        };
+
         setTimeout(() => {
             speechSynthesis.speak(utterance);
         }, 100);
     }
     
-    // Funktio, joka aktivoi äänet käyttäjän klikkauksesta
     function initAudio() {
         if (audioInitialized) return;
         audioInitialized = true;
-        // Pieni "tyhjä" puhe voi auttaa aktivoimaan moottorin joissain selaimissa
         const utterance = new SpeechSynthesisUtterance(' ');
         utterance.volume = 0;
         speechSynthesis.speak(utterance);
@@ -754,9 +770,9 @@
                 conversation.appendChild(messageDiv);
                 conversation.scrollTop = conversation.scrollHeight;
                 
-                // --- KORJAUS 2: PUHE LISÄTTY MYÖS TYÖPÖYTÄNÄKYMÄÄN ---
                 if (shouldSpeak) {
-                    speak(text);
+                    // Työpöytänäkymässä ei ole animoitavaa elementtiä
+                    speak(text, null); 
                 }
             }
         }, delay);
@@ -764,7 +780,7 @@
     }
 
     function showDemo(demoType, element) {
-        initAudio(); // Varmista, että äänet on aktivoitu
+        initAudio();
         clearDemoTimeouts();
 
         const conversation = document.getElementById('conversation');
@@ -773,11 +789,10 @@
         document.querySelectorAll('.process-step').forEach(step => step.classList.remove('active'));
         if (element) element.classList.add('active');
 
-        // Nyt viestit puhutaan myös työpöytänäkymässä (shouldSpeak: true)
         switch (demoType) {
             case 'greeting':
                 addMessage('assistant', 'Hei Äiti, Timo tässä. Kuinka voit?', 500, true);
-                addMessage('user', 'Voin hyvin, kiitos. Mukava kuulla sinusta!', 3000, false); // Hilma ei puhu
+                addMessage('user', 'Voin hyvin, kiitos. Mukava kuulla sinusta!', 3000, false);
                 break;
             case 'chat':
                 addMessage('assistant', 'Hei äiti! Minä olen Timo. Miten kukkasi voivat tänään?', 500, true);
@@ -797,7 +812,7 @@
     }
     
     function toggleMobileSimulator() {
-        initAudio(); // Varmista, että äänet on aktivoitu
+        initAudio();
         const simulator = document.getElementById('mobileSimulator');
         const overlay = document.getElementById('mobileSimOverlay');
         const btn = document.getElementById('mobileSimBtn');
@@ -812,7 +827,6 @@
             btn.textContent = '❌ Sulje mobiili';
             btn.style.background = '#f44336';
             
-            // --- KORJAUS 3: KÄYNNISTÄ DEMO AUTOMAATTISESTI ---
             const bubble = document.getElementById('mobileSimBubble');
             if (bubble) {
                  bubble.textContent = 'Yhdistetään puhelua...';
@@ -820,7 +834,6 @@
                  bubble.style.borderColor = '#ff9800';
             }
             
-            // Käynnistä demo 1.5 sekunnin kuluttua, jotta käyttäjä ehtii nähdä animaation
             setTimeout(() => {
                 startMobileSimDemo();
             }, 1500);
@@ -868,14 +881,14 @@
             const timeoutId = setTimeout(() => {
                 if (!isMobileSimActive) return;
                 
+                // --- KORJAUS 2: YKSINKERTAISTETTU JA KORJATTU SILMUKKA ---
                 if (turn.sender === 'timo') {
                      bubble.style.background = 'rgba(255, 255, 255, 0.95)';
                      bubble.style.borderColor = '#4facfe';
                      bubble.textContent = turn.text;
-                     speak(turn.text);
-                     timo.classList.add('speaking');
-                } else {
-                     timo.classList.remove('speaking');
+                     // Annetaan speak-funktiolle animoitava elementti
+                     speak(turn.text, timo); 
+                } else { // Hilman vuoro
                      bubble.textContent = `Hilma: ${turn.text}`;
                      bubble.style.background = 'rgba(232, 245, 232, 0.95)';
                      bubble.style.borderColor = '#4caf50';
@@ -884,7 +897,6 @@
             demoTimeoutIds.push(timeoutId);
         });
         
-        // Lopeta demo viimeisen viestin jälkeen
         const totalDuration = cumulativeDelay + 3000;
         const finalTimeoutId = setTimeout(endMobileSimDemo, totalDuration);
         demoTimeoutIds.push(finalTimeoutId);
@@ -918,3 +930,4 @@
     };
 
 </script>
+    
