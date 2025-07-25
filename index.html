@@ -2,111 +2,125 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraCare - Virtuaaliavustaja</title>
-    <style>
-        body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            max-width: 420px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            margin: 2rem auto;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .timo-img {
-            width: 100%;
-            border-radius: 20px;
-            margin-bottom: 1rem;
-        }
-        .status {
-            font-style: italic;
-            color: #2e7d32;
-            margin-bottom: 1rem;
-        }
-        .reminder-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        .reminder-buttons button {
-            padding: 1rem;
-            font-size: 1rem;
-            border: none;
-            border-radius: 12px;
-            background-color: #66bb6a;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .reminder-buttons button:hover {
-            background-color: #4caf50;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AuraCare Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e6f2e6;
+      padding: 1rem;
+      color: #333;
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 20px;
+    }
+    button {
+      margin: 1rem 0.5rem;
+      padding: 1rem;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      border: none;
+      background: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+    .panel {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background: white;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <img src="Timo.png" alt="Timon kuva" class="timo-img">
-        <div class="status">📞 Puhelu käynnissä...</div>
+  <h2>AuraCare Virtuaaliavustaja</h2>
+  <img src="Timo.png" alt="Timo" />
+  <div>
+    <button onclick="startConversation()">Keskustelu</button>
+    <button onclick="reminder('medicine')">💊 Lääkkeet</button>
+    <button onclick="reminder('water')">💧 Juo vettä</button>
+    <button onclick="reminder('emergency')">🚨 Hätä</button>
+    <button onclick="showPanel()">📊 Hallintapaneeli</button>
+  </div>
+  <div class="panel" id="panel"></div>
 
-        <!-- Timo & Hilma -keskusteluääniä -->
-        <audio id="a1" src="audio/timo1.mp3"></audio>
-        <audio id="a2" src="audio/hilma1.mp3"></audio>
-        <audio id="a3" src="audio/timo2.mp3"></audio>
-        <audio id="a4" src="audio/hilma2.mp3"></audio>
-        <audio id="a5" src="audio/timo3.mp3"></audio>
-        <audio id="a6" src="audio/hilma3.mp3"></audio>
-        <audio id="a7" src="audio/timo4.mp3"></audio>
-        <audio id="a8" src="audio/hilma4.mp3"></audio>
+  <script>
+    function speak(text) {
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = "fi-FI";
+      msg.pitch = 1;
+      msg.rate = 1;
+      speechSynthesis.speak(msg);
+    }
 
-        <div class="reminder-buttons">
-            <button onclick="document.getElementById('reminder1').play()">💊 Lääkemuistutus</button>
-            <button onclick="document.getElementById('reminder2').play()">💧 Juomamuistutus</button>
-            <button onclick="document.getElementById('reminder3').play()">🚨 Hätätilanne</button>
-            <button onclick="document.getElementById('reminder4').play()">📊 Hallintapaneeli</button>
-        </div>
+    function startConversation() {
+      const lines = [
+        "Timo täällä, äiti.",
+        "Moi Timo!",
+        "Jutellaanko hetki?",
+        "Joo. Mä kävin tänään kaupassa ja ostin nakkeja.",
+        "Kuulostaa herkulliselta.",
+        "Se oli sun herkkuruokaa lapsena.",
+        "Kyllä kyllä. Nyt jatkan omia töitä.",
+        "Heippa!",
+        "Soittelen taas huomenna.",
+        "Hyvä hyvä."
+      ];
+      lines.forEach((line, i) => {
+        setTimeout(() => speak(line), i * 4000);
+      });
+    }
 
-        <!-- Puheäänet muistutuksiin (keskustelutyyliin) -->
-        <audio id="reminder1" src="audio/laakemuistutus_keskustelu.mp3"></audio>
-        <audio id="reminder2" src="audio/juomamuistutus_keskustelu.mp3"></audio>
-        <audio id="reminder3" src="audio/haataapyynto_keskustelu.mp3"></audio>
-        <audio id="reminder4" src="audio/hallintapaneeli_keskustelu.mp3"></audio>
-    </div>
-
-    <script>
-        const audios = [
-            document.getElementById('a1'),
-            document.getElementById('a2'),
-            document.getElementById('a3'),
-            document.getElementById('a4'),
-            document.getElementById('a5'),
-            document.getElementById('a6'),
-            document.getElementById('a7'),
-            document.getElementById('a8')
+    function reminder(type) {
+      let lines = [];
+      if (type === "medicine") {
+        lines = [
+          "Äiti, onko aika ottaa aamulääkkeet?",
+          "Kyllä poikaseni, pitäisi ottaa ne.",
+          "Hyvä äiti! Käy ottamassa ne rauhassa.",
+          "Otitko lääkkeet?",
+          "Kyllä, otin kaikki tablettini.",
+          "Erinomaista! Verenpainelääke, D-vitamiini ja Kalsium. Kaikki otettu turvallisesti."
         ];
-        let current = 0;
-        function playSequence() {
-            if (current < audios.length) {
-                audios[current].play();
-                audios[current].onended = playSequence;
-                current++;
-            }
-        }
-        window.onload = playSequence;
-    </script>
+      } else if (type === "water") {
+        lines = [
+          "Äiti, oletko juonut tänään vettä?",
+          "En vielä paljoa poikaseni...",
+          "Käy hakemassa iso lasi vettä nyt heti.",
+          "Join nyt lasillisen, Timo kulta.",
+          "Hienoa äiti! Muista juoda vettä koko päivän ajan."
+        ];
+      } else if (type === "emergency") {
+        lines = [
+          "HÄTÄTILANNE havaittu!",
+          "Äiti, kuulin kolinaa! Onko kaikki kunnossa?",
+          "Kaaduin vähän mutta en satuttanut itseäni.",
+          "Olen huolissani äiti. Pystytkö liikkumaan normaalisti?",
+          "Kyllä pystyn, en loukannut mitään.",
+          "Hyvä äiti. Jos tuntuu pahalta, soita heti 112."
+        ];
+      }
+
+      lines.forEach((line, i) => {
+        setTimeout(() => speak(line), i * 4000);
+      });
+    }
+
+    function showPanel() {
+      const panel = document.getElementById("panel");
+      panel.innerHTML = `
+        <h3>Auracare muistutukset</h3>
+        <p>💊 Aamulla 08:00 – Otettu ✅</p>
+        <p>💧 Juotu vettä 3 lasia – Tavoite 6–8</p>
+        <p>🚨 Kaatumisia: 0 tänään</p>
+        <p>👨‍👩‍👦 Läheiset: Timo (040-1234567), Anna (050-9876543)</p>
+      `;
+      speak("Hallintapaneeli avattu.");
+    }
+  </script>
 </body>
 </html>
