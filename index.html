@@ -1,126 +1,920 @@
-
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AuraCare Demo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #e6f2e6;
-      padding: 1rem;
-      color: #333;
-      text-align: center;
-    }
-    img {
-      max-width: 100%;
-      border-radius: 20px;
-    }
-    button {
-      margin: 1rem 0.5rem;
-      padding: 1rem;
-      font-size: 1.2rem;
-      border-radius: 10px;
-      border: none;
-      background: #4caf50;
-      color: white;
-      cursor: pointer;
-    }
-    .panel {
-      margin-top: 2rem;
-      padding: 1rem;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      background: white;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCare - Virtuaaliavustaja Ikäihmisille</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* DESKTOP LAYOUT */
+        .desktop-layout {
+            display: block;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .assistant-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 3px solid #4facfe;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .conversation {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .assistant-message {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            margin-right: 10%;
+        }
+
+        .user-message {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+            margin-left: 10%;
+        }
+
+        .system-message {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .status-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .process-tracker {
+            position: fixed;
+            left: 20px;
+            top: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #4facfe;
+            width: 280px;
+            z-index: 999;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .process-step:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .process-step.active {
+            background: #4facfe;
+            color: white;
+        }
+
+        .step-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            width: 30px;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .step-description {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .timo-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .timo-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #4facfe;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 1rem 2rem;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        /* MOBILE LAYOUT */
+        .mobile-timo-icon {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: url('./Timo.png') center/cover;
+            border: 6px solid white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        .mobile-timo-icon.fallback {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            color: white;
+        }
+
+        .mobile-timo-icon.speaking {
+            animation: speak 0.8s ease-in-out infinite alternate;
+            border-color: #4caf50;
+            box-shadow: 0 25px 80px rgba(76, 175, 80, 0.6);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.02); }
+        }
+
+        @keyframes speak {
+            0% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 30px 100px rgba(76, 175, 80, 0.8); }
+        }
+
+        .mobile-status-bubble {
+            position: fixed;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            font-size: 1.3rem;
+            line-height: 1.4;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+            border: 3px solid #4facfe;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .mobile-status-bubble.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        .mobile-demo-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 998;
+            display: none;
+        }
+
+        .mobile-demo-overlay.active {
+            display: block;
+        }
+
+        .mobile-name {
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            display: none;
+        }
+
+        .mobile-name.active {
+            display: block;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .desktop-layout .container {
+                display: none;
+            }
+            
+            .mobile-timo-icon {
+                display: block !important;
+            }
+            
+            .mobile-status-bubble {
+                display: block;
+            }
+            
+            .mobile-demo-overlay {
+                display: block;
+            }
+            
+            .mobile-name {
+                display: block;
+            }
+            
+            .process-tracker {
+                display: none;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-timo-icon {
+                display: none !important;
+            }
+            
+            .mobile-status-bubble {
+                display: none !important;
+            }
+            
+            .mobile-demo-overlay {
+                display: none !important;
+            }
+            
+            .mobile-name {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .process-tracker {
+                display: none !important;
+            }
+        }
+
+        /* MOBILE SIMULATOR FOR DESKTOP */
+        .mobile-simulator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 700px;
+            background: #000;
+            border-radius: 25px;
+            padding: 20px;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .mobile-simulator.active {
+            display: block;
+        }
+
+        .mobile-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mobile-sim-timo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: url('./Timo.png') center/cover;
+            border: 4px solid white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            animation: breathe 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-sim-timo.fallback {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            color: white;
+        }
+
+        .mobile-sim-timo.speaking {
+            animation: speak 0.8s ease-in-out infinite alternate;
+            border-color: #4caf50;
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 20px 50px rgba(76, 175, 80, 0.6);
+        }
+
+        .mobile-sim-name {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .mobile-sim-bubble {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            max-width: 300px;
+            font-size: 1rem;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid #4facfe;
+            backdrop-filter: blur(10px);
+        }
+
+        .mobile-sim-controls {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .mobile-sim-btn {
+            padding: 0.5rem 1rem;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .mobile-sim-btn.end {
+            background: #f44336;
+        }
+
+        .mobile-sim-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            display: none;
+        }
+
+        .mobile-sim-overlay.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <h2>AuraCare Virtuaaliavustaja</h2>
-  <img src="Timo.png" alt="Timo" />
-  <div>
-    <button onclick="startConversation()">Keskustelu</button>
-    <button onclick="reminder('medicine')">💊 Lääkkeet</button>
-    <button onclick="reminder('water')">💧 Juo vettä</button>
-    <button onclick="reminder('emergency')">🚨 Hätä</button>
-    <button onclick="showPanel()">📊 Hallintapaneeli</button>
-  </div>
-  <div class="panel" id="panel"></div>
+    <div class="mobile-demo-overlay" id="mobileOverlay"></div>
+    <div class="mobile-name" id="mobileName">Timo</div>
+    <div class="mobile-timo-icon" id="mobileTimoIcon" style="display: none;">
+    </div>
+    
+    <div class="mobile-status-bubble" id="mobileStatusBubble">
+        Seurustelu alkaa automaattisesti...
+    </div>
 
-  <script>
-    function speak(text) {
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.lang = "fi-FI";
-      msg.pitch = 1;
-      msg.rate = 1;
-      speechSynthesis.speak(msg);
+    <div class="mobile-sim-overlay" id="mobileSimOverlay" onclick="closeMobileSimulator()"></div>
+    <div class="mobile-simulator" id="mobileSimulator">
+        <div class="mobile-screen">
+            <div class="mobile-sim-name">Timo</div>
+            <div class="mobile-sim-timo" id="mobileSimTimo">
+            </div>
+            <div class="mobile-sim-bubble" id="mobileSimBubble">
+                Hei äiti! Klikkaa aloittaaksesi keskustelu.
+            </div>
+            <div class="mobile-sim-controls">
+    <button class="mobile-sim-btn end" onclick="closeMobileSimulator()">❌ Sulje Puhelu</button>
+</div>
+        </div>
+    </div>
+
+    <div class="desktop-layout">
+        <div class="process-tracker">
+            <h3 style="text-align: center; margin-bottom: 1rem;">🔄 Demo vaiheet</h3>
+            
+            <div class="process-step" onclick="showDemo('greeting', this)">
+                <div class="step-icon">📞</div>
+                <div class="step-content">
+                    <div class="step-title">Yhteydenotto</div>
+                    <div class="step-description">Timo soittaa äidilleen</div>
+                </div>
+            </div>
+
+            <div class="process-step" onclick="showDemo('chat', this)">
+                <div class="step-icon">🌸</div>
+                <div class="step-content">
+                    <div class="step-title">Seurustelu</div>
+                    <div class="step-description">Mukava keskustelu</div>
+                </div>
+            </div>
+
+            <div class="process-step" onclick="showDemo('medicine', this)">
+                <div class="step-icon">💊</div>
+                <div class="step-content">
+                    <div class="step-title">Lääkemuistutus</div>
+                    <div class="step-description">Kysy ja varmista lääkkeet</div>
+                </div>
+            </div>
+
+            <div class="process-step" onclick="showDemo('water', this)">
+                <div class="step-icon">💧</div>
+                <div class="step-content">
+                    <div class="step-title">Juomamuistutus</div>
+                    <div class="step-description">Muistuta veden juonnista</div>
+                </div>
+            </div>
+
+            <div class="process-step" onclick="showDemo('emergency', this)">
+                <div class="step-icon">🚨</div>
+                <div class="step-content">
+                    <div class="step-title">Hätätilanne</div>
+                    <div class="step-description">Kaatuminen tai avun tarve</div>
+                </div>
+            </div>
+
+            <div class="process-step" onclick="showDemo('dashboard', this)">
+                <div class="step-icon">📊</div>
+                <div class="step-content">
+                    <div class="step-title">Hallintapaneeli</div>
+                    <div class="step-description">Asetukset ja tilastot</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="header">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                    <img src="./Logo.png" alt="AuraCare Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem;">🏥</div>
+                    <h1>🌟 AuraCare</h1>
+                </div>
+                <p>Läheisen ääni ääniohjattuna AI-avustajana - €125M markkinapotentiaali</p>
+            </div>
+
+            <div class="main-content">
+                <div class="assistant-card">
+                    <img src="./Timo.png" alt="Timo" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); margin: 0 auto 1rem; display: block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="avatar" style="display: none;">👨</div>
+                    
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        <span>Timo käynnistyy automaattisesti...</span>
+                    </div>
+
+                    <div style="background: #4caf50; color: white; padding: 1rem; border-radius: 10px; text-align: center; margin: 1rem 0;">
+                        ✨ <strong>ÄÄNIDEMO:</strong><br>
+                        🎤 <strong>Klikkaa "Kokeile äänitoimintoja"</strong> → Alkaa yhteydenotolla<br>
+                        💬 Sano "joo", "kyllä", "haluan" jne. → Keskustelu etenee<br>
+                        📱 <strong>Mobiilisimulaattori: Klikkaa "📱 Näytä mobiiliversio"</strong>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin: 1rem 0;">
+                        <button onclick="startMainVoiceDemo()" id="mainVoiceBtn">🎤 Kokeile äänitoimintoja</button>
+                        <button onclick="toggleMobileSimulator()" id="mobileSimBtn" style="background: #ff9800;">📱 Näytä mobiiliversio</button>
+                        <button onclick="testAudio()" style="background: #9c27b0;">🔊 Testaa ääni</button>
+                    </div>
+                    <div id="voiceStatus" style="text-align: center; margin: 1rem 0; font-weight: bold; color: #2196f3;"></div>
+
+                    <div class="conversation" id="conversation">
+                        <div class="message system-message">
+                            💫 AuraCare demo käynnistyy - Valitse demon vaihe vasemmalta.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timo-section">
+                    <img src="./Timo.png" alt="Timo" class="timo-avatar" style="object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="timo-avatar" style="display: none;">👨</div>
+                    <div>
+                        <h4>👨‍👩‍👦 Timo - Poika avustajana</h4>
+                        <p>"Asun 200km päästä äidistäni Hilmasta. AuraCare antaa minun puhua äitini kanssa omalla äänelläni ja kasvoillani. <strong>Mobiilissa täytän ruudun 450px isona kuvana - helppo tunnistaa!</strong>"</p>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 2rem; border-radius: 10px; margin: 2rem 0;">
+                    <h3>🎯 Kuinka AuraCare toimii</h3>
+                    <div class="features">
+                        <div class="feature-card">
+                            <div style="font-size: 2rem;">📱</div>
+                            <h4>Iso kuva mobiilissa</h4>
+                            <p>450px kuva - vanhus tunnistaa helposti kuka soittaa</p>
+                        </div>
+                        <div class="feature-card">
+                            <div style="font-size: 2rem;">🎤</div>
+                            <h4>Selkeä äänikokeilu</h4>
+                            <p>Klikkaa "Kokeile äänitoimintoja" → alkaa yhteydenotolla</p>
+                        </div>
+                        <div class="feature-card">
+                            <div style="font-size: 2rem;">💬</div>
+                            <h4>Erikseen toiminnot</h4>
+                            <p>Lääkemuistutus oma äänikokeilunsa - ei mene sekaisin</p>
+                        </div>
+                        <div class="feature-card">
+                            <div style="font-size: 2rem;">🔊</div>
+                            <h4>Selkeä ääni</h4>
+                            <p>Puhe kuuluu kirkkaasti - hands-free kokemus</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #ff6b6b; color: white; padding: 2rem; border-radius: 15px; text-align: center;">
+                    <h3>🎯 SIJOITUSMAHDOLLISUUS</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <div>
+                            <h4 style="font-size: 2rem;">1.2M</h4>
+                            <p>Ikäihmistä Suomessa</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 2rem;">€29/kk</h4>
+                            <p>Realistinen hinnoittelu</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 2rem;">€125M</h4>
+                            <p>Kokonaismarkkina</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let audioInitialized = false;
+    let isMobileSimActive = false;
+    let demoTimeoutIds = [];
+    let currentSpeech = null;
+
+    // --- KORJAUS 1: YLEINEN PUHEFUNKTIO ---
+    // Tämä funktio hoitaa kaiken puheen ja varmistaa, että ääni on aktivoitu.
+    function speak(text, lang = 'fi-FI') {
+        if (!audioInitialized || !('speechSynthesis' in window)) {
+            console.log("Puhetta ei aloitettu: ääniä ei ole aktivoitu tai selain ei tue toimintoa.");
+            return;
+        }
+
+        // Keskeytä edellinen puhe, jos sellainen on käynnissä
+        if (currentSpeech && speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        currentSpeech = utterance;
+        
+        // Pieni viive varmistaa, että edellinen puhe ehtii keskeytyä kunnolla
+        setTimeout(() => {
+            speechSynthesis.speak(utterance);
+        }, 100);
+    }
+    
+    // Funktio, joka aktivoi äänet käyttäjän klikkauksesta
+    function initAudio() {
+        if (audioInitialized) return;
+        audioInitialized = true;
+        // Pieni "tyhjä" puhe voi auttaa aktivoimaan moottorin joissain selaimissa
+        const utterance = new SpeechSynthesisUtterance(' ');
+        utterance.volume = 0;
+        speechSynthesis.speak(utterance);
+        console.log("🔊 Äänet aktivoitu käyttäjän toimesta.");
+        const voiceStatus = document.getElementById('voiceStatus');
+        if(voiceStatus) {
+            voiceStatus.textContent = "🔊 Ääni aktivoitu!";
+            voiceStatus.style.color = "#4caf50";
+        }
     }
 
-    function startConversation() {
-      const lines = [
-        "Timo täällä, äiti.",
-        "Moi Timo!",
-        "Jutellaanko hetki?",
-        "Joo. Mä kävin tänään kaupassa ja ostin nakkeja.",
-        "Kuulostaa herkulliselta.",
-        "Se oli sun herkkuruokaa lapsena.",
-        "Kyllä kyllä. Nyt jatkan omia töitä.",
-        "Heippa!",
-        "Soittelen taas huomenna.",
-        "Hyvä hyvä."
-      ];
-      lines.forEach((line, i) => {
-        setTimeout(() => speak(line), i * 4000);
-      });
+    function clearDemoTimeouts() {
+        demoTimeoutIds.forEach(id => clearTimeout(id));
+        demoTimeoutIds = [];
+        if (speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+        }
     }
 
-    function reminder(type) {
-      let lines = [];
-      if (type === "medicine") {
-        lines = [
-          "Äiti, onko aika ottaa aamulääkkeet?",
-          "Kyllä poikaseni, pitäisi ottaa ne.",
-          "Hyvä äiti! Käy ottamassa ne rauhassa.",
-          "Otitko lääkkeet?",
-          "Kyllä, otin kaikki tablettini.",
-          "Erinomaista! Verenpainelääke, D-vitamiini ja Kalsium. Kaikki otettu turvallisesti."
+    function addMessage(sender, text, delay, shouldSpeak = false) {
+        const timeoutId = setTimeout(() => {
+            const conversation = document.getElementById('conversation');
+            if (conversation) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'assistant-message');
+                messageDiv.innerHTML = `<strong>${sender === 'user' ? 'Hilma' : 'Timo'}:</strong> ${text}`;
+                conversation.appendChild(messageDiv);
+                conversation.scrollTop = conversation.scrollHeight;
+                
+                // --- KORJAUS 2: PUHE LISÄTTY MYÖS TYÖPÖYTÄNÄKYMÄÄN ---
+                if (shouldSpeak) {
+                    speak(text);
+                }
+            }
+        }, delay);
+        demoTimeoutIds.push(timeoutId);
+    }
+
+    function showDemo(demoType, element) {
+        initAudio(); // Varmista, että äänet on aktivoitu
+        clearDemoTimeouts();
+
+        const conversation = document.getElementById('conversation');
+        conversation.innerHTML = `<div class="message system-message">🎬 Aloitetaan <strong>${demoType}</strong> demo...</div>`;
+        
+        document.querySelectorAll('.process-step').forEach(step => step.classList.remove('active'));
+        if (element) element.classList.add('active');
+
+        // Nyt viestit puhutaan myös työpöytänäkymässä (shouldSpeak: true)
+        switch (demoType) {
+            case 'greeting':
+                addMessage('assistant', 'Hei Äiti, Timo tässä. Kuinka voit?', 500, true);
+                addMessage('user', 'Voin hyvin, kiitos. Mukava kuulla sinusta!', 3000, false); // Hilma ei puhu
+                break;
+            case 'chat':
+                addMessage('assistant', 'Hei äiti! Minä olen Timo. Miten kukkasi voivat tänään?', 500, true);
+                addMessage('user', 'Kiitos kysymästä poikaseni, ne voivat hyvin. Pelargoniat kukkivat kauniisti ikkunalla.', 5000, false);
+                addMessage('assistant', 'Hienoa kuulla! Muistatko kastella niitä säännöllisesti?', 10000, true);
+                addMessage('user', 'Kyllä muistan, aina kun multa tuntuu kuivalta.', 14000, false);
+                addMessage('assistant', 'Hyvä! Onko sinulla muita kukkia kuin pelargoniat?', 18000, true);
+                addMessage('user', 'On minulla pari orkideaa ja rahapuu. Ne ovat minun aarteitani.', 22000, false);
+                break;
+            case 'medicine':
+                addMessage('assistant', 'Äiti, muistathan ottaa verenpainelääkkeesi?', 500, true);
+                addMessage('user', 'Voi, melkein unohdin. Kiitos muistutuksesta!', 3500, false);
+                addMessage('assistant', 'Ei se mitään. Otatko sen nyt heti?', 6500, true);
+                addMessage('user', 'Otan heti.', 8500, false);
+                break;
+        }
+    }
+    
+    function toggleMobileSimulator() {
+        initAudio(); // Varmista, että äänet on aktivoitu
+        const simulator = document.getElementById('mobileSimulator');
+        const overlay = document.getElementById('mobileSimOverlay');
+        const btn = document.getElementById('mobileSimBtn');
+        
+        if (!simulator || !overlay || !btn) return;
+        
+        if (simulator.classList.contains('active')) {
+            closeMobileSimulator();
+        } else {
+            simulator.classList.add('active');
+            overlay.classList.add('active');
+            btn.textContent = '❌ Sulje mobiili';
+            btn.style.background = '#f44336';
+            
+            // --- KORJAUS 3: KÄYNNISTÄ DEMO AUTOMAATTISESTI ---
+            const bubble = document.getElementById('mobileSimBubble');
+            if (bubble) {
+                 bubble.textContent = 'Yhdistetään puhelua...';
+                 bubble.style.background = 'rgba(255, 243, 224, 0.95)';
+                 bubble.style.borderColor = '#ff9800';
+            }
+            
+            // Käynnistä demo 1.5 sekunnin kuluttua, jotta käyttäjä ehtii nähdä animaation
+            setTimeout(() => {
+                startMobileSimDemo();
+            }, 1500);
+        }
+    }
+
+    function closeMobileSimulator() {
+        const simulator = document.getElementById('mobileSimulator');
+        const overlay = document.getElementById('mobileSimOverlay');
+        const btn = document.getElementById('mobileSimBtn');
+        
+        if (simulator) simulator.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        if (btn) {
+            btn.textContent = '📱 Näytä mobiiliversio';
+            btn.style.background = '#ff9800';
+        }
+        
+        endMobileSimDemo();
+    }
+
+    function startMobileSimDemo() {
+        if (isMobileSimActive) return;
+        isMobileSimActive = true;
+        clearDemoTimeouts();
+
+        const timo = document.getElementById('mobileSimTimo');
+        const bubble = document.getElementById('mobileSimBubble');
+        if (!timo || !bubble) return;
+
+        const conversation = [
+            { sender: 'timo', text: 'Hei äiti! Minä olen Timo. Miten kukkasi voivat tänään?', delay: 500 },
+            { sender: 'hilma', text: 'Kiitos kysymästä poikaseni, ne voivat hyvin. Pelargoniat kukkivat kauniisti ikkunalla.', delay: 6000 },
+            { sender: 'timo', text: 'Hienoa kuulla! Muistatko kastella niitä säännöllisesti?', delay: 6000 },
+            { sender: 'hilma', text: 'Kyllä muistan, aina kun multa tuntuu kuivalta.', delay: 5000 },
+            { sender: 'timo', text: 'Hyvä! Onko sinulla muita kukkia kuin pelargoniat?', delay: 5000 },
+            { sender: 'hilma', text: 'On minulla pari orkideaa ja rahapuu. Ne ovat minun aarteitani.', delay: 6000 },
+            { sender: 'timo', text: 'Hienoa äiti. Soitan huomenna uudestaan. Hei hei!', delay: 7000 },
+            { sender: 'hilma', text: 'Hei hei, poikaseni!', delay: 4000 }
         ];
-      } else if (type === "water") {
-        lines = [
-          "Äiti, oletko juonut tänään vettä?",
-          "En vielä paljoa poikaseni...",
-          "Käy hakemassa iso lasi vettä nyt heti.",
-          "Join nyt lasillisen, Timo kulta.",
-          "Hienoa äiti! Muista juoda vettä koko päivän ajan."
-        ];
-      } else if (type === "emergency") {
-        lines = [
-          "HÄTÄTILANNE havaittu!",
-          "Äiti, kuulin kolinaa! Onko kaikki kunnossa?",
-          "Kaaduin vähän mutta en satuttanut itseäni.",
-          "Olen huolissani äiti. Pystytkö liikkumaan normaalisti?",
-          "Kyllä pystyn, en loukannut mitään.",
-          "Hyvä äiti. Jos tuntuu pahalta, soita heti 112."
-        ];
-      }
 
-      lines.forEach((line, i) => {
-        setTimeout(() => speak(line), i * 4000);
-      });
+        let cumulativeDelay = 0;
+        conversation.forEach(turn => {
+            cumulativeDelay += turn.delay;
+            const timeoutId = setTimeout(() => {
+                if (!isMobileSimActive) return;
+                
+                if (turn.sender === 'timo') {
+                     bubble.style.background = 'rgba(255, 255, 255, 0.95)';
+                     bubble.style.borderColor = '#4facfe';
+                     bubble.textContent = turn.text;
+                     speak(turn.text);
+                     timo.classList.add('speaking');
+                } else {
+                     timo.classList.remove('speaking');
+                     bubble.textContent = `Hilma: ${turn.text}`;
+                     bubble.style.background = 'rgba(232, 245, 232, 0.95)';
+                     bubble.style.borderColor = '#4caf50';
+                }
+            }, cumulativeDelay);
+            demoTimeoutIds.push(timeoutId);
+        });
+        
+        // Lopeta demo viimeisen viestin jälkeen
+        const totalDuration = cumulativeDelay + 3000;
+        const finalTimeoutId = setTimeout(endMobileSimDemo, totalDuration);
+        demoTimeoutIds.push(finalTimeoutId);
     }
+    
+    function endMobileSimDemo() {
+        isMobileSimActive = false;
+        clearDemoTimeouts();
 
-    function showPanel() {
-      const panel = document.getElementById("panel");
-      panel.innerHTML = `
-        <h3>Auracare muistutukset</h3>
-        <p>💊 Aamulla 08:00 – Otettu ✅</p>
-        <p>💧 Juotu vettä 3 lasia – Tavoite 6–8</p>
-        <p>🚨 Kaatumisia: 0 tänään</p>
-        <p>👨‍👩‍👦 Läheiset: Timo (040-1234567), Anna (050-9876543)</p>
-      `;
-      speak("Hallintapaneeli avattu.");
+        const timo = document.getElementById('mobileSimTimo');
+        if(timo) timo.classList.remove('speaking');
+        
+        const bubble = document.getElementById('mobileSimBubble');
+        if (bubble) bubble.textContent = 'Puhelu päättyi.';
     }
-  </script>
-</body>
-</html>
+    
+    function testAudio() {
+        initAudio();
+        speak('Äänitesti onnistui!');
+    }
+    
+    function startMainVoiceDemo() {
+        initAudio();
+        const voiceStatus = document.getElementById('voiceStatus');
+        voiceStatus.textContent = "🎤 Päädemo ei ole vielä toteutettu. Kokeile vaiheita vasemmalta!";
+        voiceStatus.style.color = "#f44336";
+    }
+    
+    window.onload = () => {
+        showDemo('greeting', document.querySelector('.process-step'));
+    };
+
+</script>
