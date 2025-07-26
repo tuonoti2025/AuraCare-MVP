@@ -7,179 +7,180 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background-color: #e8f5e9;
-      color: #222;
+      font-family: Arial, sans-serif;
+      background-color: #2e7d32;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .phone-frame {
+      position: relative;
+      width: 360px;
+      height: 640px;
+      background: #f4f4f4;
+      border: 16px solid #222;
+      border-top-width: 60px;
+      border-bottom-width: 60px;
+      border-radius: 36px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: #e8f5e9;
+      display: flex;
+      flex-direction: column;
     }
     .header {
       background-color: #2e7d32;
       color: white;
       text-align: center;
-      padding: 1rem;
+      padding: 0.5rem;
+      font-size: 1.1rem;
+      flex-shrink: 0;
       position: relative;
     }
     .header img.logo {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 40px;
-      height: 40px;
+      top: 8px;
+      left: 8px;
+      width: 32px;
+      height: 32px;
     }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
+    .content {
+      flex-grow: 1;
+      padding: 0.5rem;
+      overflow-y: auto;
     }
     .timo-kuva {
-      width: 120px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      margin: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      margin: 0.5rem auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     .demo-buttons {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      width: 100%;
-      max-width: 400px;
+      gap: 0.5rem;
+      margin: 0.5rem 0;
     }
     .demo-buttons button {
-      padding: 1rem;
-      font-size: 1rem;
+      padding: 0.6rem;
+      font-size: 0.9rem;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       background-color: #66bb6a;
       color: white;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.2s;
     }
     .demo-buttons button:hover {
       background-color: #559f54;
     }
     .panels {
       display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 800px;
-      margin-top: 2rem;
-      gap: 1rem;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
     }
     .panels .info, .panels .hallinta {
       background: #fff;
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      padding: 0.5rem;
+      border-radius: 8px;
       flex: 1;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      font-size: 0.85rem;
     }
     .panels .info h3::before { content: "💼 "; }
     .panels .hallinta h3::before { content: "⚙️ "; }
-    .hallinta {
-      display: none;
-    }
-    h3 {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-    }
-    ul {
-      margin: 0;
-      padding-left: 1.2em;
-    }
+    .hallinta { display: none; }
+    h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+    ul { margin: 0; padding-left: 1.2em; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="logo.png" alt="AuraCare-logo" class="logo" />
-    <h1>AuraCare Mobiilidemo</h1>
-    <p>Virtuaaliavustaja ikäihmisille</p>
-  </div>
-
-  <div class="container">
-    <!-- Timo-kuva isona avatarina -->
-    <img src="timo.png" alt="Timo avatar" class="timo-kuva" />
-
-    <!-- Painikkeet eri demoille -->
-    <div class="demo-buttons">
-      <button onclick="startMedicine()">💊 Lääkemuistutus</button>
-      <button onclick="startDrinking()">💧 Juomamuistutus</button>
-      <button onclick="startEmergency()">🚨 Hätätilanne</button>
-      <button onclick="togglePanel()">📊 Hallintapaneeli</button>
-    </div>
-
-    <!-- Info- ja hallintapaneelit vierekkäin -->
-    <div class="panels">
-      <div class="info">
-        <h3>Miksi AuraCare?</h3>
-        <ul>
-          <li>Torjuu yksinäisyyttä – tuttujen äänien vuorovaikutus</li>
-          <li>Keskustelut muistuttavat perheen yhteydestä</li>
-          <li>Laajennettavissa: lääkkeet, juominen, turvallisuus</li>
-          <li>Kustannustehokas – ei vaadi uutta laitetta</li>
-        </ul>
+  <div class="phone-frame">
+    <div class="screen">
+      <div class="header">
+        <img src="logo.png" alt="AuraCare" class="logo" />
+        AuraCare Mobiilidemo
       </div>
-
-      <div class="hallinta" id="hallinta">
-        <h3>Asetetut muistutukset</h3>
-        <ul>
-          <li>🕘 Lääkkeet klo 9:00</li>
-          <li>💧 Juominen klo 11:00 ja 14:00</li>
-          <li>📞 Yhteydenotto klo 18:00</li>
-        </ul>
-        <p>Muokkaa tehtäviä kun kaupallinen versio julkaistaan.</p>
+      <div class="content">
+        <img src="timo.png" alt="Timo" class="timo-kuva" />
+        <div class="demo-buttons">
+          <button onclick="startMedicine()">💊 Lääkemuistutus</button>
+          <button onclick="startDrinking()">💧 Juomamuistutus</button>
+          <button onclick="startEmergency()">🚨 Hätätilanne</button>
+          <button onclick="togglePanel()">📊 Hallintapaneeli</button>
+        </div>
+        <div class="panels">
+          <div class="info">
+            <h3>Miksi AuraCare?</h3>
+            <ul>
+              <li>Torjuu yksinäisyyttä – tuttujen äänien vuorovaikutus</li>
+              <li>Keskustelut muistuttavat perheen yhteydestä</li>
+              <li>Laajennettavissa: lääkkeet, juominen, turvallisuus</li>
+              <li>Kustannustehokas – ei vaadi uutta laitetta</li>
+            </ul>
+          </div>
+          <div class="hallinta" id="hallinta">
+            <h3>Asetetut muistutukset</h3>
+            <ul>
+              <li>🕘 Lääkkeet klo 9:00</li>
+              <li>💧 Juominen klo 11:00 ja 14:00</li>
+              <li>📞 Yhteydenotto klo 18:00</li>
+            </ul>
+            <p style="font-size:0.8rem; color:#555;">Muokkaa tehtäviä kaupallisessa versiossa.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Ääni-indeksien alustus
-    let timoVoice = null;
-    let hilmaVoice = null;
+    let timoVoice, hilmaVoice;
     function initVoices() {
-      const voices = speechSynthesis.getVoices();
-      timoVoice = voices.find(v => v.lang.startsWith('fi')) || voices[0];
-      hilmaVoice = voices.find(v => v.lang.startsWith('fi') && v.name !== timoVoice.name) || timoVoice;
+      const v = speechSynthesis.getVoices();
+      timoVoice = v.find(x => x.lang.startsWith('fi')) || v[0];
+      hilmaVoice = v.find(x => x.name !== timoVoice.name && x.lang.startsWith('fi')) || timoVoice;
     }
     speechSynthesis.onvoiceschanged = initVoices;
-
-    // Yleinen puhefunktio
     function speak(text, voice) {
-      const msg = new SpeechSynthesisUtterance(text);
-      if (voice) msg.voice = voice;
-      speechSynthesis.speak(msg);
+      const u = new SpeechSynthesisUtterance(text);
+      if (voice) u.voice = voice;
+      speechSynthesis.speak(u);
     }
-
-    // Dialogiketjut
     const medicineDialogue = [
-      { who: 'timo', text: 'Äiti, onko aika ottaa aamulääkkeet?' },
-      { who: 'hilma', text: 'Kyllä poikaseni, muistan aina ottaa ne.' },
-      { who: 'timo', text: 'Hyvä äiti! Muistathan myös juoda riittävästi vettä.' }
+      {who:'timo',text:'Äiti, onko aika ottaa aamulääkkeet?'},
+      {who:'hilma',text:'Kyllä poikaseni, muistan aina ottaa ne.'},
+      {who:'timo',text:'Hyvä äiti! Muistathan myös juoda vettä.'}
     ];
     const drinkingDialogue = [
-      { who: 'timo', text: 'Äiti, oletko juonut tänään vettä?' },
-      { who: 'hilma', text: 'En vielä tarpeeksi, poikaseni.' },
-      { who: 'timo', text: 'Käy hakemassa lasillinen vettä nyt.' }
+      {who:'timo',text:'Äiti, oletko juonut tänään vettä?'},
+      {who:'hilma',text:'En vielä tarpeeksi, poikaseni.'},
+      {who:'timo',text:'Käy hakemassa lasillinen vettä nyt.'}
     ];
     const emergencyDialogue = [
-      { who: 'timo', text: 'Äiti, kuulinko kolinaa? Onko kaikki kunnossa?' },
-      { who: 'hilma', text: 'Kyllä, kaaduin vain ja nousin ylös.' },
-      { who: 'timo', text: 'Hyvä, mutta jos tarvitset apua, paina hätätilanne‑painiketta.' }
+      {who:'timo',text:'Äiti, kuulinko kolinaa? Onko kaikki kunnossa?'},
+      {who:'hilma',text:'Kyllä, kaaduin vain ja nousin ylös.'},
+      {who:'timo',text:'Hyvä, mutta jos tarvitset apua, paina hätätilanne‑painiketta.'}
     ];
-
-    function runDialogue(dialogue) {
-      if (speechSynthesis.speaking) speechSynthesis.cancel();
-      dialogue.reduce((p, turn) => p.then(() => new Promise(res => {
-        const voice = turn.who === 'timo' ? timoVoice : hilmaVoice;
-        speak(turn.text, voice);
-        setTimeout(res, turn.text.length * 60);
-      })), Promise.resolve());
+    function runDialogue(d) {
+      if(speechSynthesis.speaking) speechSynthesis.cancel();
+      d.reduce((p,r)=>p.then(_=>new Promise(res=>{
+        const v=r.who==='timo'?timoVoice:hilmaVoice;
+        speak(r.text,v);
+        setTimeout(res, r.text.length*60);
+      })),Promise.resolve());
     }
-
-    function startMedicine() { runDialogue(medicineDialogue); }
-    function startDrinking() { runDialogue(drinkingDialogue); }
-    function startEmergency() { runDialogue(emergencyDialogue); }
-    function togglePanel() {
-      const p = document.getElementById('hallinta');
-      p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    function startMedicine(){runDialogue(medicineDialogue)}
+    function startDrinking(){runDialogue(drinkingDialogue)}
+    function startEmergency(){runDialogue(emergencyDialogue)}
+    function togglePanel(){
+      const p=document.getElementById('hallinta');
+      p.style.display=p.style.display==='block'?'none':'block';
     }
   </script>
 </body>
