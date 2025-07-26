@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCare - Mobiilidemo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+        :root {
+            --background-color: #2E3D32; /* Tumma vihreä tausta */
+            --phone-background: #f0f2f5; /* Puhelimen vaalea tausta */
+            --button-bg: #6ab04c;      /* Vihreä nappi */
+            --button-hover-bg: #5a943f;
+            --text-color: #333;
+            --indicator-text: #fff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .phone-screen {
+            width: 100%;
+            max-width: 400px;
+            height: 800px;
+            background-color: var(--phone-background);
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            /* === VAIHDA TÄHÄN OIKEA KUVA === */
+            background-image: url('image_49fecb.jpg'); 
+            background-size: cover;
+            background-position: center;
+        }
+
+        .status-bar {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: var(--indicator-text);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 10;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .status-bar.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-top: 1px solid #ddd;
+        }
+
+        .action-button {
+            padding: 15px 10px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-align: center;
+        }
+
+        .action-button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .action-button small {
+            display: block;
+            font-size: 0.75em;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-screen">
+        <div id="statusBar" class="status-bar"></div>
+        <div class="main-content">
+            </div>
+        <div class="button-grid">
+            <button class="action-button" onclick="playMedicineReminder()">💊 Lääkemuistutus</button>
+            <button class="action-button" onclick="playDrinkingReminder()">💧 Juomamuistutus</button>
+            <button class="action-button" onclick="playEmergency()">🚨 Hätätilanne</button>
+            <button class="action-button" onclick="playDashboard()">📊 Hallintapaneeli</button>
+        </div>
+    </div>
+
+    <script>
+        let timeoutIds = [];
+        let currentSpeech = null;
+
+        // --- DIALOGIT ---
+        const mainConversation = [
+            { speaker: 'Timo', text: 'Äiti, Timo täällä.', delay: 1500 },
+            { speaker: 'Hilma', text: 'Moi!', delay: 2000 },
+            { speaker: 'Timo', text: 'Jutellaanko vähän?', delay: 2000 },
+            { speaker: 'Hilma', text: 'Joo, mie kävin tänään kaupassa ja ostin nakkeja. Teen nakkikastikkeen ja keitän perunoita.', delay: 8000 },
+            { speaker: 'Timo', text: 'Kuulostaa herkulliselta.', delay: 3000 },
+            { speaker: 'Hilma', text: 'Oli sinun herkkuruokaa lapsena.', delay: 3000 },
+            { speaker: 'Timo', text: 'Kyllä kyllä. Nyt jatkan omia töitä.', delay: 4000 },
+            { speaker: 'Hilma', text: 'Heippa!', delay: 1500 },
+            { speaker: 'Timo', text: 'Heippa. Soittelen taas huomenna.', delay: 3000 },
+            { speaker: 'Hilma', text: 'Hyvä hyvä.', delay: 2000 }
+        ];
+
+        const medicineReminder = [
+            { speaker: 'Timo', text: 'Äiti, onko aika ottaa aamulääkkeet?', delay: 4000 },
+            { speaker: 'Hilma', text: 'Kyllä poikaseni, pitäisi ottaa ne.', delay: 3000 },
+            { speaker: 'Timo', text: 'Hyvä äiti! Käy ottamassa ne rauhassa. Odotan viisi sekuntia.', delay: 6000 },
+            { speaker: 'Hilma', text: 'Odotetaan...', delay: 5000 }, // Tauko
+            { speaker: 'Timo', text: 'Otitko lääkkeet?', delay: 2000 },
+            { speaker: 'Hilma', text: 'Kyllä, otin kaikki tablettini.', delay: 3000 },
+            { speaker: 'Timo', text: 'Erinomaista äiti! Näitä lääkkeitä otetaan: Verenpainelääke, D-vitamiini ja Kalsium. Kaikki tärkeää terveydellesi.', delay: 10000 },
+            { speaker: 'Hilma', text: 'Kiitos että muistutit, Timo kulta.', delay: 3000 },
+            { speaker: 'System', text: '✅ Lääkkeet otettu turvallisesti', delay: 3000 }
+        ];
+
+        const drinkingReminder = [
+            { speaker: 'Timo', text: 'Äiti, oletko juonut tänään vettä?', delay: 3000 },
+            { speaker: 'Hilma', text: 'En vielä paljoa poikaseni...', delay: 3000 },
+            { speaker: 'Timo', text: 'Tämä on tärkeää! Käy hakemassa iso lasi vettä nyt heti. Erityisesti lääkkeiden kanssa pitää juoda riittävästi.', delay: 9000 },
+            { speaker: 'Hilma', text: 'Odotetaan...', delay: 5000 }, // Tauko
+            { speaker: 'Hilma', text: 'Join nyt lasillisen, Timo kulta.', delay: 3000 },
+            { speaker: 'Timo', text: 'Hienoa äiti! Muista juoda vettä koko päivän ajan. Tavoite on 6–8 lasia päivässä.', delay: 8000 },
+            { speaker: 'Hilma', text: 'Yritän muistaa, kiitos kun huolehdit.', delay: 3000 },
+            { speaker: 'System', text: '✅ Nestetasapaino hoidettu', delay: 3000 }
+        ];
+
+        const emergencyScenario = [
+            { speaker: 'System', text: '🚨 HÄTÄTILANNE havaittu! 🚨', delay: 3000 },
+            { speaker: 'Timo', text: 'Äiti, kuulin kolinaa! Onko kaikki kunnossa?', delay: 4000 },
+            { speaker: 'Hilma', text: 'Timo kulta, kaaduin vähän mutta en satuttanut itseäni.', delay: 5000 },
+            { speaker: 'Timo', text: 'Olen huolissani äiti. Pystytkö liikkumaan normaalisti? Tarkistan että olet kunnossa.', delay: 7000 },
+            { speaker: 'Hilma', text: 'Kyllä pystyn, en loukannut mitään.', delay: 3000 },
+            { speaker: 'Timo', text: 'Hyvä äiti! Mutta jos tuntuu pahalta, soita heti 112. Ilmoitan myös Timolle.', delay: 7000 },
+            { speaker: 'System', text: '✅ Hätätilanne käsitelty turvallisesti', delay: 3000 }
+        ];
+
+        const dashboardInfo = [
+            { speaker: 'Timo', text: 'Näytetään hallintapaneeli.', delay: 2000 },
+            { speaker: 'Timo', text: 'Tässä on Timon hallintapaneeli. Aamun lääkkeet kello kahdeksan. Illan lääkkeet kello kahdeksantoista.', delay: 9000 },
+            { speaker: 'Timo', text: 'Juomamuistutus kahden tunnin välein. Viimeksi kello kymmenen kolmekymmentä.', delay: 7000 },
+            { speaker: 'Timo', text: 'Läheiset: Timo, poika: 040-123-4567. Anna, tytär: 050-987-6543.', delay: 9000 },
+            { speaker: 'Timo', text: 'Tämän päivän tilastot: Lääkkeet otettu: 1/2. Vettä juotu: 3 lasia. Keskusteluja: 2. Kaatumisia: 0.', delay: 11000 }
+        ];
+        
+        // --- TOIMINNALLISUUS ---
+
+        function clearAllDemos() {
+            timeoutIds.forEach(id => clearTimeout(id));
+            timeoutIds = [];
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+            const statusBar = document.getElementById('statusBar');
+            statusBar.classList.remove('visible');
+        }
+
+        function speak(text, onEndCallback = () => {}) {
+            if (!('speechSynthesis' in window)) {
+                console.error("Selain ei tue puhesynteesiä.");
+                onEndCallback();
+                return;
+            }
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fi-FI';
+            utterance.rate = 0.95;
+            utterance.onend = onEndCallback;
+            utterance.onerror = () => {
+                console.error("Puhesynteesissä tapahtui virhe.");
+                onEndCallback();
+            };
+            
+            currentSpeech = utterance;
+            speechSynthesis.speak(utterance);
+        }
+
+        function playDialogue(dialogue) {
+            clearAllDemos();
+            const statusBar = document.getElementById('statusBar');
+            let cumulativeDelay = 500;
+
+            dialogue.forEach(turn => {
+                const timeoutId = setTimeout(() => {
+                    let statusText = '';
+                    let shouldSpeak = false;
+
+                    if (turn.speaker === 'Timo') {
+                        statusText = 'Timo puhuu... 🎙️';
+                        shouldSpeak = true;
+                    } else if (turn.speaker === 'Hilma') {
+                        statusText = 'Hilma vastaa...';
+                        shouldSpeak = false; // Hilman "ääni" on vain tauko
+                    } else { // System
+                        statusText = turn.text;
+                        shouldSpeak = false;
+                    }
+                    
+                    statusBar.textContent = statusText;
+                    statusBar.classList.add('visible');
+
+                    if (shouldSpeak) {
+                        speak(turn.text);
+                    }
+                    
+                }, cumulativeDelay);
+
+                timeoutIds.push(timeoutId);
+                cumulativeDelay += turn.delay;
+            });
+            
+            // Piilota status-palkki lopuksi
+            const finalTimeoutId = setTimeout(clearAllDemos, cumulativeDelay + 1000);
+            timeoutIds.push(finalTimeoutId);
+        }
+        
+        // Nappien käsittelijät
+        function playMedicineReminder() { playDialogue(medicineReminder); }
+        function playDrinkingReminder() { playDialogue(drinkingReminder); }
+        function playEmergency() { playDialogue(emergencyScenario); }
+        function playDashboard() { playDialogue(dashboardInfo); }
+        
+        // Käynnistä pääkeskustelu automaattisesti sivun latautuessa
+        window.onload = () => {
+            // Pieni viive ennen kuin aloitetaan, jotta sivu ehtii latautua kunnolla
+            setTimeout(() => {
+                playDialogue(mainConversation);
+            }, 1000);
+        };
+    </script>
+
+</body>
+</html>
