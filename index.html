@@ -7,7 +7,7 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       background-color: #e8f5e9;
       color: #222;
     }
@@ -16,6 +16,14 @@
       color: white;
       text-align: center;
       padding: 1rem;
+      position: relative;
+    }
+    .header img.logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
     }
     .container {
       display: flex;
@@ -49,25 +57,39 @@
     .demo-buttons button:hover {
       background-color: #559f54;
     }
-    .info, .hallinta {
+    .panels {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 800px;
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+    .panels .info, .panels .hallinta {
       background: #fff;
       padding: 1rem;
       border-radius: 10px;
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
-      margin-top: 1rem;
+      flex: 1;
     }
+    .panels .info h3::before { content: "💼 "; }
+    .panels .hallinta h3::before { content: "⚙️ "; }
     .hallinta {
       display: none;
     }
     h3 {
       margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    ul {
+      margin: 0;
+      padding-left: 1.2em;
     }
   </style>
 </head>
 <body>
   <div class="header">
+    <img src="logo.png" alt="AuraCare-logo" class="logo" />
     <h1>AuraCare Mobiilidemo</h1>
     <p>Virtuaaliavustaja ikäihmisille</p>
   </div>
@@ -84,25 +106,27 @@
       <button onclick="togglePanel()">📊 Hallintapaneeli</button>
     </div>
 
-    <!-- Sijoittaja-info -->
-    <div class="info">
-      <h3>Miksi AuraCare?</h3>
-      <ul>
-        <li>Torjuu yksinäisyyttä – tuttujen äänien vuorovaikutus</li>
-        <li>Keskustelut muistuttavat perheen yhteydestä</li>
-        <li>Laajennettavissa: lääkkeet, juominen, turvallisuus</li>
-        <li>Kustannustehokas – ei vaadi uutta laitetta</li>
-      </ul>
-    </div>
+    <!-- Info- ja hallintapaneelit vierekkäin -->
+    <div class="panels">
+      <div class="info">
+        <h3>Miksi AuraCare?</h3>
+        <ul>
+          <li>Torjuu yksinäisyyttä – tuttujen äänien vuorovaikutus</li>
+          <li>Keskustelut muistuttavat perheen yhteydestä</li>
+          <li>Laajennettavissa: lääkkeet, juominen, turvallisuus</li>
+          <li>Kustannustehokas – ei vaadi uutta laitetta</li>
+        </ul>
+      </div>
 
-    <!-- Hallintapaneeli -->
-    <div class="hallinta" id="hallinta">
-      <h3>Asetetut muistutukset</h3>
-      <ul>
-        <li>Lääkkeet klo 9:00</li>
-        <li>Juominen klo 11:00 ja 14:00</li>
-        <li>Yhteydenotto klo 18:00</li>
-      </ul>
+      <div class="hallinta" id="hallinta">
+        <h3>Asetetut muistutukset</h3>
+        <ul>
+          <li>🕘 Lääkkeet klo 9:00</li>
+          <li>💧 Juominen klo 11:00 ja 14:00</li>
+          <li>📞 Yhteydenotto klo 18:00</li>
+        </ul>
+        <p>Muokkaa tehtäviä kun kaupallinen versio julkaistaan.</p>
+      </div>
     </div>
   </div>
 
@@ -112,7 +136,6 @@
     let hilmaVoice = null;
     function initVoices() {
       const voices = speechSynthesis.getVoices();
-      // Etsi suomenkieliset äänet
       timoVoice = voices.find(v => v.lang.startsWith('fi')) || voices[0];
       hilmaVoice = voices.find(v => v.lang.startsWith('fi') && v.name !== timoVoice.name) || timoVoice;
     }
@@ -143,25 +166,17 @@
     ];
 
     function runDialogue(dialogue) {
-      // Pysäytä mahdollinen käynnissä oleva puhe
       if (speechSynthesis.speaking) speechSynthesis.cancel();
-      // Toista vuorotellen
-      dialogue.reduce((promise, turn) => {
-        return promise.then(() => new Promise(res => {
-          const voice = turn.who === 'timo' ? timoVoice : hilmaVoice;
-          speak(turn.text, voice);
-          // odota puheen pituuden verran (arvio)
-          setTimeout(res, turn.text.length * 60);
-        }));
-      }, Promise.resolve());
+      dialogue.reduce((p, turn) => p.then(() => new Promise(res => {
+        const voice = turn.who === 'timo' ? timoVoice : hilmaVoice;
+        speak(turn.text, voice);
+        setTimeout(res, turn.text.length * 60);
+      })), Promise.resolve());
     }
 
-    // Linkitetyt funktiot
     function startMedicine() { runDialogue(medicineDialogue); }
     function startDrinking() { runDialogue(drinkingDialogue); }
     function startEmergency() { runDialogue(emergencyDialogue); }
-
-    // Panelin toggle
     function togglePanel() {
       const p = document.getElementById('hallinta');
       p.style.display = p.style.display === 'block' ? 'none' : 'block';
