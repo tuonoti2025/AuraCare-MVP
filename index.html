@@ -11,35 +11,22 @@
       background-color: #2e7d32;
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
+      align-items: flex-start;
+      padding: 2rem 0;
     }
-    .phone-frame {
-      position: relative;
+    .container {
       width: 360px;
-      height: 640px;
-      background: #f4f4f4;
-      border: 16px solid #222;
-      border-top-width: 60px;
-      border-bottom-width: 60px;
-      border-radius: 36px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      overflow: hidden;
-    }
-    .screen {
-      width: 100%;
-      height: 100%;
       background: #e8f5e9;
-      display: flex;
-      flex-direction: column;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     .header {
       background-color: #2e7d32;
       color: white;
       text-align: center;
-      padding: 0.5rem;
+      padding: 0.75rem;
       font-size: 1.1rem;
-      flex-shrink: 0;
       position: relative;
     }
     .header img.logo {
@@ -50,11 +37,10 @@
       height: 32px;
     }
     .content {
-      flex-grow: 1;
-      padding: 0.5rem;
-      overflow-y: auto;
+      padding: 0.75rem;
     }
     .timo-kuva {
+      display: block;
       width: 80px;
       height: 80px;
       border-radius: 50%;
@@ -65,7 +51,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 0.5rem;
-      margin: 0.5rem 0;
+      margin: 0.75rem 0;
     }
     .demo-buttons button {
       padding: 0.6rem;
@@ -83,7 +69,7 @@
     .panels {
       display: flex;
       gap: 0.5rem;
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
     .panels .info, .panels .hallinta {
       background: #fff;
@@ -101,39 +87,37 @@
   </style>
 </head>
 <body>
-  <div class="phone-frame">
-    <div class="screen">
-      <div class="header">
-        <img src="logo.png" alt="AuraCare" class="logo" />
-        AuraCare Mobiilidemo
+  <div class="container">
+    <div class="header">
+      <img src="logo.png" alt="AuraCare logo" class="logo" />
+      AuraCare Mobiilidemo
+    </div>
+    <div class="content">
+      <img src="timo.png" alt="Timo" class="timo-kuva" />
+      <div class="demo-buttons">
+        <button onclick="startMedicine()">💊 Lääkemuistutus</button>
+        <button onclick="startDrinking()">💧 Juomamuistutus</button>
+        <button onclick="startEmergency()">🚨 Hätätilanne</button>
+        <button onclick="togglePanel()">📊 Hallintapaneeli</button>
       </div>
-      <div class="content">
-        <img src="timo.png" alt="Timo" class="timo-kuva" />
-        <div class="demo-buttons">
-          <button onclick="startMedicine()">💊 Lääkemuistutus</button>
-          <button onclick="startDrinking()">💧 Juomamuistutus</button>
-          <button onclick="startEmergency()">🚨 Hätätilanne</button>
-          <button onclick="togglePanel()">📊 Hallintapaneeli</button>
+      <div class="panels">
+        <div class="info">
+          <h3>Miksi AuraCare?</h3>
+          <ul>
+            <li>Torjuu yksinäisyyttä – tuttujen äänien vuorovaikutus</li>
+            <li>Keskustelut muistuttavat perheen yhteydestä</li>
+            <li>Laajennettavissa: lääkkeet, juominen, turvallisuus</li>
+            <li>Kustannustehokas – ei vaadi uutta laitetta</li>
+          </ul>
         </div>
-        <div class="panels">
-          <div class="info">
-            <h3>Miksi AuraCare?</h3>
-            <ul>
-              <li>Torjuu yksinäisyyttä – tuttujen äänien vuorovaikutus</li>
-              <li>Keskustelut muistuttavat perheen yhteydestä</li>
-              <li>Laajennettavissa: lääkkeet, juominen, turvallisuus</li>
-              <li>Kustannustehokas – ei vaadi uutta laitetta</li>
-            </ul>
-          </div>
-          <div class="hallinta" id="hallinta">
-            <h3>Asetetut muistutukset</h3>
-            <ul>
-              <li>🕘 Lääkkeet klo 9:00</li>
-              <li>💧 Juominen klo 11:00 ja 14:00</li>
-              <li>📞 Yhteydenotto klo 18:00</li>
-            </ul>
-            <p style="font-size:0.8rem; color:#555;">Muokkaa tehtäviä kaupallisessa versiossa.</p>
-          </div>
+        <div class="hallinta" id="hallinta">
+          <h3>Asetetut muistutukset</h3>
+          <ul>
+            <li>🕘 Lääkkeet klo 9:00</li>
+            <li>💧 Juominen klo 11:00 ja 14:00</li>
+            <li>📞 Yhteydenotto klo 18:00</li>
+          </ul>
+          <p style="font-size:0.8rem; color:#555;">Muokkaa tehtäviä kaupallisessa versiossa.</p>
         </div>
       </div>
     </div>
