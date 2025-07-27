@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AuraCare - Mobiilidemo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2e7d32;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem 0;
+    }
+    .container {
+      width: 360px;
+      background: #e8f5e9;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background-color: #2e7d32;
+      color: white;
+      text-align: center;
+      padding: 0.75rem;
+      font-size: 1.2rem;
+      position: relative;
+    }
+    .header img.logo {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+    }
+    .screen {
+      padding: 0.75rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .timo-kuva {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: block;
+      margin: 0.5rem auto;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .demo-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin: 0.75rem 0;
+    }
+    .demo-buttons button {
+      padding: 0.6rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #66bb6a;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .demo-buttons button:hover {
+      background-color: #559f54;
+    }
+    .panels {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .panels .info,
+    .panels .hallinta {
+      background: #fff;
+      padding: 0.5rem;
+      border-radius: 8px;
+      flex: 1;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      font-size: 0.85rem;
+    }
+    .panels .info h3::before { content: "💼 "; }
+    .panels .hallinta h3::before { content: "⚙️ "; }
+    .panels .hallinta { display: none; }
+    h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+    ul { margin: 0; padding-left: 1.2em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="logo.png" alt="AuraCare logo" class="logo" />
+      AuraCare Mobiilidemo
+    </div>
+    <div class="screen">
+      <!-- Timo-avatar -->
+      <img src="timo.png" alt="Timo avatar" class="timo-kuva" />
+      
+      <!-- Toimintopainikkeet -->
+      <div class="demo-buttons">
+        <button onclick="startMedicine()">💊 Lääkemuistutus</button>
+        <button onclick="startDrinking()">💧 Juomamuistutus</button>
+        <button onclick="startEmergency()">🚨 Hätätilanne</button>
+        <button onclick="togglePanel()">📊 Hallintapaneeli</button>
+      </div>
+
+      <!-- Paneelit vierekkäin -->
+      <div class="panels">
+        <div class="info">
+          <h3>Miksi AuraCare?</h3>
+          <ul>
+            <li>Torjuu yksinäisyyttä – tuttujen äänien vuorovaikutus</li>
+            <li>Keskustelut muistuttavat perheen yhteydestä</li>
+            <li>Laajennettavissa: lääkkeet, juominen, turvallisuus</li>
+            <li>Kustannustehokas – ei vaadi uutta laitetta</li>
+          </ul>
+        </div>
+        <div class="hallinta" id="hallinta">
+          <h3>Asetetut muistutukset</h3>
+          <ul>
+            <li>🕘 Lääkkeet klo 9:00</li>
+            <li>💧 Juominen klo 11:00 ja 14:00</li>
+            <li>📞 Yhteydenotto klo 18:00</li>
+          </ul>
+          <p style="font-size:0.8rem; color:#555;">Muokkaa tehtäviä kaupallisessa versiossa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let timoVoice, hilmaVoice;
+    function initVoices() {
+      const v = speechSynthesis.getVoices();
+      timoVoice = v.find(x => x.lang.startsWith('fi')) || v[0];
+      hilmaVoice = v.find(x => x.name !== timoVoice.name && x.lang.startsWith('fi')) || timoVoice;
+    }
+    speechSynthesis.onvoiceschanged = initVoices;
+    function speak(text, voice) {
+      const u = new SpeechSynthesisUtterance(text);
+      if (voice) u.voice = voice;
+      speechSynthesis.speak(u);
+    }
+    const medicineDialogue = [
+      { who: 'timo', text: 'Äiti, onko aika ottaa aamulääkkeet?' },
+      { who: 'hilma', text: 'Kyllä poikaseni, muistan aina ottaa ne.' },
+      { who: 'timo', text: 'Hyvä äiti! Muistathan myös juoda vettä.' }
+    ];
+    const drinkingDialogue = [
+      { who: 'timo', text: 'Äiti, oletko juonut tänään vettä?' },
+      { who: 'hilma', text: 'En vielä tarpeeksi, poikaseni.' },
+      { who: 'timo', text: 'Käy hakemassa lasillinen vettä nyt.' }
+    ];
+    const emergencyDialogue = [
+      { who: 'timo', text: 'Äiti, kuulinko kolinaa? Onko kaikki kunnossa?' },
+      { who: 'hilma', text: 'Kyllä, kaaduin vain ja nousin ylös.' },
+      { who: 'timo', text: 'Hyvä, mutta jos tarvitset apua, paina hätätilanne‑painiketta.' }
+    ];
+    function runDialogue(d) {
+      if (speechSynthesis.speaking) speechSynthesis.cancel();
+      d.reduce((p, r) => p.then(() => new Promise(res => {
+        const v = r.who === 'timo' ? timoVoice : hilmaVoice;
+        speak(r.text, v);
+        setTimeout(res, r.text.length * 60);
+      })), Promise.resolve());
+    }
+    function startMedicine() { runDialogue(medicineDialogue); }
+    function startDrinking() { runDialogue(drinkingDialogue); }
+    function startEmergency() { runDialogue(emergencyDialogue); }
+    function togglePanel() {
+      const p = document.getElementById('hallinta');
+      p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>
